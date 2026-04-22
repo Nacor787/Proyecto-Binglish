@@ -1,0 +1,949 @@
+/* ============================================================
+   CONVENIOS.CSS — Premium Glassmorphism Landing Page
+   Binglish — The Right Move
+   ============================================================ */
+
+/* ── CSS Custom Properties ─────────────────────────────────── */
+:root {
+    --conv-bg: #050510;
+    --conv-surface: rgba(255, 255, 255, 0.04);
+    --conv-glass: rgba(255, 255, 255, 0.06);
+    --conv-glass-border: rgba(255, 255, 255, 0.1);
+    --conv-glass-strong: rgba(255, 255, 255, 0.1);
+    --conv-text: #e8eaf6;
+    --conv-text-muted: rgba(255, 255, 255, 0.55);
+    --conv-accent: #00e5ff;
+    --conv-accent-2: #7b2ff7;
+    --conv-accent-3: #00d4aa;
+    --conv-gradient: linear-gradient(135deg, #00e5ff, #7b2ff7);
+    --conv-gradient-text: linear-gradient(135deg, #00e5ff 0%, #7b2ff7 50%, #00d4aa 100%);
+    --conv-glow-cyan: rgba(0, 229, 255, 0.25);
+    --conv-glow-purple: rgba(123, 47, 247, 0.25);
+    --conv-radius: 20px;
+    --conv-radius-sm: 12px;
+    --conv-radius-pill: 50px;
+    --conv-transition: cubic-bezier(0.25, 0.8, 0.25, 1);
+    --conv-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* ── Reset & Base ──────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--conv-font);
+    background: var(--conv-bg);
+    color: var(--conv-text);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Vanta.js Background ───────────────────────────────────── */
+#vanta-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+/* ── Global Content Layer ──────────────────────────────────── */
+.conv-navbar,
+.conv-hero,
+.conv-section,
+.conv-cta-section,
+.conv-footer {
+    position: relative;
+    z-index: 1;
+}
+
+/* ============================================================
+   NAVBAR
+   ============================================================ */
+.conv-navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    padding: 0 1.5rem;
+    transition: all 0.4s var(--conv-transition);
+}
+
+.conv-navbar.scrolled {
+    background: rgba(5, 5, 16, 0.85);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid var(--conv-glass-border);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+}
+
+.conv-navbar-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 0;
+    transition: padding 0.4s var(--conv-transition);
+}
+
+.conv-navbar.scrolled .conv-navbar-inner {
+    padding: 0.6rem 0;
+}
+
+.conv-navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+    transition: transform 0.3s var(--conv-transition);
+}
+
+.conv-navbar-brand:hover {
+    transform: translateY(-1px);
+}
+
+.conv-navbar-brand img {
+    filter: drop-shadow(0 0 8px rgba(0, 229, 255, 0.3));
+}
+
+.conv-brand-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1;
+}
+
+.conv-brand-title {
+    font-size: 1.15rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    background: var(--conv-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.conv-brand-subtitle {
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    color: var(--conv-text-muted);
+    text-transform: uppercase;
+    margin-top: 2px;
+}
+
+.conv-navbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.conv-btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1.25rem;
+    border-radius: var(--conv-radius-pill);
+    background: var(--conv-glass);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--conv-glass-border);
+    color: var(--conv-text);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.35s var(--conv-transition);
+}
+
+.conv-btn-back:hover {
+    background: rgba(0, 229, 255, 0.12);
+    border-color: rgba(0, 229, 255, 0.3);
+    color: var(--conv-accent);
+    transform: translateX(-3px);
+    box-shadow: 0 0 20px rgba(0, 229, 255, 0.15);
+}
+
+.conv-btn-back i {
+    font-size: 1.1rem;
+    transition: transform 0.3s var(--conv-transition);
+}
+
+.conv-btn-back:hover i {
+    transform: translateX(-3px);
+}
+
+/* ============================================================
+   HERO SECTION
+   ============================================================ */
+.conv-hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 120px 1.5rem 60px;
+    position: relative;
+}
+
+/* Gradient fade removed as per user request to drop the dark color entering the grid */
+
+.conv-hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+}
+
+.conv-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1.25rem;
+    border-radius: var(--conv-radius-pill);
+    background: rgba(0, 229, 255, 0.08);
+    border: 1px solid rgba(0, 229, 255, 0.2);
+    color: var(--conv-accent);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    animation: convPulseGlow 3s ease-in-out infinite;
+}
+
+.conv-hero-badge i {
+    font-size: 1rem;
+}
+
+.conv-hero-title {
+    font-size: clamp(2.2rem, 5vw, 3.8rem);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 1.25rem;
+    letter-spacing: -0.02em;
+}
+
+.conv-gradient-text {
+    background: var(--conv-gradient-text);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 200% auto;
+    animation: convGradientShift 4s ease-in-out infinite alternate;
+}
+
+.conv-hero-subtitle {
+    font-size: clamp(0.95rem, 2vw, 1.15rem);
+    color: var(--conv-text-muted);
+    line-height: 1.7;
+    max-width: 650px;
+    margin: 0 auto 2rem;
+    font-weight: 400;
+}
+
+.conv-hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.conv-stat-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    border-radius: var(--conv-radius-pill);
+    background: var(--conv-glass-strong);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--conv-glass-border);
+    font-size: 0.85rem;
+    color: var(--conv-text);
+    transition: all 0.3s var(--conv-transition);
+}
+
+.conv-stat-pill:hover {
+    border-color: rgba(0, 229, 255, 0.3);
+    background: rgba(0, 229, 255, 0.08);
+    transform: translateY(-2px);
+}
+
+.conv-stat-pill i {
+    color: var(--conv-accent);
+    font-size: 1rem;
+}
+
+.conv-stat-pill strong {
+    color: #fff;
+    font-weight: 700;
+}
+
+/* Scroll indicator */
+.conv-scroll-indicator {
+    position: relative;
+    z-index: 2;
+    margin-top: 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    animation: convFloatY 2.5s ease-in-out infinite;
+}
+
+.conv-scroll-indicator span {
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--conv-text-muted);
+    font-weight: 500;
+}
+
+.conv-scroll-arrow {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--conv-glass);
+    border: 1px solid var(--conv-glass-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--conv-accent);
+    font-size: 0.9rem;
+}
+
+/* ============================================================
+   SECTION — Cards Grid
+   ============================================================ */
+.conv-section {
+    padding: 100px 0 80px;
+}
+
+.conv-section-header {
+    text-align: center;
+    margin-bottom: 3.5rem;
+}
+
+.conv-section-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 1rem;
+    border-radius: var(--conv-radius-pill);
+    background: rgba(123, 47, 247, 0.1);
+    border: 1px solid rgba(123, 47, 247, 0.2);
+    color: #b388ff;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 1rem;
+}
+
+.conv-section-badge i {
+    font-size: 0.85rem;
+}
+
+.conv-section-title {
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 800;
+    margin-bottom: 1rem;
+    letter-spacing: -0.02em;
+}
+
+.conv-section-subtitle {
+    font-size: 1rem;
+    color: var(--conv-text-muted);
+    max-width: 580px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+/* ============================================================
+   CONVENTION CARDS
+   ============================================================ */
+.conv-card {
+    position: relative;
+    border-radius: var(--conv-radius);
+    overflow: hidden;
+    height: 100%;
+    transition: transform 0.45s var(--conv-transition),
+        box-shadow 0.45s var(--conv-transition);
+}
+
+.conv-card:hover {
+    transform: translateY(-8px) scale(1.02);
+}
+
+/* Animated glow border */
+.conv-card-glow {
+    position: absolute;
+    inset: 0;
+    border-radius: var(--conv-radius);
+    padding: 1px;
+    background: linear-gradient(135deg,
+            rgba(0, 229, 255, 0.3),
+            rgba(123, 47, 247, 0.1),
+            rgba(0, 212, 170, 0.3));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0.5;
+    transition: opacity 0.4s var(--conv-transition);
+    pointer-events: none;
+}
+
+.conv-card:hover .conv-card-glow {
+    opacity: 1;
+    background: linear-gradient(135deg,
+            rgba(0, 229, 255, 0.6),
+            rgba(123, 47, 247, 0.4),
+            rgba(0, 212, 170, 0.6));
+}
+
+.conv-card-inner {
+    background: var(--conv-glass);
+    backdrop-filter: blur(24px) saturate(150%);
+    -webkit-backdrop-filter: blur(24px) saturate(150%);
+    border: 1px solid var(--conv-glass-border);
+    border-radius: var(--conv-radius);
+    padding: 2rem 1.75rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.4s var(--conv-transition);
+}
+
+.conv-card:hover .conv-card-inner {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.18);
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.4),
+        0 0 40px rgba(0, 229, 255, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Card Logo Icon */
+.conv-card-logo {
+    margin-bottom: 1.25rem;
+}
+
+.conv-card-logo-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    background: linear-gradient(135deg, rgba(0, 229, 255, 0.15), rgba(0, 229, 255, 0.05));
+    border: 1px solid rgba(0, 229, 255, 0.2);
+    color: var(--conv-accent);
+    transition: all 0.4s var(--conv-transition);
+}
+
+.conv-card:hover .conv-card-logo-icon {
+    transform: scale(1.08) rotate(-3deg);
+    box-shadow: 0 0 25px rgba(0, 229, 255, 0.25);
+}
+
+/* Color variants */
+.conv-card-logo-icon.tech {
+    background: linear-gradient(135deg, rgba(123, 47, 247, 0.15), rgba(123, 47, 247, 0.05));
+    border-color: rgba(123, 47, 247, 0.25);
+    color: #b388ff;
+}
+
+.conv-card:hover .conv-card-logo-icon.tech {
+    box-shadow: 0 0 25px rgba(123, 47, 247, 0.25);
+}
+
+.conv-card-logo-icon.health {
+    background: linear-gradient(135deg, rgba(244, 67, 54, 0.15), rgba(244, 67, 54, 0.05));
+    border-color: rgba(244, 67, 54, 0.25);
+    color: #ef9a9a;
+}
+
+.conv-card:hover .conv-card-logo-icon.health {
+    box-shadow: 0 0 25px rgba(244, 67, 54, 0.2);
+}
+
+.conv-card-logo-icon.gov {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.15), rgba(255, 193, 7, 0.05));
+    border-color: rgba(255, 193, 7, 0.25);
+    color: #ffe082;
+}
+
+.conv-card:hover .conv-card-logo-icon.gov {
+    box-shadow: 0 0 25px rgba(255, 193, 7, 0.2);
+}
+
+.conv-card-logo-icon.ngo {
+    background: linear-gradient(135deg, rgba(0, 212, 170, 0.15), rgba(0, 212, 170, 0.05));
+    border-color: rgba(0, 212, 170, 0.25);
+    color: #80cbc4;
+}
+
+.conv-card:hover .conv-card-logo-icon.ngo {
+    box-shadow: 0 0 25px rgba(0, 212, 170, 0.2);
+}
+
+.conv-card-logo-icon.finance {
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.15), rgba(76, 175, 80, 0.05));
+    border-color: rgba(76, 175, 80, 0.25);
+    color: #a5d6a7;
+}
+
+.conv-card:hover .conv-card-logo-icon.finance {
+    box-shadow: 0 0 25px rgba(76, 175, 80, 0.2);
+}
+
+/* Card content */
+.conv-card-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #fff;
+    letter-spacing: -0.01em;
+}
+
+.conv-card-category {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--conv-accent);
+    margin-bottom: 0.85rem;
+    opacity: 0.8;
+}
+
+.conv-card-category i {
+    font-size: 0.7rem;
+}
+
+.conv-card-description {
+    font-size: 0.88rem;
+    color: var(--conv-text-muted);
+    line-height: 1.65;
+    flex-grow: 1;
+    margin-bottom: 1rem;
+}
+
+.conv-card-benefits {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+}
+
+.conv-benefit-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.3rem 0.7rem;
+    border-radius: var(--conv-radius-pill);
+    background: rgba(0, 229, 255, 0.06);
+    border: 1px solid rgba(0, 229, 255, 0.12);
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.conv-benefit-tag i {
+    color: var(--conv-accent-3);
+    font-size: 0.7rem;
+}
+
+.conv-card-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.25rem;
+    border-radius: var(--conv-radius-pill);
+    background: transparent;
+    border: 1px solid var(--conv-glass-border);
+    color: var(--conv-text);
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-weight: 600;
+    transition: all 0.35s var(--conv-transition);
+    align-self: flex-start;
+}
+
+.conv-card-btn:hover {
+    background: var(--conv-gradient);
+    border-color: transparent;
+    color: #fff;
+    box-shadow: 0 6px 25px rgba(0, 229, 255, 0.25);
+    transform: translateX(4px);
+}
+
+.conv-card-btn i {
+    transition: transform 0.3s var(--conv-transition);
+    font-size: 0.9rem;
+}
+
+.conv-card-btn:hover i {
+    transform: translateX(4px);
+}
+
+/* ============================================================
+   CTA SECTION
+   ============================================================ */
+.conv-cta-section {
+    padding: 40px 0 100px;
+}
+
+.conv-cta-card {
+    position: relative;
+    border-radius: var(--conv-radius);
+    overflow: hidden;
+    padding: 1px;
+}
+
+.conv-cta-glow {
+    position: absolute;
+    inset: 0;
+    border-radius: var(--conv-radius);
+    background: var(--conv-gradient);
+    opacity: 0.15;
+    transition: opacity 0.5s var(--conv-transition);
+}
+
+.conv-cta-card:hover .conv-cta-glow {
+    opacity: 0.25;
+}
+
+.conv-cta-content {
+    position: relative;
+    background: rgba(5, 5, 16, 0.9);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: var(--conv-radius);
+    border: 1px solid var(--conv-glass-border);
+    padding: 3.5rem 2rem;
+    text-align: center;
+}
+
+.conv-cta-icon {
+    font-size: 3rem;
+    background: var(--conv-gradient-text);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 1.5rem;
+    display: inline-block;
+}
+
+.conv-cta-title {
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    font-weight: 800;
+    margin-bottom: 1rem;
+    letter-spacing: -0.02em;
+}
+
+.conv-cta-text {
+    font-size: 1rem;
+    color: var(--conv-text-muted);
+    max-width: 550px;
+    margin: 0 auto 2rem;
+    line-height: 1.7;
+}
+
+.conv-cta-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.85rem 2rem;
+    border-radius: var(--conv-radius-pill);
+    background: var(--conv-gradient);
+    color: #fff;
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    transition: all 0.4s var(--conv-transition);
+    box-shadow: 0 6px 30px rgba(0, 229, 255, 0.2);
+}
+
+.conv-cta-btn:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 10px 40px rgba(0, 229, 255, 0.35);
+    color: #fff;
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.conv-footer {
+    padding: 2.5rem 1.5rem;
+    border-top: 1px solid var(--conv-glass-border);
+    background: rgba(5, 5, 16, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.conv-footer-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.conv-footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+}
+
+.conv-footer-brand img {
+    filter: drop-shadow(0 0 6px rgba(0, 229, 255, 0.2));
+}
+
+.conv-footer-brand-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1;
+}
+
+.conv-footer-title {
+    font-size: 0.95rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    background: var(--conv-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.conv-footer-tagline {
+    font-size: 0.6rem;
+    font-weight: 500;
+    letter-spacing: 1.2px;
+    color: var(--conv-text-muted);
+    text-transform: uppercase;
+    margin-top: 2px;
+}
+
+.conv-footer-links {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.conv-footer-link {
+    color: var(--conv-text-muted);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.3s var(--conv-transition);
+}
+
+.conv-footer-link:hover {
+    color: var(--conv-accent);
+}
+
+.conv-footer-socials {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.conv-social-link {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--conv-glass);
+    border: 1px solid var(--conv-glass-border);
+    color: var(--conv-text-muted);
+    text-decoration: none;
+    font-size: 1rem;
+    transition: all 0.35s var(--conv-transition);
+}
+
+.conv-social-link:hover {
+    background: var(--conv-gradient);
+    border-color: transparent;
+    color: #fff;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 229, 255, 0.25);
+}
+
+.conv-footer-bottom {
+    text-align: center;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--conv-glass-border);
+    font-size: 0.78rem;
+    color: var(--conv-text-muted);
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
+@keyframes convPulseGlow {
+
+    0%,
+    100% {
+        box-shadow: 0 0 10px rgba(0, 229, 255, 0.05);
+    }
+
+    50% {
+        box-shadow: 0 0 20px rgba(0, 229, 255, 0.15);
+    }
+}
+
+@keyframes convGradientShift {
+    0% {
+        background-position: 0% center;
+    }
+
+    100% {
+        background-position: 200% center;
+    }
+}
+
+@keyframes convFloatY {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 991.98px) {
+    .conv-hero {
+        min-height: 90vh;
+        padding: 100px 1.25rem 50px;
+    }
+
+    .conv-hero-title {
+        font-size: 2.2rem;
+    }
+
+    .conv-section {
+        padding: 70px 0 60px;
+    }
+
+    .conv-cta-content {
+        padding: 2.5rem 1.5rem;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .conv-navbar-inner {
+        padding: 0.8rem 0;
+    }
+
+    .conv-btn-back span {
+        display: none;
+    }
+
+    .conv-btn-back {
+        padding: 0.5rem 0.75rem;
+    }
+
+    .conv-hero {
+        min-height: 85vh;
+        padding: 90px 1rem 40px;
+    }
+
+    .conv-hero-title {
+        font-size: 1.85rem;
+    }
+
+    .conv-hero-subtitle {
+        font-size: 0.9rem;
+    }
+
+    .conv-hero-stats {
+        gap: 0.65rem;
+    }
+
+    .conv-stat-pill {
+        padding: 0.45rem 0.85rem;
+        font-size: 0.78rem;
+    }
+
+    .conv-section {
+        padding: 60px 0 50px;
+    }
+
+    .conv-section-title {
+        font-size: 1.6rem;
+    }
+
+    .conv-card-inner {
+        padding: 1.5rem 1.25rem;
+    }
+
+    .conv-cta-section {
+        padding: 20px 0 70px;
+    }
+
+    .conv-cta-content {
+        padding: 2rem 1.25rem;
+    }
+
+    .conv-footer-inner {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .conv-footer-links {
+        justify-content: center;
+    }
+
+    .conv-footer-socials {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .conv-hero-title {
+        font-size: 1.6rem;
+    }
+
+    .conv-hero-stats {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .conv-stat-pill {
+        width: 100%;
+        max-width: 220px;
+        justify-content: center;
+    }
+}

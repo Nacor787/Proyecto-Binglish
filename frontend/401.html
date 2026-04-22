@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso Denegado | Binglish</title>
+    <!-- Importar fuentes globales y CSS base -->
+    <link rel="stylesheet" href="css/styles.css">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: var(--font-primary), 'Inter', sans-serif;
+            overflow: hidden;
+            background-color: #050510;
+        }
+
+        .bg-animation {
+            position: fixed;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            z-index: -1;
+            pointer-events: none;
+            background:
+                radial-gradient(circle at 30% 40%, rgba(0, 180, 255, 0.15), transparent 50%),
+                radial-gradient(circle at 70% 60%, rgba(123, 47, 247, 0.15), transparent 50%);
+            animation: floatMove 25s ease-in-out infinite;
+        }
+
+        @keyframes floatMove {
+            0% {
+                transform: translate(0, 0);
+            }
+
+            50% {
+                transform: translate(-2%, -3%);
+            }
+
+            100% {
+                transform: translate(0, 0);
+            }
+        }
+
+        .auth-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            position: relative;
+            z-index: 10;
+        }
+
+        .auth-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 3rem 2rem;
+            max-width: 450px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+        }
+
+        .lock-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 71, 87, 0.1);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 1.5rem auto;
+            border: 1px solid rgba(255, 71, 87, 0.3);
+            box-shadow: 0 0 20px rgba(255, 71, 87, 0.2);
+        }
+
+        .auth-title {
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            color: #ffffff;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+
+        .auth-text {
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 2rem;
+            font-size: 1.05rem;
+            line-height: 1.5;
+        }
+
+        .btn-return {
+            display: inline-block;
+            width: 100%;
+            box-sizing: border-box;
+            padding: 14px 28px;
+            background: linear-gradient(135deg, #00E5FF, #00B4D8);
+            color: #000;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            box-shadow: 0 8px 20px rgba(0, 229, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .btn-return:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(0, 229, 255, 0.4);
+            color: #000;
+        }
+
+        .footer-text {
+            margin-top: 2rem;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.3);
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Fondo Animado -->
+    <div class="bg-animation"></div>
+
+    <!-- Contenido Central -->
+    <div class="auth-container">
+        <div class="auth-card">
+
+            <div class="lock-icon">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ff4757" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+            </div>
+
+            <h2 class="auth-title">Acceso Denegado</h2>
+            <p class="auth-text">Tu sesión ha expirado o no tienes permisos para acceder a este núcleo. Autentícate
+                nuevamente para continuar.</p>
+
+            <a href="index.html" class="btn-return">
+                Volver al Inicio Seguro
+            </a>
+        </div>
+
+        <p class="footer-text">SISTEMA CORE BINGLISH</p>
+    </div>
+
+</body>
+
+</html>

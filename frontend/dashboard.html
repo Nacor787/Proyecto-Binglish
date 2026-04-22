@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — Binglish</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="libs/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="libs/css/bootstrap-icons.css" rel="stylesheet">
+    <!-- SweetAlert2 -->
+    <link href="libs/css/sweetalert2.min.css" rel="stylesheet">
+    <!-- AOS (Animate On Scroll) -->
+    <link href="libs/css/aos.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <!-- Google Fonts: Playfair Display + DM Sans -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=DM+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="css/styles.css" rel="stylesheet">
+    <link href="css/dashboard.css" rel="stylesheet">
+    <link href="css/tour.css" rel="stylesheet">
+    <!-- Driver.js (Onboarding Tour) -->
+    <link href="libs/css/driver.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+    <div class="dashboard-wrapper">
+        <!-- Animated Background Layer -->
+        <div class="bg-animation"></div>
+
+        <!-- ============================================================
+         SIDEBAR
+         ============================================================ -->
+        <aside class="sidebar" id="sidebar" data-aos="fade-right" data-aos-duration="600">
+            <!-- LOGO AREA -->
+            <div class="sidebar-header">
+                <a class="navbar-brand d-flex align-items-center" href="#">
+                    <img src="assets/logo.svg" alt="Binglish" height="50" class="me-2">
+                    <div class="d-flex flex-column justify-content-center lh-1">
+                        <span class="brand-title">BINGLISH</span>
+                        <span class="brand-subtitle">The Right Move</span>
+                    </div>
+                </a>
+                <button class="btn-close d-lg-none"
+                    onclick="document.getElementById('sidebar').classList.remove('show')"></button>
+            </div>
+
+            <!-- USER CARD -->
+            <div class="sidebar-user-card" id="sidebarUserCard">
+                <div class="sidebar-avatar" id="sidebarAvatar">NA</div>
+                <div class="sidebar-user-info">
+                    <div class="sidebar-user-name" id="sidebarUserName">Usuario</div>
+                    <span class="sidebar-role-badge" id="sidebarUserRole">ROL</span>
+                    <span id="sidebarUserCode"
+                        style="display:block; font-size:0.72rem; color:rgba(0,200,255,0.75); letter-spacing:0.5px; margin-top:3px; font-weight:600;"></span>
+                </div>
+            </div>
+
+            <!-- NAVEGACIÓN AGRUPADA -->
+            <nav class="sidebar-nav" id="sidebarNavWrapper">
+                <ul class="nav flex-column" id="sidebarNav">
+                    <!-- Generado dinámicamente por JS según rol -->
+                </ul>
+            </nav>
+
+            <!-- FOOTER -->
+            <div class="sidebar-footer" id="sidebarFooter">
+                <div id="tourBtnContainer"></div>
+                <button class="sidebar-logout-btn" id="btnLogout" title="Cerrar Sesión">
+                    <span><i class="bi bi-box-arrow-left text-danger"></i></span>
+                    <span class="nav-text">Cerrar Sesión</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- ============================================================
+         MAIN CONTENT
+         ============================================================ -->
+        <div class="main-content" id="mainContent">
+            <!-- Topbar -->
+            <div class="topbar" data-aos="fade-down" data-aos-duration="500">
+                <div class="d-flex align-items-center gap-3">
+                    <button class="btn-toggle-sidebar" id="btnToggleSidebar">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <span class="topbar-title" id="topbarTitle">Dashboard</span>
+                </div>
+
+                <!-- Controles del Topbar (Derecha) -->
+                <div class="d-flex align-items-center gap-3">
+
+                    <!-- Notificaciones -->
+                    <div class="dropdown" id="notifDropdown">
+                        <!-- Botón campana -->
+                        <button class="neu-btn position-relative" data-bs-toggle="dropdown" data-bs-auto-close="outside"
+                            aria-expanded="false" id="btnNotifBell" title="Notificaciones">
+                            <span class="neu-btn-content">
+                                <i class="bi bi-bell-fill"></i>
+                            </span>
+                            <!-- Badge dinámico -->
+                            <span
+                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger badge-pulse"
+                                id="badgeNotifBell" style="display: none; font-size: 0.65rem;">
+                                0
+                            </span>
+                        </button>
+
+                        <!-- Panel de notificaciones -->
+                        <div class="dropdown-menu dropdown-menu-end notif-dropdown-panel p-0 shadow-lg border-0"
+                            style="width: 360px; max-height: 420px; overflow: hidden;">
+
+                            <!-- Header -->
+                            <div class="notif-header d-flex justify-content-between align-items-center px-3 py-2">
+                                <h6 class="mb-0 fw-bold"><i class="bi bi-bell me-1"></i> Notificaciones</h6>
+                                <span class="badge bg-primary rounded-pill" id="notifCountLabel">0</span>
+                            </div>
+
+                            <!-- Lista de mensajes (scroll) -->
+                            <div class="notif-list" id="notifDropdownList" style="max-height: 300px; overflow-y: auto;">
+                                <div class="text-center py-4 text-muted small">
+                                    <i class="bi bi-inbox fs-4 d-block mb-1"></i>
+                                    Sin notificaciones
+                                </div>
+                            </div>
+
+                            <!-- Footer Mensajes-->
+                            <div class="notif-footer text-center border-top">
+                                <a href="#" class="d-block py-2 text-decoration-none small fw-600"
+                                    id="btnVerTodosAvisos" style="color: var(--primary);">
+                                    Ver todos los avisos <i class="bi bi-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botón Home -->
+                    <button onclick="window.location.href='index.html'" class="neu-btn" title="Ir al Inicio">
+                        <span class="neu-btn-content"><i class="bi bi-house-fill"></i></span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="content-area" id="contentArea" data-aos="fade-in" data-aos-duration="700" data-aos-delay="200">
+                <!-- Generado dinámicamente por dashboard.js -->
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <p class="mt-2 text-muted">Cargando...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="libs/bootstrap.bundle.min.js"></script>
+    <script src="libs/sweetalert2@11.js"></script>
+    <!-- Driver.js (Onboarding Tour) -->
+    <script src="libs/tour/driver.js.iife.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <!-- PDF.js para visor de biblioteca -->
+    <script src="libs/pdfjs/pdf.min.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/tour.js"></script>
+
+    <!-- AOS (Animate On Scroll) -->
+    <script src="libs/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 700,
+            easing: 'ease-in-out',
+            once: true,
+            offset: 30
+        });
+    </script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,8 @@
+[tool.pyright]
+include = ["backent"]
+extraPaths = ["backent"]
+venvPath = "."
+venv = "backent/venv"
+
+[tool.pyre]
+source_directories = ["backent"]

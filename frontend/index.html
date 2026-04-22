@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Binglish - Centro de Idiomas. Aprende inglés con metodología moderna y profesional.">
+    <title>Binglish — Centro de Idiomas</title>
+
+    <!-- Google Fonts: Inter + Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Bootstrap 5 -->
+    <link href="libs/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="libs/css/bootstrap-icons.css" rel="stylesheet">
+    <!-- SweetAlert2 -->
+    <link href="libs/css/sweetalert2.min.css" rel="stylesheet">
+    <!-- AOS (Animate On Scroll) -->
+    <link href="libs/css/aos.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="css/styles.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- ============================================================
+     WELCOME INTRO OVERLAY
+     ============================================================ -->
+    <div class="welcome-overlay" id="welcomeOverlay">
+        <div class="welcome-content">
+            <span class="welcome-text" id="welcomeText">WELCOME!</span>
+            <span class="welcome-text" id="welcomeText">to</span>
+            <span class="welcome-text" id="welcomeText">BINGLISH!</span>
+            <div class="welcome-line"></div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+     VANTA.JS ANIMATED BACKGROUND
+     ============================================================ -->
+    <div id="vanta-bg"></div>
+
+    <!-- ============================================================
+     NAVBAR (fixed-top con glass)
+     ============================================================ -->
+    <nav class="navbar navbar-expand-lg navbar-binglish fixed-top" id="mainNavbar">
+        <div class="container-fluid px-4 px-lg-5">
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <img src="assets/logo.svg" alt="Binglish" height="50" class="me-2">
+                <div class="d-flex flex-column justify-content-center lh-1">
+                    <span class="brand-title">BINGLISH</span>
+                    <span class="brand-subtitle">The Right Move</span>
+                </div>
+            </a>
+            <!-- Botones externos en Móvil (SIEMPRE VISIBLES) -->
+            <div class="d-flex align-items-center order-1 order-lg-3 ms-auto pe-2 pe-lg-0 ms-lg-0 ps-lg-3 border-lg-start"
+                style="border-color: rgba(0,229,255,0.2) !important;">
+                <a class="nav-link nav-icon-circle" data-bs-toggle="modal" data-bs-target="#loginModal" id="btnLoginNav"
+                    style="cursor: pointer;" title="Ingresar">
+                    <i class="bi bi-person-fill"></i>
+                </a>
+                <a class="nav-link nav-icon-circle" href="dashboard.html" id="btnDashNav"
+                    style="display:none; margin-left: 0.5rem;" title="Dashboard">
+                    <i class="bi bi-speedometer2"></i>
+                </a>
+            </div>
+
+            <button class="navbar-toggler animated-burger collapsed border-0 order-2 order-lg-4 ms-2" type="button"
+                data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+                aria-label="Toggle navigation" style="margin-top: 5px;">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <div class="collapse navbar-collapse order-3 order-lg-2" id="navbarNav">
+                <!-- Menú Principal (Centro) -->
+                <ul class="navbar-nav mx-auto align-items-lg-center gap-1" id="navMenu">
+                    <span class="nav-indicator" id="navIndicator"></span>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#inicio">
+                            <i class="bi bi-house-door me-1"></i>Inicio
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#nosotros">
+                            <i class="bi bi-people me-1"></i>Nosotros
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#metodologia">
+                            <i class="bi bi-lightbulb me-1"></i>Metodología
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#becasModal">
+                            <i class="bi bi-mortarboard me-1"></i>Becas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contacto">
+                            <i class="bi bi-envelope me-1"></i>Contacto
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#ubicacion">
+                            <i class="bi bi-geo-alt me-1"></i>Ubicación
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="convenios.html">
+                            <i class="bi bi-building me-1"></i>Convenios
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ============================================================
+     HERO SECTION
+     ============================================================ -->
+    <section class="hero-section" id="inicio">
+        <div class="glass-hero-wrapper">
+
+
+            <!-- Hero Content -->
+            <div class="container hero-inner-content">
+                <div class="row align-items-center">
+                    <div class="col-lg-7 hero-content">
+                        <div class="hero-badge" data-aos="fade-down" data-aos-duration="600">
+                            <i class="bi bi-lightning-charge-fill"></i>
+                            Centro de Idiomas Profesional
+                        </div>
+                        <h1 class="hero-title" data-aos="fade-up" data-aos-duration="800" data-aos-delay="100">
+                            Aprende inglés <br class="d-md-none"><span id="hero-typing-text"></span>
+                        </h1>
+                        <p class="hero-subtitle" data-aos="fade-up" data-aos-duration="800" data-aos-delay="200">
+                            Formamos profesionales bilingües con metodología moderna,
+                            clases interactivas y acompañamiento personalizado para alcanzar tus metas.
+                        </p>
+                        <div class="d-flex gap-3 flex-wrap" data-aos="zoom-in-up" data-aos-duration="800"
+                            data-aos-delay="300">
+                            <a href="#contacto" class="btn btn-hero btn-hero-primary">
+                                <i class="bi bi-rocket-takeoff-fill me-2"></i>Empieza Ahora
+                            </a>
+                            <a href="#nosotros" class="btn btn-hero btn-hero-outline">
+                                <i class="bi bi-info-circle me-2"></i>Conócenos
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-5 position-relative mt-5 mt-lg-0" data-aos="fade-left" data-aos-duration="1000"
+                        data-aos-delay="200">
+                        <!-- Logo flotante con halo glass -->
+                        <div class="hero-logo-float">
+                            <img src="assets/logo.png" alt="Binglish Logo">
+                        </div>
+                        <!-- Ilustración con contenedor glass -->
+                        <div class="hero-illustration-wrapper">
+                            <div class="hero-illustration-glow"></div>
+                            <img src="assets/undraw_continuous-learning_a1ld.svg" alt="Aprende Inglés"
+                                class="img-fluid">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+     NOSOTROS (Misión / Visión)
+     ============================================================ -->
+    <section class="section-padding" id="nosotros">
+        <div class="container">
+            <div class="text-center" data-aos="fade-down" data-aos-duration="700">
+                <span class="section-badge"><i class="bi bi-people-fill me-1"></i>Sobre Nosotros</span>
+                <h2 class="section-title">¿Por qué elegir Binglish?</h2>
+                <p class="section-subtitle">Combinamos excelencia académica con tecnología para ofrecer la mejor
+                    experiencia de aprendizaje de idiomas.</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-6" data-aos="zoom-in" data-aos-duration="700" data-aos-delay="100">
+                    <div class="feature-card">
+                        <div class="feature-icon purple">
+                            <i class="bi bi-bullseye"></i>
+                        </div>
+                        <h5>Nuestra Misión</h5>
+                        <p style="text-align: justify;">En Binglish The Right Move, nos dedicamos a impulsar el dominio
+                            del inglés
+                            con una enseñanza efectiva respaldada por la metodología Educere y la investigación en
+                            Entrada Comprensible. Nuestra misión va más allá de enseñar un idioma; buscamos construir un
+                            puente hacia un futuro bilingüe y lleno de oportunidades para Bolivia. Creemos firmemente en
+                            el poder transformador del inglés para abrir puertas y crear conexiones globales.</p>
+                    </div>
+                </div>
+                <div class="col-md-6" data-aos="zoom-in" data-aos-duration="700" data-aos-delay="200">
+                    <div class="feature-card">
+                        <div class="feature-icon green">
+                            <i class="bi bi-eye-fill"></i>
+                        </div>
+                        <h5>Nuestra Visión</h5>
+                        <p style="text-align: justify;">Convertirnos en el centro de idiomas líder en la región,
+                            reconocido por la
+                            calidad educativa, la innovación pedagógica y la formación de ciudadanos globales preparados
+                            para los retos del mundo moderno.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+     METODOLOGÍA
+     ============================================================ -->
+    <section class="section-padding" id="metodologia">
+        <div class="container">
+            <div class="text-center" data-aos="fade-down" data-aos-duration="700">
+                <span class="section-badge"><i class="bi bi-lightbulb-fill me-1"></i>Metodología</span>
+                <h2 class="section-title">Nuestra Forma de Enseñar</h2>
+                <p class="section-subtitle">Cada clase está diseñada para que aprendas de forma efectiva con un enfoque
+                    práctico y dinámico.</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-3" data-aos="zoom-in" data-aos-duration="600" data-aos-delay="100">
+                    <div class="feature-card text-center">
+                        <div class="feature-icon purple mx-auto"><i class="bi bi-chat-text-fill"></i></div>
+                        <h6 class="mt-3">Conversacional</h6>
+                        <p class="small">Aprende hablando desde el primer día con dinámicas interactivas y
+                            roleplay.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3" data-aos="zoom-in" data-aos-duration="600" data-aos-delay="200">
+                    <div class="feature-card text-center">
+                        <div class="feature-icon green mx-auto"><i class="bi bi-person-video3"></i></div>
+                        <h6 class="mt-3">Clases Personalizadas</h6>
+                        <p class="small">Adaptamos el contenido a tu nivel y necesidades profesionales.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3" data-aos="zoom-in" data-aos-duration="600" data-aos-delay="300">
+                    <div class="feature-card text-center">
+                        <div class="feature-icon pink mx-auto"><i class="bi bi-laptop-fill"></i></div>
+                        <h6 class="mt-3">Tecnología Educativa</h6>
+                        <p class="small">Plataforma digital para seguimiento de notas, materiales y progreso.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3" data-aos="zoom-in" data-aos-duration="600" data-aos-delay="400">
+                    <div class="feature-card text-center">
+                        <div class="feature-icon blue mx-auto"><i class="bi bi-trophy-fill"></i></div>
+                        <h6 class="mt-3">Certificación</h6>
+                        <p class="small">Obtén tu certificado al completar cada nivel con evaluación continua.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+     ESTADÍSTICAS
+     ============================================================ -->
+    <section class="stats-section section-padding">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-6 col-md-3" data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">
+                    <div class="stat-item">
+                        <div class="stat-number" data-count="250">0</div>
+                        <div class="stat-label">Estudiantes Activos</div>
+                        <div class="stat-plus">+</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3" data-aos="fade-up" data-aos-duration="600" data-aos-delay="200">
+                    <div class="stat-item">
+                        <div class="stat-number" data-count="8">0</div>
+                        <div class="stat-label">Docentes Expertos</div>
+                        <div class="stat-plus">+</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3" data-aos="fade-up" data-aos-duration="600" data-aos-delay="300">
+                    <div class="stat-item">
+                        <div class="stat-number" data-count="2">0</div>
+                        <div class="stat-label">Tipos de idiomas</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3" data-aos="fade-up" data-aos-duration="600" data-aos-delay="400">
+                    <div class="stat-item">
+                        <div class="stat-number" data-count="95">0</div>
+                        <div class="stat-label">Tasa de Aprobación</div>
+                        <div class="stat-plus">%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+     CONTACTO
+     ============================================================ -->
+    <section class="contact-section section-padding" id="contacto">
+        <div class="container">
+            <div class="text-center" data-aos="fade-down" data-aos-duration="700">
+                <span class="section-badge"><i class="bi bi-envelope-fill me-1"></i>Contacto</span>
+                <h2 class="section-title">¿Tienes Preguntas?</h2>
+                <p class="section-subtitle">Escríbenos y nuestro equipo te responderá lo antes posible.</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-lg-5" data-aos="fade-right" data-aos-duration="800">
+                    <div class="contact-card h-100">
+                        <h5 class="mb-4">Información de Contacto</h5>
+                        <div class="contact-info-item">
+                            <i class="bi bi-geo-alt-fill"></i>
+                            <div>
+                                <strong>Dirección</strong>
+                                <p class="mb-0 small">Av. Villazón edificio Román N°1790</p>
+                            </div>
+                        </div>
+                        <div class="contact-info-item">
+                            <i class="bi bi-telephone-fill"></i>
+                            <div>
+                                <strong>Teléfono</strong>
+                                <p class="mb-0 small">+591 73302492</p>
+                            </div>
+                        </div>
+                        <div class="contact-info-item">
+                            <i class="bi bi-envelope-fill"></i>
+                            <div>
+                                <strong>Email</strong>
+                                <p class="mb-0 small">info@binglish.com</p>
+                            </div>
+                        </div>
+                        <div class="contact-info-item">
+                            <i class="bi bi-clock-fill"></i>
+                            <div>
+                                <strong>Horario</strong>
+                                <p class="mb-0 small">Lun - Sab: 8:00 AM - 8:00 PM</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <h6>Síguenos</h6>
+                        <div class="social-row mt-3">
+                            <a href="https://www.facebook.com/share/1KfHyboGJN/" target="_blank"
+                                class="social-circle facebook" title="Facebook">
+                                <i class="bi bi-facebook"></i>
+                            </a>
+                            <a href="#" target="_blank" class="social-circle instagram" title="Instagram">
+                                <i class="bi bi-instagram"></i>
+                            </a>
+                            <a href="https://www.tiktok.com/@binglish_the_right_move?_r=1&_t=ZS-94pWPJMNoqg"
+                                target="_blank" class="social-circle tiktok" title="TikTok">
+                                <i class="bi bi-tiktok"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-7" data-aos="fade-left" data-aos-duration="800" data-aos-delay="100">
+                    <div class="contact-card h-100">
+                        <h5 class="mb-4">Envíanos un Mensaje</h5>
+                        <form id="contactForm" novalidate>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Nombre</label>
+                                    <input type="text" class="form-control" id="contactNombre" required>
+                                    <div class="invalid-feedback">Tu nombre es requerido.</div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="contactEmail" required>
+                                    <div class="invalid-feedback">Ingresa un email válido.</div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Asunto</label>
+                                <input type="text" class="form-control" id="contactAsunto" required>
+                                <div class="invalid-feedback">El asunto es requerido.</div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Mensaje</label>
+                                <textarea class="form-control" id="contactMensaje" rows="4" required></textarea>
+                                <div class="invalid-feedback">Escribe tu mensaje.</div>
+                            </div>
+                            <button type="submit" class="btn btn-hero btn-hero-primary w-100" id="btnContactSubmit">
+                                <i class="bi bi-send-fill me-2"></i>Enviar Mensaje
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+     UBICACIÓN (Mapa)
+     ============================================================ -->
+    <section class="section-padding" id="ubicacion">
+        <div class="container">
+            <div class="text-center" data-aos="fade-down" data-aos-duration="700">
+                <span class="section-badge"><i class="bi bi-geo-alt-fill me-1"></i>Ubicación</span>
+                <h2 class="section-title">Encuéntranos</h2>
+                <p class="section-subtitle">Visítanos en nuestro centro de idiomas.</p>
+            </div>
+            <div class="map-container mx-auto" style="max-width: 900px;" data-aos="zoom-in" data-aos-duration="800">
+                <iframe
+                    src="https://maps.google.com/maps?q=Binglish%20-%20The%20right%20move&t=&z=16&ie=UTF8&iwloc=&output=embed"
+                    width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+     FOOTER
+     ============================================================ -->
+    <footer class="footer-binglish">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4" data-aos="zoom-in-up" data-aos-duration="600" data-aos-delay="100">
+                    <div class="footer-brand">BINGLISH</div>
+                    <div class="footer-brand-subtitle">The Right Move</div>
+                    <p class="mt-3 small">Centro de idiomas comprometido con la excelencia educativa y la formación de
+                        profesionales bilingües.</p>
+                    <div class="social-row mt-3">
+                        <a href="https://www.facebook.com/share/1KfHyboGJN/" target="_blank"
+                            class="social-circle facebook" title="Facebook">
+                            <i class="bi bi-facebook"></i>
+                        </a>
+                        <a href="#" target="_blank" class="social-circle instagram" title="Instagram">
+                            <i class="bi bi-instagram"></i>
+                        </a>
+                        <a href="https://www.tiktok.com/@binglish_the_right_move?_r=1&_t=ZS-94pWPJMNoqg" target="_blank"
+                            class="social-circle tiktok" title="TikTok">
+                            <i class="bi bi-tiktok"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-4" data-aos="zoom-in-up" data-aos-duration="600" data-aos-delay="200">
+                    <h6>Enlaces Rápidos</h6>
+                    <ul class="footer-links list-unstyled">
+                        <li><a href="#inicio"><i class="bi bi-house-door me-2"></i>Inicio</a></li>
+                        <li><a href="#nosotros"><i class="bi bi-people me-2"></i>Nosotros</a></li>
+                        <li><a href="#metodologia"><i class="bi bi-lightbulb me-2"></i>Metodología</a></li>
+                        <li><a href="#contacto"><i class="bi bi-envelope-arrow-up me-2"></i>Contacto</a></li>
+                        <li><a href="#ubicacion"><i class="bi bi-geo-alt me-2"></i>Ubicación</a></li>
+                        <li><a href="convenios.html"><i class="bi bi-building me-2"></i>Convenios</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4" data-aos="zoom-in-up" data-aos-duration="600" data-aos-delay="300">
+                    <h6>Contacto</h6>
+                    <ul class="footer-links">
+                        <li><a href="mailto:info@binglish.com"><i class="bi bi-envelope me-1"></i>info@binglish.com</a>
+                        </li>
+                        <li><a href="tel:+591 73302492"><i class="bi bi-telephone me-1"></i>+591 73302492</a></li>
+                        <li><a href="#ubicacion"><i class="bi bi-geo-alt me-1"></i>Av. Villazón edificio Román N°1790,
+                                frente Monoblock UMSA, La Paz, Bolivia</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                &copy; 2026 Binglish — Centro de Idiomas. Todos los derechos reservados.
+            </div>
+        </div>
+    </footer>
+
+    <!-- ============================================================
+     MODAL LOGIN (Glassmorphism)
+     ============================================================ -->
+    <div class="modal modal-animated fade" id="loginModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content glass-login">
+                <div class="modal-header border-0 pb-0 pt-4 px-4">
+                    <div class="text-center w-100">
+                        <img src="assets/logo.svg" alt="Binglish" height="80" class="me-3">
+                        <h4 class="glass-login-title">Iniciar Sesión</h4>
+                        <p class="glass-login-subtitle">Ingresa con tu código de usuario</p>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3"
+                        data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body px-4 pb-4">
+                    <form id="loginForm" novalidate>
+                        <div class="mb-3">
+                            <label class="form-label glass-login-label">Código de Usuario</label>
+                            <div class="input-group">
+                                <span class="input-group-text glass-login-icon">
+                                    <i class="bi bi-person-badge-fill"></i>
+                                </span>
+                                <select class="form-select glass-login-prefix" id="tipoUsuario">
+                                    <option value="BTRM">BTRM</option>
+                                    <option value="ADM">ADM</option>
+                                    <option value="TCH">TCH</option>
+                                </select>
+                                <span class="input-group-text glass-login-icon login-dash">-</span>
+                                <input type="text" class="form-control glass-login-input" id="loginCodigo"
+                                    placeholder="204" inputmode="numeric" pattern="[0-9]+" required>
+                                <div class="invalid-feedback">Ingresa tu número de código (solo dígitos).</div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label glass-login-label">Contraseña</label>
+                            <div class="input-group">
+                                <span class="input-group-text glass-login-icon">
+                                    <i class="bi bi-lock-fill"></i>
+                                </span>
+                                <input type="password" class="form-control glass-login-input border-end-0"
+                                    id="loginPassword" placeholder="••••••••" required>
+                                <span class="input-group-text glass-login-icon" style="cursor: pointer;"
+                                    onclick="togglePasswordVisibility('loginPassword', this)"
+                                    title="Mostrar contraseña">
+                                    <i class="bi bi-eye-fill"></i>
+                                </span>
+                                <div class="invalid-feedback">Ingresa tu contraseña.</div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn glass-login-btn">
+                            <i class="bi bi-box-arrow-in-right me-2"></i>Ingresar
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+     MODAL BECAS (Glassmorphism)
+     ============================================================ -->
+    <div class="modal modal-animated fade" id="becasModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
+            <div class="modal-content glass-becas">
+                <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3"
+                    style="z-index:10" data-bs-dismiss="modal"></button>
+                <div class="modal-body p-0">
+                    <div class="row g-0">
+                        <!-- Left: Info -->
+                        <div class="col-lg-5 becas-info-col">
+                            <div class="becas-info-content">
+                                <div class="d-flex align-items-center mb-4 gap-3">
+                                    <a class="navbar-brand d-flex align-items-center">
+                                        <img src="assets/logo.svg" alt="Binglish" height="50" class="me-2">
+                                        <div class="d-flex flex-column justify-content-start lh-1">
+                                            <span class="brand-title" style="color: #fff;">BINGLISH</span>
+                                            <span class="brand-subtitle">The
+                                                Right Move</span>
+                                        </div>
+                                    </a>
+                                </div>
+                                <h3 class="becas-title"><i class="bi bi-mortarboard-fill me-2"
+                                        style="background: linear-gradient(135deg, #6C63FF, #00D4AA); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;"></i>Becas
+                                    Binglish</h3>
+                                <p class="becas-description">
+                                    Nuestras becas están diseñadas para estudiantes apasionados y comprometidos que
+                                    desean llevar su inglés al siguiente nivel. Ya sea que estés buscando mejorar tus
+                                    habilidades para avanzar en tu carrera, estudiar en el extranjero o simplemente
+                                    abrir nuevas puertas en tu vida, estamos aquí para apoyarte en tu viaje.
+                                </p>
+                                <p class="becas-description">
+                                    Postula hoy y da el primer paso hacia un futuro brillante con nuestro programa de
+                                    becas en nuestra academia de inglés.
+                                </p>
+                                <div class="becas-features">
+                                    <div class="becas-feature-item">
+                                        <i class="bi bi-check-circle-fill"></i>
+                                        <span>Cobertura parcial o total</span>
+                                    </div>
+                                    <div class="becas-feature-item">
+                                        <i class="bi bi-check-circle-fill"></i>
+                                        <span>Acceso a todos los niveles</span>
+                                    </div>
+                                    <div class="becas-feature-item">
+                                        <i class="bi bi-check-circle-fill"></i>
+                                        <span>Certificación internacional</span>
+                                    </div>
+                                    <div class="becas-feature-item">
+                                        <i class="bi bi-check-circle-fill"></i>
+                                        <span>Material incluido</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Right: Form -->
+                        <div class="col-lg-7 becas-form-col">
+                            <div class="becas-form-content">
+                                <h5 class="becas-form-title">
+                                    <i class="bi bi-pencil-square me-2"></i>Formulario de Postulación
+                                </h5>
+                                <form id="becasForm" novalidate>
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label glass-login-label">Nombre</label>
+                                            <input type="text" class="form-control glass-login-input" id="becaNombre"
+                                                placeholder="Tu nombre" required>
+                                            <div class="invalid-feedback">Campo requerido.</div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label glass-login-label">Apellido</label>
+                                            <input type="text" class="form-control glass-login-input" id="becaApellido"
+                                                placeholder="Tu apellido" required>
+                                            <div class="invalid-feedback">Campo requerido.</div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label glass-login-label">Edad</label>
+                                            <input type="number" class="form-control glass-login-input" id="becaEdad"
+                                                placeholder="18" min="10" max="80" required>
+                                            <div class="invalid-feedback">Ingresa tu edad.</div>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <label class="form-label glass-login-label">Email</label>
+                                            <input type="email" class="form-control glass-login-input" id="becaEmail"
+                                                placeholder="correo@ejemplo.com" required>
+                                            <div class="invalid-feedback">Email válido requerido.</div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label glass-login-label">Teléfono</label>
+                                            <input type="tel" class="form-control glass-login-input" id="becaTelefono"
+                                                placeholder="+591 12345678" required>
+                                            <div class="invalid-feedback">Campo requerido.</div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label glass-login-label">País</label>
+                                            <input type="text" class="form-control glass-login-input" id="becaPais"
+                                                placeholder="Tu país" required>
+                                            <div class="invalid-feedback">Campo requerido.</div>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label glass-login-label">¿Cuál es tu nivel de
+                                                inglés?</label>
+                                            <select class="form-select glass-login-input" id="becaNivel" required>
+                                                <option value="" disabled selected>Selecciona tu nivel</option>
+                                                <option value="basico">Básico</option>
+                                                <option value="intermedio">Intermedio</option>
+                                                <option value="avanzado">Avanzado</option>
+                                            </select>
+                                            <div class="invalid-feedback">Selecciona una opción.</div>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label glass-login-label">¿Por qué quieres aprender
+                                                inglés?</label>
+                                            <textarea class="form-control glass-login-input" id="becaPorque" rows="2"
+                                                placeholder="Cuéntanos tu razón..." required></textarea>
+                                            <div class="invalid-feedback">Campo requerido.</div>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label glass-login-label">¿Qué te motiva a aprender
+                                                inglés?</label>
+                                            <textarea class="form-control glass-login-input" id="becaMotivacion"
+                                                rows="2" placeholder="Tu motivación..." required></textarea>
+                                            <div class="invalid-feedback">Campo requerido.</div>
+                                        </div>
+                                        <div class="col-12 mt-3">
+                                            <button type="submit" class="btn glass-login-btn" id="btnBecasSubmit">
+                                                <i class="bi bi-send-fill me-2"></i>Enviar Postulación
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+     WHATSAPP FLOTANTE
+     ============================================================ -->
+    <a href="https://wa.me/59173302492?text=Hola,%20me%20gustaría%20recibir%20más%20información%20sobre%20los%20cursos%20de%20inglés."
+        target="_blank" class="whatsapp-float" title="Chatea con nosotros">
+        <div class="wa-sign"><i class="bi bi-whatsapp"></i></div>
+        <div class="wa-text">WhatsApp</div>
+    </a>
+
+    <!-- ============================================================
+     APLICACION CEL
+    ============================================================ -->
+    <a href="#" target="_blank" class="app-cel" title="Descarga la app">
+        <div class="app-cel-sign"><i class="bi bi-phone"></i></div>
+        <div class="app-cel-text">App</div>
+    </a>
+
+
+    <!-- Scripts -->
+    <!-- Three.js (required by Vanta) -->
+    <script src="libs/three.min.js"></script>
+    <!-- Vanta.js Waves -->
+    <script src="libs/vanta.waves.min.js"></script>
+    <script src="libs/bootstrap.bundle.min.js"></script>
+    <script src="libs/sweetalert2@11.js"></script>
+    <script src="libs/index.umd.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+
+    <!-- AOS (Animate On Scroll) -->
+    <script src="libs/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 800,
+            easing: 'ease-in-out',
+            once: true,
+            offset: 50
+        });
+    </script>
+
+    <!-- Welcome Overlay Cleanup -->
+    <script>
+        const _wo = document.getElementById('welcomeOverlay');
+        if (_wo) {
+            _wo.addEventListener('animationend', (e) => {
+                if (e.animationName === 'welcomeFadeOut') _wo.remove();
+            });
+            setTimeout(() => { if (_wo.parentNode) _wo.remove(); }, 2500);
+        }
+    </script>
+
+    <!-- Custom Main JS -->
+    <script src="js/main.js"></script>
+
+</body>
+
+</html>
