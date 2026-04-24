@@ -3,10 +3,17 @@
  * Módulo centralizado para comunicación con el backend FastAPI.
  */
 
-// En producción (Nginx): usa /api como proxy reverso — el puerto NUNCA se expone.
-// En desarrollo local: conecta directo al backend en puerto 8000.
+// Configuración para Cloudflare Tunnel con dominio propio
+// En desarrollo local: conecta directo al backend en el puerto 8000.
 const IS_LOCAL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
+// Opción 1 (Recomendada con Cloudflare Tunnel): 
+// Usar Ingress Rules en tu config.yaml para enviar el tráfico de "tudominio.com/api" hacia "localhost:8000"
 const API_BASE = IS_LOCAL ? 'http://localhost:8000' : '/api';
+
+// Opción 2: Si creas un subdominio separado en Cloudflare exclusivamente para el backend (ej: api.tudominio.com)
+// Descomenta la siguiente línea y pon tu subdominio real, comentando la Opción 1 de arriba:
+// const API_BASE = IS_LOCAL ? 'http://localhost:8000' : 'https://api.tudominio.com';
 
 /**
  * Obtiene el token JWT almacenado en localStorage.

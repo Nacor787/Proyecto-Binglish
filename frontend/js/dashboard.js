@@ -1465,7 +1465,7 @@ async function deleteConfig(id, tipo, nombre) {
 }
 
 /* ==========================================================
-   INSCRIPCIONES (Gestión Global de Alumnos por Curso)
+   Asignaciones (Gestión Global de Alumnos por Curso)
    ========================================================== */
 
 let currentAsignacionEstudianteId = null;

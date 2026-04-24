@@ -34,9 +34,9 @@
      ============================================================ -->
     <div class="welcome-overlay" id="welcomeOverlay">
         <div class="welcome-content">
-            <span class="welcome-text" id="welcomeText">WELCOME!</span>
-            <span class="welcome-text" id="welcomeText">to</span>
-            <span class="welcome-text" id="welcomeText">BINGLISH!</span>
+            <span class="welcome-text welcome-bold" id="welcomeTextWelcome">WELCOME!</span>
+            <span class="welcome-text welcome-light" id="welcomeTextTo">to</span>
+            <span class="welcome-text welcome-light" id="welcomeTextBinglish">BINGLISH!</span>
             <div class="welcome-line"></div>
         </div>
     </div>
@@ -484,15 +484,35 @@
                     <form id="loginForm" novalidate>
                         <div class="mb-3">
                             <label class="form-label glass-login-label">Código de Usuario</label>
-                            <div class="input-group">
+                            <div class="input-group has-validation">
                                 <span class="input-group-text glass-login-icon">
                                     <i class="bi bi-person-badge-fill"></i>
                                 </span>
-                                <select class="form-select glass-login-prefix" id="tipoUsuario">
-                                    <option value="BTRM">BTRM</option>
-                                    <option value="ADM">ADM</option>
-                                    <option value="TCH">TCH</option>
-                                </select>
+                                <button class="btn dropdown-toggle glass-login-prefix border-0" type="button"
+                                    data-bs-toggle="dropdown" aria-expanded="false" id="dropdownTipoUsuario"
+                                    style="background: transparent; min-width: 70px; flex-shrink: 0; color: #00E5FF !important; text-shadow: 0 0 8px rgba(0,229,255,0.4); font-weight: 700; letter-spacing: 1px;">
+                                    BTRM
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-dark shadow border-secondary">
+                                    <li><a class="dropdown-item active" href="#"
+                                            onclick="selectTipoUsuario('BTRM', this, event)">BTRM (Estudiante)</a></li>
+                                    <li><a class="dropdown-item" href="#"
+                                            onclick="selectTipoUsuario('ADM', this, event)">ADM (Administración)</a>
+                                    </li>
+                                    <li><a class="dropdown-item" href="#"
+                                            onclick="selectTipoUsuario('TCH', this, event)">TCH (Docente)</a></li>
+                                </ul>
+                                <input type="hidden" id="tipoUsuario" value="BTRM">
+                                <script>
+                                    function selectTipoUsuario(val, el, e) {
+                                        e.preventDefault();
+                                        document.getElementById('tipoUsuario').value = val;
+                                        document.getElementById('dropdownTipoUsuario').innerText = val;
+                                        const items = el.closest('.dropdown-menu').querySelectorAll('.dropdown-item');
+                                        items.forEach(item => item.classList.remove('active'));
+                                        el.classList.add('active');
+                                    }
+                                </script>
                                 <span class="input-group-text glass-login-icon login-dash">-</span>
                                 <input type="text" class="form-control glass-login-input" id="loginCodigo"
                                     placeholder="204" inputmode="numeric" pattern="[0-9]+" required>

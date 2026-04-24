@@ -140,6 +140,16 @@ body {
     box-shadow: 0 0 15px rgba(0, 229, 255, 0.5);
 }
 
+.welcome-bold {
+    font-weight: 900;
+    /* o 800, según lo que prefieras */
+}
+
+.welcome-light {
+    font-weight: 400;
+    /* o 500, según lo que prefieras */
+}
+
 /* Welcome Text Slide Up + Fade In */
 @keyframes welcomeTextIn {
     0% {
@@ -884,8 +894,9 @@ a:hover {
     box-shadow: none !important;
 }
 
-/* Select de prefijo en login (BTRM / ADM / TCH) */
-select.glass-login-prefix {
+/* Select o Botón de prefijo en login (BTRM / ADM / TCH) */
+select.glass-login-prefix,
+button.glass-login-prefix {
     background: transparent !important;
     border: none !important;
     color: #00E5FF !important;
@@ -897,6 +908,9 @@ select.glass-login-prefix {
     padding: 0.5rem 0.4rem 0.5rem 0.6rem;
     cursor: pointer;
     box-shadow: none !important;
+}
+
+select.glass-login-prefix {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
@@ -906,7 +920,15 @@ select.glass-login-prefix {
     background-size: 8px !important;
 }
 
-select.glass-login-prefix:focus {
+/* Evitamos que el botón tenga el borde grisáceo al presionarlo */
+button.glass-login-prefix:active,
+button.glass-login-prefix.show {
+    color: #00E5FF !important;
+    border: none !important;
+}
+
+select.glass-login-prefix:focus,
+button.glass-login-prefix:focus {
     outline: none;
     box-shadow: none !important;
 }
