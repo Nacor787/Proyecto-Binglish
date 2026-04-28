@@ -549,6 +549,67 @@
         padding: 1rem;
         margin-bottom: 1rem;
     }
+
+    /* ── Sidebar Móvil: drawer deslizable ── */
+    .sidebar {
+        /* Oculto fuera de pantalla por defecto */
+        transform: translateX(-100%);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        /* Siempre ocupa el alto completo de la pantalla */
+        height: 100dvh;
+        /* dvh evita el problema con la barra de URL del móvil */
+        height: 100vh;
+        /* fallback */
+        /* Controlamos el scroll SOLO en la nav, no en toda la sidebar */
+        overflow: hidden;
+        /* Aseguramos que el footer siempre sea accesible */
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Sidebar visible cuando tiene clase .show */
+    .sidebar.show {
+        transform: translateX(0);
+        box-shadow: 8px 0 40px rgba(0, 0, 0, 0.6);
+    }
+
+    /* La navegación ocupa el espacio sobrante y hace scroll internamente */
+    .sidebar .sidebar-nav {
+        flex: 1 1 auto;
+        overflow-y: auto;
+        overflow-x: hidden;
+        min-height: 0;
+        /* Necesario para que flex+overflow funcionen */
+    }
+
+    /* El footer/logout SIEMPRE pegado al fondo, nunca se corta */
+    .sidebar .sidebar-footer {
+        flex-shrink: 0;
+        position: sticky;
+        bottom: 0;
+        background: rgba(13, 27, 62, 0.95);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 0.8rem 1rem 1.2rem;
+        z-index: 2;
+    }
+
+    /* Overlay oscuro detrás del sidebar cuando está abierto */
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.55);
+        backdrop-filter: blur(2px);
+        -webkit-backdrop-filter: blur(2px);
+        z-index: 1049;
+        transition: opacity 0.3s ease;
+    }
+
+    .sidebar-overlay.show {
+        display: block;
+    }
 }
 
 .table-responsive {

@@ -142,12 +142,10 @@ body {
 
 .welcome-bold {
     font-weight: 900;
-    /* o 800, según lo que prefieras */
 }
 
 .welcome-light {
     font-weight: 400;
-    /* o 500, según lo que prefieras */
 }
 
 /* Welcome Text Slide Up + Fade In */

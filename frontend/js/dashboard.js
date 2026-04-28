@@ -89,7 +89,11 @@ function initSidebar(user) {
 
             // Cerrar sidebar en mobile
             if (window.innerWidth < 992) {
-                sidebar.classList.remove('show');
+                if (typeof window._closeSidebar === 'function') {
+                    window._closeSidebar();
+                } else {
+                    sidebar.classList.remove('show');
+                }
             }
         });
     });
@@ -310,18 +314,54 @@ function initTopbar() {
     const btnToggle = document.getElementById('btnToggleSidebar');
     const sidebar = document.getElementById('sidebar');
     const mainContent = document.getElementById('mainContent');
+    const overlay = document.getElementById('sidebarOverlay');
+    const btnClose = document.getElementById('btnCloseSidebar');
+
+    /** Abre el sidebar en móvil */
+    function openSidebar() {
+        sidebar.classList.add('show');
+        if (overlay) overlay.classList.add('show');
+        document.body.style.overflow = 'hidden'; // Evita scroll del fondo
+    }
+
+    /** Cierra el sidebar en móvil */
+    function closeSidebar() {
+        sidebar.classList.remove('show');
+        if (overlay) overlay.classList.remove('show');
+        document.body.style.overflow = '';
+    }
 
     if (btnToggle) {
         btnToggle.addEventListener('click', () => {
             if (window.innerWidth >= 992) {
+                // Escritorio: colapsa/expande
                 sidebar.classList.toggle('collapsed');
                 mainContent.classList.toggle('expanded');
             } else {
-                sidebar.classList.toggle('show');
+                // Móvil: abrir/cerrar drawer
+                if (sidebar.classList.contains('show')) {
+                    closeSidebar();
+                } else {
+                    openSidebar();
+                }
             }
         });
     }
+
+    // Botón X del header del sidebar cierra el drawer
+    if (btnClose) {
+        btnClose.addEventListener('click', closeSidebar);
+    }
+
+    // Clic en el overlay cierra el drawer
+    if (overlay) {
+        overlay.addEventListener('click', closeSidebar);
+    }
+
+    // Exponer closeSidebar globalmente (para nav-items)
+    window._closeSidebar = closeSidebar;
 }
+
 
 /* ==========================================================
    SECTION LOADER (SPA-like routing)
@@ -1812,13 +1852,13 @@ function _getNotaModalHeaderHTML() {
                         <input type="text" class="form-control" id="notaEstudianteCodigo" placeholder="204" oninput="_handleStudentCodeChange(this.value)" required>
                     </div>
                 </div>
-                <div class="mt-4">
-                    <div class="d-flex justify-content-between align-items-center p-2 rounded" style="background: rgba(0,0,0,0.3);">
-                        <div class="form-check form-check-inline mb-0">
+                <div class="mt-3">
+                    <div class="d-flex flex-wrap align-items-center gap-2 p-2 rounded" style="background: rgba(0,0,0,0.3); overflow: hidden;">
+                        <div class="form-check mb-0 flex-shrink-0">
                             <input class="form-check-input" type="radio" name="notaPassed" id="statusPassed" value="true" checked>
                             <label class="form-check-label text-success small fw-bold" for="statusPassed">APROBADO</label>
                         </div>
-                        <div class="form-check form-check-inline mb-0">
+                        <div class="form-check mb-0 flex-shrink-0">
                             <input class="form-check-input" type="radio" name="notaPassed" id="statusFailed" value="false">
                             <label class="form-check-label text-danger small fw-bold" for="statusFailed">REPROBADO</label>
                         </div>

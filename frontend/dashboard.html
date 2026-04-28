@@ -37,6 +37,9 @@
         <!-- ============================================================
          SIDEBAR
          ============================================================ -->
+        <!-- Overlay oscuro para móvil (se muestra detrás del sidebar) -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
         <aside class="sidebar" id="sidebar" data-aos="fade-right" data-aos-duration="600">
             <!-- LOGO AREA -->
             <div class="sidebar-header">
@@ -47,8 +50,7 @@
                         <span class="brand-subtitle">The Right Move</span>
                     </div>
                 </a>
-                <button class="btn-close d-lg-none"
-                    onclick="document.getElementById('sidebar').classList.remove('show')"></button>
+                <button class="btn-close d-lg-none" id="btnCloseSidebar"></button>
             </div>
 
             <!-- USER CARD -->
