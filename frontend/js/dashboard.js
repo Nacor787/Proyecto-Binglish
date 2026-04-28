@@ -718,18 +718,15 @@ async function renderUsuarios(container) {
                                 <div class="col-md-6">
                                     <h6 class="text-muted small uppercase fw-bold mb-3" style="letter-spacing: 1px;">Account & System</h6>
                                     <div class="mb-3">
-                                        <label class="form-label small text-muted mb-1">Código (Student/User ID)</label>
-                                        <div class="input-group input-group-sm">
-                                            <span class="input-group-text bg-transparent border-secondary text-info fw-bold">BTRM-</span>
-                                            <input type="text" class="form-control bg-dark border-secondary text-white" id="userCodigo" placeholder="204" inputmode="numeric" pattern="[0-9]+" required>
-                                        </div>
+                                        <label class="form-label small text-muted mb-1">Código</label>
+                                        <input type="text" class="form-control form-control-sm bg-dark border-secondary text-white" id="userCodigo" placeholder="204" inputmode="numeric" pattern="[0-9]+" required>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label small text-muted mb-1">System Role</label>
                                         <select class="form-select form-select-sm bg-dark text-white border-secondary" id="userRol" required>
-                                            <option value="estudiante">Estudiante</option>
-                                            <option value="docente">Docente</option>
-                                            <option value="admin">Administrador</option>
+                                            <option value="estudiante">Estudiante (BTRM-)</option>
+                                            <option value="docente">Docente (TCH-)</option>
+                                            <option value="admin">Administrador (ADM-)</option>
                                         </select>
                                     </div>
                                     <div class="mb-3">
@@ -911,7 +908,8 @@ async function editUser(id) {
     try {
         const user = await apiGet(`/usuarios/${id}`);
         document.getElementById('userId').value = user.id;
-        document.getElementById('userCodigo').value = user.codigo.replace(/^BTRM-/i, '');
+
+        document.getElementById('userCodigo').value = user.codigo.replace(/^(BTRM-|ADM-|TCH-)/i, '');
         document.getElementById('userNombre').value = user.nombre;
         document.getElementById('userApellido').value = user.apellido;
         document.getElementById('userTelefono').value = user.telefono || '';
@@ -951,6 +949,7 @@ async function deleteUser(id, nombre) {
 
 function initUserForm() {
     const form = document.getElementById('userForm');
+
     if (!form) return;
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -958,9 +957,14 @@ function initUserForm() {
 
         const id = document.getElementById('userId').value;
         let rawCodigo = document.getElementById('userCodigo').value.trim();
+        const roleSelected = document.getElementById('userRol').value;
 
-        // Limpiar si el usuario copió y pegó 'BTRM-' por accidente
-        rawCodigo = rawCodigo.replace(/^BTRM-/i, '').replace(/\s+/g, '');
+        let prefix = 'BTRM-';
+        if (roleSelected === 'admin') prefix = 'ADM-';
+        else if (roleSelected === 'docente') prefix = 'TCH-';
+
+        // Limpiar si el usuario copió y pegó algun prefijo por accidente
+        rawCodigo = rawCodigo.replace(/^(BTRM-|ADM-|TCH-)/i, '').replace(/\s+/g, '');
 
         if (!/^\d+$/.test(rawCodigo)) {
             Swal.fire({ icon: 'warning', title: 'Código inválido', text: 'El código numérico solo debe contener números.' });
@@ -968,12 +972,12 @@ function initUserForm() {
         }
 
         const data = {
-            codigo: `BTRM-${rawCodigo}`,
+            codigo: `${prefix}${rawCodigo}`,
             nombre: document.getElementById('userNombre').value.trim(),
             apellido: document.getElementById('userApellido').value.trim(),
             telefono: document.getElementById('userTelefono').value.trim() || null,
             direccion: document.getElementById('userDireccion').value.trim() || null,
-            rol: document.getElementById('userRol').value,
+            rol: roleSelected,
             activo: document.getElementById('userActivo').checked,
         };
         const password = document.getElementById('userPassword').value;
