@@ -46,7 +46,11 @@ function initSidebar(user) {
     const avatar = document.getElementById('sidebarAvatar');
 
     // ── User Card: nombre, rol, avatar con iniciales ──
-    if (userName) userName.innerHTML = `${user.nombre}<br><span style="font-size: 0.9em;">${user.apellido}</span>`;
+    if (userName) {
+        const primerNombre = (user.nombre || '').trim().split(' ')[0];
+        const primerApellido = (user.apellido || '').trim().split(' ')[0];
+        userName.textContent = `${primerNombre} ${primerApellido}`;
+    }
     if (userRole) userRole.textContent = user.rol.toUpperCase();
     const userCode = document.getElementById('sidebarUserCode');
     if (userCode && user.codigo) userCode.textContent = user.codigo;
@@ -733,6 +737,10 @@ async function renderUsuarios(container) {
                                         <label class="form-label small text-muted mb-1">Phone Number</label>
                                         <input type="text" class="form-control form-control-sm bg-dark border-secondary text-white" id="userTelefono">
                                     </div>
+                                    <div class="mb-3">
+                                        <label class="form-label small text-muted mb-1">Emergency / Parent Contact</label>
+                                        <input type="text" class="form-control form-control-sm bg-dark border-secondary text-white" id="userTelefonoEmergencia" placeholder="Ref. familiar o apoderado">
+                                    </div>
                                     <div class="mb-0 pt-1 d-flex align-items-end" style="height: 38px;">
                                         <div class="form-check form-switch w-100 p-2 rounded" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);">
                                             <input class="form-check-input ms-1" type="checkbox" id="userActivo" checked style="cursor: pointer;">
@@ -822,7 +830,8 @@ function _internalRenderUsers() {
                 <code class="text-info bg-info bg-opacity-10 px-2 py-1 rounded border border-info border-opacity-25">${u.codigo}</code>
             </td>
             <td>
-                <div class="small"><i class="bi bi-telephone text-muted me-2"></i>${u.telefono || 'Not provided'}</div>
+                <div class="small"><i class="bi bi-telephone text-muted me-2"></i>P: ${u.telefono || '—'}</div>
+                <div class="small mt-1"><i class="bi bi-person-lines-fill text-muted me-2"></i>E: ${u.telefono_emergencia || '—'}</div>
             </td>
             <td>
                 <div class="small text-truncate" style="max-width: 150px;" title="${u.direccion || ''}">
@@ -913,6 +922,7 @@ async function editUser(id) {
         document.getElementById('userNombre').value = user.nombre;
         document.getElementById('userApellido').value = user.apellido;
         document.getElementById('userTelefono').value = user.telefono || '';
+        document.getElementById('userTelefonoEmergencia').value = user.telefono_emergencia || '';
         document.getElementById('userDireccion').value = user.direccion || '';
         document.getElementById('userRol').value = user.rol;
         document.getElementById('userActivo').checked = user.activo;
@@ -956,17 +966,17 @@ function initUserForm() {
         if (!form.checkValidity()) { form.classList.add('was-validated'); return; }
 
         const id = document.getElementById('userId').value;
-        let rawCodigo = document.getElementById('userCodigo').value.trim();
+        let rawCodigoInput = document.getElementById('userCodigo').value;
         const roleSelected = document.getElementById('userRol').value;
 
         let prefix = 'BTRM-';
         if (roleSelected === 'admin') prefix = 'ADM-';
         else if (roleSelected === 'docente') prefix = 'TCH-';
 
-        // Limpiar si el usuario copió y pegó algun prefijo por accidente
-        rawCodigo = rawCodigo.replace(/^(BTRM-|ADM-|TCH-)/i, '').replace(/\s+/g, '');
+        // Extraer únicamente los caracteres numéricos, ignorando letras, espacios invisibles o guiones
+        let rawCodigo = rawCodigoInput.replace(/\D/g, '');
 
-        if (!/^\d+$/.test(rawCodigo)) {
+        if (!rawCodigo) {
             Swal.fire({ icon: 'warning', title: 'Código inválido', text: 'El código numérico solo debe contener números.' });
             return;
         }
@@ -976,6 +986,7 @@ function initUserForm() {
             nombre: document.getElementById('userNombre').value.trim(),
             apellido: document.getElementById('userApellido').value.trim(),
             telefono: document.getElementById('userTelefono').value.trim() || null,
+            telefono_emergencia: document.getElementById('userTelefonoEmergencia').value.trim() || null,
             direccion: document.getElementById('userDireccion').value.trim() || null,
             rol: roleSelected,
             activo: document.getElementById('userActivo').checked,
@@ -1554,8 +1565,8 @@ window.renderAsignaciones = async (container) => {
                         <tr class="text-muted small uppercase fw-bold" style="letter-spacing: 0.5px;">
                             <th class="ps-4">Estudiante</th>
                             <th>Código</th>
-                            <th>Curso</th>
-                            <th>Nivel</th>
+                            <th>Docente Asignado</th>
+                            <th>Curso / Horarios</th>
                             <th class="text-end pe-4">Acciones</th>
                         </tr>
                     </thead>
@@ -1603,10 +1614,9 @@ window.renderAsignaciones = async (container) => {
                             </div>
 
                             <div class="mb-4">
-                                <label class="text-muted small uppercase fw-bold mb-2 d-block">SELECCIONAR CURSO</label>
-                                <select class="form-select glass-select py-2" id="asigCursoSelect" required>
-                                    <option value="">Cargando cursos...</option>
-                                </select>
+                                <label class="text-muted small uppercase fw-bold mb-2 d-block">BUSCAR Y SELECCIONAR DOCENTE</label>
+                                <input class="form-control border-secondary bg-transparent text-white py-2" id="asigCursoInput" list="docentesList" placeholder="Escribe el nombre del docente..." required autocomplete="off">
+                                <datalist id="docentesList"></datalist>
                             </div>
 
                             <button type="submit" class="btn btn-primary w-100 py-3 fw-bold mt-2 shadow-glow" id="btnSaveAsignacion" disabled>
@@ -1644,11 +1654,13 @@ async function loadAsignacionesTable() {
         tbody.innerHTML = asignaciones.map(ins => {
             const user = usuarios.find(u => u.id === ins.estudiante_id);
             const curso = cursos.find(c => c.id === ins.curso_id);
+            const docente = curso && curso.docente_id ? usuarios.find(u => u.id === curso.docente_id) : null;
 
             const userName = user ? `${user.nombre} ${user.apellido}` : 'Alumno Desconocido';
             const userCode = user ? `${user.codigo}` : 'N/A';
             const cursoName = curso ? curso.nombre : 'Curso Desconocido';
-            const nivelName = curso?.nivel?.nombre || 'N/A';
+            const docenteName = docente ? `Prof. ${docente.nombre} ${docente.apellido}` : 'Sin docente asignado';
+            const horarios = curso && curso.dias ? `${curso.dias} (${curso.hora_inicio} - ${curso.hora_fin})` : 'Sin horarios';
             const initials = user ? (user.nombre[0] + user.apellido[0]).toUpperCase() : '??';
 
             return `
@@ -1660,11 +1672,11 @@ async function loadAsignacionesTable() {
                         </div>
                     </td>
                     <td><span class="text-info bg-info bg-opacity-10 px-2 py-1 rounded border border-info border-opacity-25 fw-bold" style="font-size: 0.85rem;">${userCode}</span></td>
-                    <td class="text-white">${cursoName}</td>
-                    <td><span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 px-3 py-2 fw-bold" style="letter-spacing: 0.5px;">${nivelName}</span></td>
+                    <td class="text-white fw-bold"><i class="bi bi-person-workspace me-2 text-primary"></i>${docenteName}</td>
+                    <td><span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 px-3 py-2 fw-bold" style="letter-spacing: 0.5px;">${cursoName} <br><small class="text-muted">${horarios}</small></span></td>
                     <td class="text-end pe-4">
                         <button class="btn btn-action-mini btn-outline-danger" 
-                                onclick="deleteAsignacion(${ins.estudiante_id}, ${ins.curso_id}, '${userName.replace(/'/g, "\\'")}', '${cursoName.replace(/'/g, "\\'")}')" 
+                                onclick="deleteAsignacion(${ins.estudiante_id}, ${ins.curso_id}, '${userName.replace(/'/g, "\\'")}', '${docenteName.replace(/'/g, "\\'")}')" 
                                 title="Eliminar asignación">
                             <i class="bi bi-trash-fill"></i>
                         </button>
@@ -1731,16 +1743,33 @@ function initAsignacionesLogic() {
         inputCode.onkeypress = (e) => { if (e.key === 'Enter') { e.preventDefault(); searchHandler(); } };
     }
 
-    // Cargar cursos en el modal
+    // Cargar cursos (ahora mostrando al docente) en el modal con un buscador
     (async () => {
-        const select = document.getElementById('asigCursoSelect');
-        if (!select) return;
+        const dataList = document.getElementById('docentesList');
+        if (!dataList) return;
         try {
-            const cursos = await apiGet('/cursos/');
-            select.innerHTML = '<option value="">-- Seleccionar Curso --</option>' +
-                cursos.map(c => `<option value="${c.id}">${c.nombre}</option>`).join('');
+            const [cursos, usuarios] = await Promise.all([
+                apiGet('/cursos/'),
+                apiGet('/usuarios/')
+            ]);
+
+            let optionsHTML = '';
+
+            cursos.forEach(c => {
+                if (c.docente_id) {
+                    const doc = usuarios.find(u => u.id === c.docente_id);
+                    const docName = doc ? `Prof. ${doc.nombre} ${doc.apellido}` : 'Docente Desconocido';
+                    const horarios = c.dias ? `| ${c.dias} ${c.hora_inicio}` : '';
+                    // Usamos el textContent de la opción como value para que el datalist lo muestre
+                    optionsHTML += `<option data-id="${c.id}" value="${docName} - ${c.nombre} ${horarios}"></option>`;
+                } else {
+                    optionsHTML += `<option data-id="${c.id}" value="Sin Docente - ${c.nombre}"></option>`;
+                }
+            });
+
+            dataList.innerHTML = optionsHTML;
         } catch (err) {
-            select.innerHTML = '<option value="">Error al cargar cursos</option>';
+            console.error('Error al cargar docentes', err);
         }
     })();
 
@@ -1749,7 +1778,17 @@ function initAsignacionesLogic() {
     if (form) {
         form.onsubmit = async (e) => {
             e.preventDefault();
-            const cursoId = document.getElementById('asigCursoSelect').value;
+
+            const inputVal = document.getElementById('asigCursoInput').value;
+            // Buscar la opción seleccionada para extraer su data-id real
+            const option = document.querySelector(`#docentesList option[value="${inputVal}"]`);
+
+            if (!option) {
+                Swal.fire({ icon: 'warning', title: 'Selección inválida', text: 'Por favor, selecciona un docente de la lista.' });
+                return;
+            }
+
+            const cursoId = option.getAttribute('data-id');
             if (!currentAsignacionEstudianteId || !cursoId) return;
 
             try {
@@ -2768,10 +2807,11 @@ async function renderPagos(container) {
                                     <th>Monto</th>
                                     <th>Estado</th>
                                     <th>Último Pago</th>
+                                    <th>Observación</th>
                                     <th class="text-end">Acciones</th>
                                 </tr>
                             </thead>
-                            <tbody><tr><td colspan="6" class="text-center py-4"><div class="spinner-border spinner-border-sm text-primary"></div> Cargando...</td></tr></tbody>
+                            <tbody><tr><td colspan="7" class="text-center py-4"><div class="spinner-border spinner-border-sm text-primary"></div> Cargando...</td></tr></tbody>
                         </table>
                     </div>
                 </div>
@@ -2937,7 +2977,7 @@ function _internalRenderPagos() {
     const tbody = document.querySelector('#pagosTable tbody');
     if (!tbody) return;
     if (!state.data || state.data.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-4">No se encontraron registros de pago</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted py-4">No se encontraron registros de pago</td></tr>';
         const pgn = document.getElementById('pagosPagination');
         if (pgn) pgn.innerHTML = '';
         return;
@@ -2966,6 +3006,7 @@ function _internalRenderPagos() {
                 <td class="fw-bold">Bs. ${p.consigna ? parseFloat(p.consigna.monto).toFixed(2) : '—'}</td>
                 <td>${badge}</td>
                 <td class="text-muted small">${p.fecha_pago ? new Date(p.fecha_pago).toLocaleDateString() : '—'}</td>
+                <td class="text-muted small">${p.observacion ? p.observacion : '—'}</td>
                 <td class="text-end">
                     <button class="btn btn-sm btn-outline-info border-0 py-0 px-2 fs-6 me-1" onclick="showAsignarPagoModal(${p.id})" title="Editar"><i class="bi bi-pencil"></i></button>
                     ${p.estado !== 'pagado' ? `<button class="btn btn-sm btn-success py-0 px-2 fs-6 me-1" onclick="marcarPagado(${p.id})" title="Marcar pagado"><i class="bi bi-check2"></i></button>` : ''}

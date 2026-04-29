@@ -70,7 +70,7 @@ function handleSessionExpired() {
  */
 async function apiFetch(endpoint, options = {}) {
     const headers = { ...options.headers };
-    
+
     // Solo agregar Content-Type si no es FormData (el browser lo pone solo con el boundary)
     // y si no se ha especificado ya un Content-Type
     if (!(options.body instanceof FormData) && !headers['Content-Type']) {
@@ -83,7 +83,19 @@ async function apiFetch(endpoint, options = {}) {
     }
 
     const config = { ...options, headers, mode: 'cors' };
-    let res = await fetch(`${API_BASE}${endpoint}`, config);
+    let res;
+
+    try {
+        res = await fetch(`${API_BASE}${endpoint}`, config);
+    } catch (error) {
+        if (!navigator.onLine) {
+            throw new Error('No hay conexión a Internet. Por favor, revisa tu conexión e inténtalo de nuevo.');
+        } else if (error.name === 'TypeError' || error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+            throw new Error('La conexión es muy lenta o el servidor no responde. Por favor, verifica tu internet e intenta de nuevo.');
+        } else {
+            throw error;
+        }
+    }
 
     // Interceptar el código 401 globalmente
     if (res.status === 401) {
