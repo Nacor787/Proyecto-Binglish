@@ -126,22 +126,33 @@ def eliminar_backup(filename: str, data: dict):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-# ── Configurar Automatización Cron ──
-@router.post("/config-cron")
-def configurar_cron(data: dict):
+# ── Obtener Estado de Windows Task Scheduler ──
+@router.get("/config-scheduler")
+def obtener_scheduler():
     """
-    Configura la regla de crontab para backups automáticos en Linux.
-    Body JSON: { "password": "...", "frequency": "...", "day": "...", "time": "..." }
+    Devuelve la configuración actual almacenada de la tarea programada.
     """
-    password = data.get("password", "")
+    try:
+        return backup_service.get_scheduler_status()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ── Configurar Automatización Windows Task Scheduler ──
+@router.post("/config-scheduler")
+def configurar_scheduler(data: dict):
+    """
+    Configura la regla de tareas programadas en Windows.
+    Recibe: password, frequency (daily|weekly|monthly|none), day, time_str (HH:MM).
+    """
+    password = data.get("password")
     _verify_password(password)
 
-    frequency = data.get("frequency", "none")
-    day = data.get("day", 0)
-    time_str = data.get("time", "02:00")
+    frequency = data.get("frequency")
+    day = data.get("day", 1)
+    time_str = data.get("time_str", "02:00")
 
     try:
-        result = backup_service.setup_cron_job(frequency, int(day), time_str)
+        result = backup_service.setup_scheduler_task(frequency, int(day), time_str)
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

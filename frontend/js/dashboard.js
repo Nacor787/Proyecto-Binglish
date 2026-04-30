@@ -1780,8 +1780,15 @@ function initAsignacionesLogic() {
             e.preventDefault();
 
             const inputVal = document.getElementById('asigCursoInput').value;
-            // Buscar la opción seleccionada para extraer su data-id real
-            const option = document.querySelector(`#docentesList option[value="${inputVal}"]`);
+            // Buscar la opción seleccionada iterando para evitar problemas con caracteres especiales
+            const dataListOptions = document.getElementById('docentesList').options;
+            let option = null;
+            for (let i = 0; i < dataListOptions.length; i++) {
+                if (dataListOptions[i].value === inputVal) {
+                    option = dataListOptions[i];
+                    break;
+                }
+            }
 
             if (!option) {
                 Swal.fire({ icon: 'warning', title: 'Selección inválida', text: 'Por favor, selecciona un docente de la lista.' });
@@ -3323,8 +3330,8 @@ function renderReportes(container) {
 
             <!-- Reporte de Notas -->
             <div class="col-xl-6 col-md-6">
-                <div class="dash-stat-card orange">
-                    <div class="card-body p-4 d-flex flex-column">
+                <div class="dash-stat-card orange h-100">
+                    <div class="card-body p-4 d-flex flex-column h-100">
                         <div class="d-flex align-items-center mb-3">
                             <div class="icon-circle bg-primary bg-opacity-10 text-primary me-3" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">
                                 <i class="bi bi-clipboard-data-fill fs-5"></i>
@@ -3351,8 +3358,8 @@ function renderReportes(container) {
             <!-- Reporte de Usuarios -->
             ${hasRole(['admin']) ? `
             <div class="col-xl-6 col-md-6">
-                <div class="dash-stat-card blue">
-                    <div class="card-body p-4 d-flex flex-column">
+                <div class="dash-stat-card blue h-100">
+                    <div class="card-body p-4 d-flex flex-column h-100">
                         <div class="d-flex align-items-center mb-3">
                             <div class="icon-circle bg-success bg-opacity-10 text-success me-3" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">
                                 <i class="bi bi-people-fill fs-5"></i>
@@ -3389,9 +3396,9 @@ function renderReportes(container) {
             </div>
 
             <!-- Reporte de Pagos -->
-            <div class="col-xl-6 col-md-6 mt-4">
-                <div class="dash-stat-card green">
-                    <div class="card-body p-4 d-flex flex-column">
+            <div class="col-xl-6 col-md-6">
+                <div class="dash-stat-card green h-100">
+                    <div class="card-body p-4 d-flex flex-column h-100">
                         <div class="d-flex align-items-center mb-3">
                             <div class="icon-circle bg-warning bg-opacity-10 text-warning me-3" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">
                                 <i class="bi bi-cash-coin fs-5"></i>
@@ -3522,7 +3529,7 @@ async function renderBackups(container) {
                 </div>
             </div>
 
-            <!-- Backup Automático (Cron) -->
+            <!-- Backup Automático (Programador Tareas) -->
             <div class="col-xl-4 col-md-12">
                 <div class="card border-0 shadow-sm h-100 dash-stat-card border-top border-4 border-info">
                     <div class="card-body p-4 d-flex flex-column">
@@ -3531,12 +3538,12 @@ async function renderBackups(container) {
                                 <div class="icon-circle bg-info bg-opacity-10 text-info me-3" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">
                                     <i class="bi bi-robot fs-5"></i>
                                 </div>
-                                <h6 class="mb-0 fw-bold">Automatización (Cron)</h6>
+                                <h6 class="mb-0 fw-bold">Automatización (Windows)</h6>
                             </div>
-                            <span class="badge bg-light text-secondary border"><i class="bi bi-gear-fill me-1"></i>Linux Ready</span>
+                            <span class="badge bg-light text-secondary border"><i class="bi bi-windows me-1"></i>Windows Server</span>
                         </div>
                         
-                        <p class="text-white-50 small mt-2">Delega el trabajo a los cronjobs del servidor OS para asegurar la resiliencia pura.</p>
+                        <p class="text-white-50 small mt-2">Guarda una copia de tu base de datos automáticamente.</p>
 
                         <div class="row g-2 mb-3 flex-grow-1">
                             <!-- Tipo de frecuencia -->
@@ -3551,7 +3558,7 @@ async function renderBackups(container) {
                             </div>
 
                             <!-- Día y Hora -->
-                            <div class="col-7">
+                            <div class="col-7" id="backupDayWrapper">
                                 <label class="form-label small fw-semibold text-secondary mb-1">Día Preferido</label>
                                 <select class="form-select form-select-sm shadow-none" id="backupDay">
                                     <option value="1">Lunes</option>
@@ -3570,7 +3577,7 @@ async function renderBackups(container) {
                         </div>
 
                         <button class="btn btn-outline-info w-100 fw-semibold" id="btnSaveBackupConfig">
-                            <i class="bi bi-save me-2"></i>Sincronizar Cron
+                            <i class="bi bi-save me-2"></i>Sincronizar Tarea
                         </button>
                     </div>
                 </div>
@@ -3618,27 +3625,45 @@ async function renderBackups(container) {
         showBackupPasswordModal('restore', { file: fileInput.files[0] });
     });
 
-    // ── Lógica Frontend para Guardar Cron ──
-    const btnSaveCron = document.getElementById('btnSaveBackupConfig');
+    // ── Lógica Frontend para Guardar Tarea Programada ──
+    const btnSaveSchedule = document.getElementById('btnSaveBackupConfig');
     const freqSelect = document.getElementById('backupFrequency');
     const daySelect = document.getElementById('backupDay');
+    const backupDayWrapper = document.getElementById('backupDayWrapper');
+    const timeInput = document.getElementById('backupTime');
 
-    // Deshabilitar 'dia' si la frecuencia es diaria o apagada
+    // Cargar estado inicial desde el backend
+    apiGet('/backups/config-scheduler')
+        .then(status => {
+            if (status.frequency) {
+                freqSelect.value = status.frequency;
+                if (status.day) daySelect.value = status.day;
+                if (status.time_str) timeInput.value = status.time_str;
+
+                if (status.frequency === 'daily' || status.frequency === 'none') {
+                    backupDayWrapper.classList.add('d-none');
+                } else {
+                    backupDayWrapper.classList.remove('d-none');
+                }
+            }
+        })
+        .catch(err => console.error('Error al cargar config de tareas:', err));
+
     freqSelect.addEventListener('change', () => {
-        if (freqSelect.value === 'none' || freqSelect.value === 'daily') {
-            daySelect.disabled = true;
+        if (freqSelect.value === 'daily' || freqSelect.value === 'none') {
+            backupDayWrapper.classList.add('d-none');
         } else {
-            daySelect.disabled = false;
+            backupDayWrapper.classList.remove('d-none');
         }
     });
 
-    btnSaveCron.addEventListener('click', () => {
+    btnSaveSchedule.addEventListener('click', () => {
         const config = {
             frequency: freqSelect.value,
             day: daySelect.value,
-            time: document.getElementById('backupTime').value || "02:00"
+            time: timeInput.value || "02:00"
         };
-        showBackupPasswordModal('config-cron', config);
+        showBackupPasswordModal('config-schedule', config);
     });
 
     // ── Cargar historial ──
@@ -3660,7 +3685,7 @@ function showBackupPasswordModal(action, params) {
         actionIcon = 'bi-arrow-counterclockwise';
         confirmColor = '#198754';
     } else {
-        actionLabel = 'Autenticar Regla de Cron';
+        actionLabel = 'Autenticar Tarea Programada';
         actionIcon = 'bi-robot';
         confirmColor = '#0dcaf0';
     }
@@ -3695,35 +3720,35 @@ function showBackupPasswordModal(action, params) {
             await executeBackupGenerate(password, params.table_name);
         } else if (action === 'restore') {
             await executeBackupRestore(password, params.file);
-        } else if (action === 'config-cron') {
-            await executeCronConfig(password, params);
+        } else if (action === 'config-schedule') {
+            await executeScheduleConfig(password, params);
         }
     });
 }
 
 /**
- * Solicita al backend crear o actualizar el trabajo de Cron del OS
+ * Solicita al backend crear o actualizar la Tarea de Windows
  */
-async function executeCronConfig(password, configParams) {
+async function executeScheduleConfig(password, configParams) {
     Swal.fire({
         title: 'Mapeando reglas del OS...',
-        html: '<div class="spinner-border text-info" role="status"></div><p class="mt-2 small text-muted">Escribiendo en crontab...</p>',
+        html: '<div class="spinner-border text-info" role="status"></div><p class="mt-2 small text-muted">Configurando schtasks...</p>',
         allowOutsideClick: false,
         showConfirmButton: false,
     });
 
     try {
-        const result = await apiPost('/backups/config-cron', {
+        const result = await apiPost('/backups/config-scheduler', {
             password: password,
             frequency: configParams.frequency,
             day: configParams.day,
-            time: configParams.time
+            time_str: configParams.time
         });
 
         Swal.fire({
             icon: 'success',
             title: '¡Automatización Sincronizada!',
-            text: result.message || 'El planificador del sistema operativo ha sido actualizado.',
+            text: result.message || 'El planificador de Windows ha sido actualizado.',
             confirmButtonColor: '#0dcaf0',
         });
     } catch (err) {
@@ -3878,7 +3903,7 @@ function _internalRenderBackups() {
                             <td class="text-end">
                                 <a href="${API_BASE}/backups/download/${b.filename}" 
                                    class="btn btn-sm btn-outline-primary" 
-                                   download="${b.filename}">
+                                   download="${b.filename}" title="Descargar">
                                     <i class="bi bi-cloud-download"></i>
                                 </a>
                                     <button class="btn btn-sm btn-outline-danger" 

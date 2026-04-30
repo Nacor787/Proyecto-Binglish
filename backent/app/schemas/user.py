@@ -42,6 +42,7 @@ class UserCreate(BaseModel):
     apellido: str
     direccion: Optional[str] = None
     telefono: Optional[str] = None
+    telefono_emergencia: Optional[str] = None
     password: str
     rol: str = "estudiante"
     activo: Optional[bool] = True
@@ -65,6 +66,7 @@ class UserUpdate(BaseModel):
     apellido: Optional[str] = None
     direccion: Optional[str] = None
     telefono: Optional[str] = None
+    telefono_emergencia: Optional[str] = None
     password: Optional[str] = None
     rol: Optional[str] = None
     activo: Optional[bool] = None
@@ -77,6 +79,7 @@ class UserOut(BaseModel):
     apellido: str
     direccion: Optional[str] = None
     telefono: Optional[str] = None
+    telefono_emergencia: Optional[str] = None
     rol: str
     activo: bool
     created_at: Optional[datetime] = None

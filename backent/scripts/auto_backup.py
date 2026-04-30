@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-cron_backup.py — Ejecutor de Backups Automáticos para Cron.
-Este script se ejecuta aisaldamente sin despertar FastAPI. 
-Permite al servidor Linux invocar la copia de seguridad.
+auto_backup.py — Ejecutor de Backups Automáticos para Windows Task Scheduler.
+Este script se ejecuta aisladamente sin despertar FastAPI. 
+Permite al servidor Windows invocar la copia de seguridad.
 """
 
 import sys
@@ -25,7 +25,7 @@ def main():
         print(f"Archivo: {result['filename']}")
         print(f"Tamaño: {result['size_kb']} KB")
     except Exception as e:
-        print(f"Error al generar backup desde Cron: {e}", file=sys.stderr)
+        print(f"Error al generar backup desde Task Scheduler: {e}", file=sys.stderr)
         sys.exit(1)
 
 if __name__ == "__main__":

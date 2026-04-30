@@ -224,64 +224,90 @@ def _validate_sql_file(filepath: str):
     except UnicodeDecodeError:
         raise ValueError("El archivo no es un archivo SQL válido (encoding incorrecto).")
 
-def setup_cron_job(frequency: str, day: int, time_str: str) -> dict:
+def setup_scheduler_task(frequency: str, day: int, time_str: str) -> dict:
     """
-    Configura una regla en el crontab de Linux invocando los binarios del OS nativamente.
-    En Windows lanzará un log simulado debido a la ausencia del comando crontab.
+    Configura una regla en el Programador de Tareas de Windows (schtasks).
     """
-    import platform
+    import subprocess
     import sys
 
-    if platform.system() == "Windows":
-        print(f"[CRON MOCK WINDOWS] Guardado ({frequency}, dia {day}, a las {time_str})")
-        return {"status": "success", "message": "Simulado exitosamente en Windows (Linux requerido para crontab)."}
+    task_name = "Binglish_Auto_Backup"
     
-    # ── Lógica Nativa para Linux ──
+    # 1. Intentar borrar tarea anterior (ignorar error si no existe)
+    subprocess.run(["schtasks", "/Delete", "/TN", task_name, "/F"], capture_output=True)
+
+    if frequency == "none" or frequency == "":
+        import json
+        config_file = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "scheduler_config.json")
+        try:
+            with open(config_file, "w") as f:
+                json.dump({"frequency": "none", "day": 1, "time_str": "02:00"}, f)
+        except Exception:
+            pass
+        return {"status": "success", "message": "Automatización desactivada exitosamente."}
+
+    script_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "scripts", "auto_backup.py")
+    python_exec = sys.executable
+
+    # Crear un archivo .bat para evitar los bugs de comillas de schtasks y el problema del directorio
+    bat_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "scripts", "run_backup.bat")
+    backend_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    try:
+        with open(bat_path, "w") as f:
+            f.write(f'@echo off\ncd /d "{backend_root}"\n"{python_exec}" "{script_path}"\n')
+    except Exception as e:
+        raise RuntimeError(f"Error al crear el ejecutable de backup: {e}")
+
+    cmd = [
+        "schtasks", "/Create", "/TN", task_name, 
+        "/TR", bat_path, "/F"
+    ]
+
+    # Formatear la hora asegurando formato HH:MM
     try:
         hour, minute = time_str.split(":")
+        time_formatted = f"{int(hour):02d}:{int(minute):02d}"
     except ValueError:
-        hour, minute = "2", "0"
+        time_formatted = "02:00"
 
-    cron_expr = ""
     if frequency == "daily":
-        cron_expr = f"{int(minute)} {int(hour)} * * *"
+        cmd.extend(["/SC", "DAILY", "/ST", time_formatted])
     elif frequency == "weekly":
-        cron_expr = f"{int(minute)} {int(hour)} * * {int(day)}"
+        # Mapeo de día de la semana para schtasks (MON, TUE, WED, THU, FRI, SAT, SUN)
+        # JavaScript suele enviar: 0=Dom, 1=Lun, 2=Mar, 3=Mie, 4=Jue, 5=Vie, 6=Sab
+        days_map = {0: "SUN", 1: "MON", 2: "TUE", 3: "WED", 4: "THU", 5: "FRI", 6: "SAT"}
+        win_day = days_map.get(int(day), "MON")
+        cmd.extend(["/SC", "WEEKLY", "/D", win_day, "/ST", time_formatted])
     elif frequency == "monthly":
-        # Nota: cron ignora día de semana si damos un día del mes. Simplificamos usando 1 o el valor que pase.
-        mes_dia = int(day) if int(day) > 0 else 1
-        cron_expr = f"{int(minute)} {int(hour)} {mes_dia} * *"
+        mes_dia = int(day) if int(day) > 0 and int(day) <= 31 else 1
+        cmd.extend(["/SC", "MONTHLY", "/D", str(mes_dia), "/ST", time_formatted])
 
-    # Identificador único para evitar duplicar líneas cada vez que se guarde
-    marker = "# AUTO_BINGLISH_BACKUP"
-    script_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "scripts", "cron_backup.py")
-    python_exec = sys.executable  # Usa el venv activo o python global real
-
-    # 1. Leer crontab existente (silenciar el error si crontab está vacío para este user)
     try:
-        res = subprocess.run(["crontab", "-l"], capture_output=True, text=True)
-        current_cron = res.stdout if res.returncode == 0 else ""
-    except Exception:
-        current_cron = ""
-
-    # 2. Remover trabajos antiguos de Binglish
-    new_cron_lines = [line for line in current_cron.splitlines() if marker not in line and line.strip()]
-
-    # 3. Agregar el nuevo trabajo si la frecuencia NO es 'none'
-    if cron_expr:
-        new_job = f"{cron_expr} {python_exec} {script_path} > /dev/null 2>&1 {marker}"
-        new_cron_lines.append(new_job)
-
-    # 4. Escribir crontab devuelta al SO
-    new_cron_content = "\n".join(new_cron_lines) + "\n"
-    
-    try:
-        # Alimentar crontab vía pipe
-        proc = subprocess.Popen(["crontab", "-"], stdin=subprocess.PIPE, text=True)
-        proc.communicate(new_cron_content)
-        if proc.returncode != 0:
-            raise RuntimeError("El comando crontab regresó error.")
+        res = subprocess.run(cmd, capture_output=True, text=True, check=True)
+    except subprocess.CalledProcessError as e:
+        raise RuntimeError(f"Error al configurar la tarea programada en Windows: {e.stderr or e.stdout}")
     except Exception as e:
-        raise RuntimeError(f"Fallo interactuando con crontab: {e}")
-        
-    return {"status": "success", "message": "Automatización configurada exitosamente."}
+        raise RuntimeError(f"No se pudo invocar schtasks: {str(e)}")
+
+    # Guardar la configuración en un archivo para que el frontend pueda leerla
+    import json
+    config_file = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "scheduler_config.json")
+    try:
+        with open(config_file, "w") as f:
+            json.dump({"frequency": frequency, "day": day, "time_str": time_formatted}, f)
+    except Exception as e:
+        print(f"No se pudo guardar scheduler_config.json: {e}")
+
+    return {"status": "success", "message": "Tarea programada configurada exitosamente."}
+
+def get_scheduler_status() -> dict:
+    import json
+    config_file = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "scheduler_config.json")
+    if os.path.exists(config_file):
+        try:
+            with open(config_file, "r") as f:
+                return json.load(f)
+        except:
+            pass
+    return {"frequency": "none", "day": 1, "time_str": "02:00"}
+

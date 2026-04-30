@@ -27,6 +27,7 @@ class User(Base):
     apellido = Column(String(100), nullable=False)
     direccion = Column(String(150), nullable=True)
     telefono = Column(String(20), nullable=True)
+    telefono_emergencia = Column(String(50), nullable=True)
     hashed_password = Column(String(255), nullable=False)
     rol = Column(SAEnum(RolEnum), nullable=False, default=RolEnum.estudiante)
     activo = Column(Boolean, default=True)
