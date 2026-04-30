@@ -33,6 +33,13 @@ document.addEventListener('DOMContentLoaded', () => {
             document.body.appendChild(modal);
         }
     });
+
+    // Iniciar el Tour Interactivo si es necesario
+    setTimeout(() => {
+        if (typeof checkAndLaunchTour === 'function') {
+            checkAndLaunchTour();
+        }
+    }, 600);
 });
 
 /* ==========================================================

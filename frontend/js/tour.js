@@ -174,9 +174,8 @@ function startOnboardingTour() {
         prevBtnText: '← Anterior',
         doneBtnText: '✓ Finalizar',
         progressText: '{{current}} de {{total}}',
-        allowClose: true,
+        allowClose: false,
         disableActiveInteraction: true,
-        onOverlayClick: () => { /* bloquear cierre al hacer clic en overlay */ },
         overlayColor: 'rgba(0, 0, 0, 0.75)',
         stagePadding: 8,
         stageRadius: 12,
@@ -195,6 +194,19 @@ function startOnboardingTour() {
             const wrapper = popover.wrapper;
             if (wrapper && wrapper.firstChild) {
                 wrapper.insertBefore(progressEl, wrapper.firstChild);
+            }
+
+            // Custom Close Button (X) - since allowClose: false hides the native one
+            let closeBtn = wrapper.querySelector('.custom-tour-close-btn');
+            if (!closeBtn) {
+                closeBtn = document.createElement('button');
+                closeBtn.className = 'custom-tour-close-btn';
+                closeBtn.innerHTML = '&times;';
+                closeBtn.style.cssText = 'position: absolute; top: 12px; right: 16px; background: transparent; border: none; color: rgba(255,255,255,0.6); font-size: 24px; cursor: pointer; z-index: 10; padding: 0; line-height: 1; outline: none; font-family: sans-serif;';
+                closeBtn.onmouseover = () => closeBtn.style.color = '#ff4d4f';
+                closeBtn.onmouseout = () => closeBtn.style.color = 'rgba(255,255,255,0.6)';
+                closeBtn.onclick = () => driverObj.destroy();
+                wrapper.appendChild(closeBtn);
             }
         },
         onDestroyStarted: () => {
