@@ -1136,6 +1136,12 @@
         margin-bottom: 2rem;
     }
 
+    /* El panel de comentarios en móvil NO debe mostrarse en desktop
+       porque los comentarios ya están integrados como columna en la tabla */
+    .custom-section-pane#step-comments {
+        display: none !important;
+    }
+
     .custom-section-pane:last-child {
         margin-bottom: 0;
     }

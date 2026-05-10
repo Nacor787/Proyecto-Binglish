@@ -94,6 +94,11 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="#equipo">
+                            <i class="bi bi-person-badge me-1"></i>Equipo
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="#metodologia">
                             <i class="bi bi-lightbulb me-1"></i>Metodología
                         </a>
@@ -215,6 +220,57 @@
         </div>
     </section>
 
+    <!-- ======================================
+        PERSONAL DOCENTE Y ADMINISTRATIVO
+        ====================================== -->
+    <section class="section-padding" id="equipo">
+        <div class="container">
+            <div class="text-center" data-aos="fade-down" data-aos-duration="700">
+                <span class="section-badge"><i class="bi bi-people-fill me-1"></i>Nuestro Equipo</span>
+                <h2 class="section-title">Personal Docente y Administrativo</h2>
+                <p class="section-subtitle">Conoce a los profesionales apasionados que hacen posible la experiencia
+                    Binglish todos los días.</p>
+            </div>
+
+            <!-- FOTO GRUPAL -->
+            <div class="row justify-content-center mb-5" data-aos="fade-up" data-aos-duration="800"
+                data-aos-delay="200">
+                <div class="col-lg-10">
+                    <div class="group-photo-card" id="groupPhotoBg">
+                        <img src="https://via.placeholder.com/1200x500" alt="Foto Grupal del Equipo Binglish"
+                            class="group-photo-img" id="groupPhotoImg">
+                        <p class="group-photo-caption">La familia Binglish: Comprometidos con tu fluidez y aprendizaje
+                            continuo.</p>
+                        <input type="file" id="photoUpload" accept="image/*" style="display:none"
+                            onchange="loadPhoto(event)" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- FILTROS -->
+            <div class="row mb-4" data-aos="fade-up" data-aos-duration="600" data-aos-delay="300">
+                <div class="col-12">
+                    <div class="d-flex justify-content-center flex-wrap filters-container">
+                        <button class="filter-btn active" onclick="setFilter('todos', this)">Todos <span
+                                class="count-badge" id="count-todos"></span></button>
+                        <button class="filter-btn" onclick="setFilter('docente', this)">Docentes <span
+                                class="count-badge" id="count-docente"></span></button>
+                        <button class="filter-btn" onclick="setFilter('administrativo', this)">Administrativos <span
+                                class="count-badge" id="count-administrativo"></span></button>
+                        <button class="filter-btn" onclick="setFilter('coordinacion', this)">Coordinación <span
+                                class="count-badge" id="count-coordinacion"></span></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONTENEDOR DINÁMICO -->
+            <div id="staffContainer" data-aos="fade-up" data-aos-duration="800" data-aos-delay="400">
+                <!-- Se renderiza via JS -->
+            </div>
+
+        </div>
+    </section>
+
     <!-- ============================================================
      METODOLOGÍA
      ============================================================ -->
@@ -329,7 +385,7 @@
                             <i class="bi bi-envelope-fill"></i>
                             <div>
                                 <strong>Email</strong>
-                                <p class="mb-0 small">info@binglish.com</p>
+                                <p class="mb-0 small" target="_blank">binglishtherightmove@gmail.com</p>
                             </div>
                         </div>
                         <div class="contact-info-item">
@@ -451,7 +507,8 @@
                 <div class="col-lg-4" data-aos="zoom-in-up" data-aos-duration="600" data-aos-delay="300">
                     <h6>Contacto</h6>
                     <ul class="footer-links">
-                        <li><a href="mailto:info@binglish.com"><i class="bi bi-envelope me-1"></i>info@binglish.com</a>
+                        <li><a href="mailto:binglishtherightmove@gmail.com" target="_blank"><i
+                                    class="bi bi-envelope me-1"></i>binglishtherightmove@gmail.com</a>
                         </li>
                         <li><a href="tel:+591 73302492"><i class="bi bi-telephone me-1"></i>+591 73302492</a></li>
                         <li><a href="#ubicacion"><i class="bi bi-geo-alt me-1"></i>Av. Villazón edificio Román N°1790,
@@ -736,7 +793,8 @@
         }
     </script>
 
-    <!-- Custom Main JS -->
+    <!-- Custom JS -->
+    <script src="js/convenios.js"></script>
     <script src="js/main.js"></script>
 
 </body>

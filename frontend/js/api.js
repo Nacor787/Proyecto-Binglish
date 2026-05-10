@@ -7,13 +7,9 @@
 // En desarrollo local: conecta directo al backend en el puerto 8000.
 const IS_LOCAL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 
-// Opción 1 (Recomendada con Cloudflare Tunnel): 
-// Usar Ingress Rules en tu config.yaml para enviar el tráfico de "tudominio.com/api" hacia "localhost:8000"
-const API_BASE = IS_LOCAL ? 'http://localhost:8000' : '/api';
-
-// Opción 2: Si creas un subdominio separado en Cloudflare exclusivamente para el backend (ej: api.tudominio.com)
-// Descomenta la siguiente línea y pon tu subdominio real, comentando la Opción 1 de arriba:
-// const API_BASE = IS_LOCAL ? 'http://localhost:8000' : 'https://api.tudominio.com';
+// Configuración para Cloudflare Tunnel + Nginx
+// Nginx en producción se encarga de recibir las peticiones en /apib
+const API_BASE = IS_LOCAL ? 'http://localhost:8000/api' : '/api';
 
 /**
  * Obtiene el token JWT almacenado en localStorage.
@@ -82,7 +78,8 @@ async function apiFetch(endpoint, options = {}) {
         headers['Authorization'] = `Bearer ${token}`;
     }
 
-    const config = { ...options, headers, mode: 'cors' };
+    // credentials: 'include' asegura que se envíen las cookies HttpOnly al backend
+    const config = { ...options, headers, mode: 'cors', credentials: 'include' };
     let res;
 
     try {
@@ -100,14 +97,8 @@ async function apiFetch(endpoint, options = {}) {
     // Interceptar el código 401 globalmente
     if (res.status === 401) {
         // Evitar bucles en endpoints de auth
-        if (endpoint === '/auth/refresh' || endpoint === '/auth/login') {
+        if (endpoint === '/auth/refresh' || endpoint === '/auth/login' || endpoint === '/auth/logout') {
             return res;
-        }
-
-        const refreshToken = localStorage.getItem('binglish_refresh_token');
-        if (!refreshToken) {
-            handleSessionExpired();
-            throw new Error('Sesión expirada');
         }
 
         // Si ya hay un proceso de refresh en curso, encolar la petición actual
@@ -126,11 +117,11 @@ async function apiFetch(endpoint, options = {}) {
         isRefreshing = true;
 
         try {
-            // Intentar renovar token
+            // Intentar renovar token (el navegador enviará la cookie automáticamente gracias a credentials: 'include')
             const refreshRes = await fetch(`${API_BASE}/auth/refresh`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ refresh_token: refreshToken }),
+                credentials: 'include',
                 mode: 'cors'
             });
 
@@ -138,7 +129,6 @@ async function apiFetch(endpoint, options = {}) {
 
             const data = await refreshRes.json();
             localStorage.setItem('binglish_token', data.access_token);
-            localStorage.setItem('binglish_refresh_token', data.refresh_token);
 
             // Reanudar todas las peticiones fallidas encoladas
             processQueue(null, data.access_token);

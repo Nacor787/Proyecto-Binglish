@@ -1218,8 +1218,8 @@ function renderPaginationControls(containerId, totalItems, pageSize, currentPage
     for (let i = 1; i <= totalPages; i++) {
         if (totalPages > 7) {
             if (i !== 1 && i !== totalPages && Math.abs(i - currentPage) > 1) {
-                if (i === 2 && currentPage > 3) html += `<li class="page-item disabled"><span class="page-link border-0 bg-transparent">...</span></li>`;
-                if (i === totalPages - 1 && currentPage < totalPages - 2) html += `<li class="page-item disabled"><span class="page-link border-0 bg-transparent">...</span></li>`;
+                if (i === 2 && currentPage > 3) html += `<li class="page-item disabled"><span class="page-link border-0 bg-transparent text-secondary fw-bold">...</span></li>`;
+                if (i === totalPages - 1 && currentPage < totalPages - 2) html += `<li class="page-item disabled"><span class="page-link border-0 bg-transparent text-secondary fw-bold">...</span></li>`;
                 continue;
             }
         }
@@ -1905,7 +1905,7 @@ function _getNotaModalHeaderHTML() {
                 <div class="mb-3">
                     <label class="text-muted small uppercase fw-bold">STUDENT CODE</label>
                     <div class="input-group input-group-sm">
-                        <span class="input-group-text bg-transparent border-secondary text-muted">BTRM-</span>
+                        <span class="input-group-text bg-transparent border-secondary" style="background: transparent; min-width: 70px; flex-shrink: 0; color: #00E5FF !important; text-shadow: 0 0 8px rgba(0,229,255,0.4); font-weight: 700; letter-spacing: 1px;">BTRM-</span>
                         <input type="text" class="form-control" id="notaEstudianteCodigo" placeholder="204" oninput="_handleStudentCodeChange(this.value)" required>
                     </div>
                 </div>
@@ -2061,7 +2061,7 @@ async function renderNotas(container) {
         </div>
 
         <!-- MODAL REGISTRAR NOTA -->
-        <div class="modal fade modal-dashboard" id="notaModal" tabindex="-1">
+        <div class="modal fade modal-dashboard" id="notaModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
             <div class="modal-dialog modal-xl modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -3447,7 +3447,8 @@ async function descargarReporte(tipo, formato) {
     if (tipo === 'pagos') {
         const codigoInput = document.getElementById('reportesPagoCodigo');
         if (codigoInput && codigoInput.value.trim()) {
-            url += `?codigo_estudiante=${encodeURIComponent(codigoInput.value.trim())}`;
+            const codigoCompleto = `BTRM-${codigoInput.value.trim()}`;
+            url += `?codigo_estudiante=${encodeURIComponent(codigoCompleto)}`;
         }
     } else if (tipo === 'usuarios') {
         const rolInput = document.getElementById('reportesUsuarioRol');
@@ -3458,7 +3459,7 @@ async function descargarReporte(tipo, formato) {
 
     try {
         Swal.fire({
-            title: 'Descargando...',
+            title: 'Generando reporte...',
             didOpen: () => { Swal.showLoading(); },
             allowOutsideClick: false
         });
@@ -3466,7 +3467,13 @@ async function descargarReporte(tipo, formato) {
         downloadBlob(blob, `reporte_${tipo}.${ext}`);
         Swal.fire({ icon: 'success', title: `Reporte ${formato.toUpperCase()} descargado`, timer: 1500, showConfirmButton: false });
     } catch (err) {
-        Swal.fire({ icon: 'error', title: 'Error', text: err.message });
+        const isNotFound = err.message?.toLowerCase().includes('no se encontró') || err.message?.includes('404');
+        Swal.fire({
+            icon: isNotFound ? 'warning' : 'error',
+            title: isNotFound ? 'Estudiante no encontrado' : 'Error al generar reporte',
+            text: err.message || 'Ocurrió un error desconocido al descargar el reporte.',
+            confirmButtonColor: isNotFound ? '#f39c12' : '#e74c3c',
+        });
     }
 }
 
@@ -3540,9 +3547,9 @@ async function renderBackups(container) {
             <div class="col-xl-4 col-md-12">
                 <div class="card border-0 shadow-sm h-100 dash-stat-card border-top border-4 border-info">
                     <div class="card-body p-4 d-flex flex-column">
-                        <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
                             <div class="d-flex align-items-center">
-                                <div class="icon-circle bg-info bg-opacity-10 text-info me-3" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">
+                                <div class="icon-circle bg-info bg-opacity-10 text-info me-3" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 50%; flex-shrink: 0;">
                                     <i class="bi bi-robot fs-5"></i>
                                 </div>
                                 <h6 class="mb-0 fw-bold">Automatización (Windows)</h6>
@@ -3593,8 +3600,9 @@ async function renderBackups(container) {
             <!-- Historial de Backups -->
             <div class="col-12 mt-4">
                 <div class="card shadow-sm table-card">
-                    <div class="card-header bg-transparent border-bottom-0 pt-4 pb-2 px-4 d-flex justify-content-between align-items-center">
+                    <div class="card-header bg-transparent border-bottom-0 pt-4 pb-2 px-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
                         <h6 class="mb-0 fw-bold text-white"><i class="bi bi-clock-history me-2" style="color: var(--accent);"></i>Historial de Copias Realizadas</h6>
+                        <span class="small fw-bold text-white-50">Cada Backup tiene una duración de 1 semana en el sistema y luego se elimina automáticamente.</span>
                     </div>
                     <div class="card-body px-4 pb-4">
                         <div id="backupHistoryTable" class="rounded p-3 bg-transparent">
@@ -3624,11 +3632,6 @@ async function renderBackups(container) {
 
     btnRestore.addEventListener('click', () => {
         if (!fileInput.files.length) return;
-        Swal.fire({
-            title: 'Cargando archivo...',
-            didOpen: () => { Swal.showLoading(); },
-            allowOutsideClick: false
-        });
         showBackupPasswordModal('restore', { file: fileInput.files[0] });
     });
 
@@ -3892,21 +3895,21 @@ function _internalRenderBackups() {
     const pageData = paginateArray(state.data, state.page, state.size);
     tableContainer.innerHTML = `
         <div class="table-responsive">
-            <table class="table table-sm table-hover mb-0">
+            <table class="table table-sm table-hover text-nowrap align-middle mb-0">
                 <thead>
                     <tr>
-                        <th><i class="bi bi-file-earmark-code me-1"></i>Archivo</th>
-                        <th><i class="bi bi-hdd me-1"></i>Tamaño</th>
-                        <th><i class="bi bi-calendar3 me-1"></i>Fecha y hora</th>
-                        <th class="text-end">Acción</th>
+                        <th class="text-uppercase small fw-bold text-muted"><i class="bi bi-file-earmark-code me-1"></i>Archivo</th>
+                        <th class="text-uppercase small fw-bold text-muted"><i class="bi bi-hdd me-1"></i>Tamaño</th>
+                        <th class="text-uppercase small fw-bold text-muted"><i class="bi bi-calendar3 me-1"></i>Fecha y hora</th>
+                        <th class="text-end text-uppercase small fw-bold text-muted">Acción</th>
                     </tr>
                 </thead>
                 <tbody>
                     ${pageData.map(b => `
                         <tr>
-                            <td><code class="small">${b.filename}</code></td>
-                            <td>${b.size_kb} KB</td>
-                            <td>${new Date(b.created).toLocaleString('es-BO')}</td>
+                            <td><code class="small px-2 py-1 bg-dark bg-opacity-10 rounded">${b.filename}</code></td>
+                            <td><span class="badge bg-secondary bg-opacity-25 text-light">${b.size_kb} KB</span></td>
+                            <td class="small text-white-50">${new Date(b.created).toLocaleString('es-BO')}</td>
                             <td class="text-end">
                                 <a href="${API_BASE}/backups/download/${b.filename}" 
                                    class="btn btn-sm btn-outline-primary" 
@@ -4104,24 +4107,36 @@ function _internalRenderMensajes() {
     }
 
     const pageData = paginateArray(state.data, state.page, state.size);
-    container.innerHTML = pageData.map(m => `
-        <div class="card shadow-sm table-card mb-2 d-flex flex-row p-3 align-items-start ${m.destinatario_id ? 'border-start border-4 border-primary border-opacity-10' : 'border-start border-4 border-warning border-opacity-10'}">
-            <i class="bi ${m.destinatario_id ? 'bi-person-fill text-primary' : 'bi-megaphone-fill text-warning'} fs-4 me-3 mt-1" style="opacity: 0.8;"></i>
+    container.innerHTML = pageData.map(m => {
+        const esSistema = m.solo_admin === true;
+        const esDirecto = !!m.destinatario_id;
+        const iconClass = esSistema
+            ? 'bi-shield-lock-fill text-info'
+            : (esDirecto ? 'bi-person-fill text-primary' : 'bi-megaphone-fill text-warning');
+        const borderClass = esSistema
+            ? 'border-start border-4 border-info border-opacity-25'
+            : (esDirecto ? 'border-start border-4 border-primary border-opacity-10' : 'border-start border-4 border-warning border-opacity-10');
+        const badgeHtml = esSistema
+            ? '<span class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25 me-2"><i class="bi bi-shield-lock me-1"></i>Sistema</span>'
+            : (!esDirecto
+                ? '<span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 me-2">General</span>'
+                : `<span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 me-2"><i class="bi bi-person-fill"></i> ${m.destinatario ? m.destinatario.codigo : 'Directo'}</span>`);
+
+        return `
+        <div class="card shadow-sm table-card mb-2 d-flex flex-row p-3 align-items-start ${borderClass}">
+            <i class="bi ${iconClass} fs-4 me-3 mt-1" style="opacity: 0.8;"></i>
             <div class="flex-grow-1">
                 <div class="d-flex justify-content-between align-items-center">
                     <strong class="text-white mb-0" style="font-size: 1.1rem; text-shadow: 0 0 5px rgba(0, 229, 255, 0.2);">${m.titulo}</strong>
-                    <div>
-                        ${!m.destinatario_id
-            ? '<span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 me-2">General</span>'
-            : `<span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 me-2"><i class="bi bi-person-fill"></i> ${m.destinatario ? m.destinatario.codigo : 'Directo'}</span>`}
-                    </div>
+                    <div>${badgeHtml}</div>
                 </div>
-                <p class="mb-1 mt-2 text-white" style="font-size: 0.95rem;">${m.contenido}</p>
+                <p class="mb-1 mt-2 text-white" style="font-size: 0.95rem; white-space: pre-line;">${m.contenido}</p>
                 <small class="text-muted" style="font-size: 0.75rem;"><i class="bi bi-clock me-1"></i>${m.created_at ? new Date(m.created_at).toLocaleString() : ''}</small>
             </div>
             ${hasRole(['admin']) ? `<button class="btn btn-sm btn-outline-danger border-0 py-0 px-2 fs-6 ms-3 align-self-start mt-1" onclick="deleteMensaje(${m.id})" title="Eliminar"><i class="bi bi-trash"></i></button>` : ''}
         </div>
-    `).join('');
+    `;
+    }).join('');
 
     renderPaginationControls('mensajesPagination', state.data.length, state.size, state.page, 'changeMensajesPage');
 }

@@ -9,7 +9,8 @@
 async function login(codigo, password) {
     const data = await apiPost('/auth/login', { codigo, password });
     localStorage.setItem('binglish_token', data.access_token);
-    localStorage.setItem('binglish_refresh_token', data.refresh_token);
+    // El refresh token ahora se maneja automáticamente vía cookies HttpOnly por seguridad.
+
     // Obtener info del usuario autenticado
     const user = await apiGet('/usuarios/me');
     localStorage.setItem('binglish_user', JSON.stringify(user));
@@ -17,11 +18,18 @@ async function login(codigo, password) {
 }
 
 /**
- * Cierra la sesión y redirige al index.
+ * Cierra la sesión, destruye la cookie de refresh y redirige al index.
  */
-function logout() {
+async function logout() {
+    try {
+        // Pedirle al backend que destruya la cookie HttpOnly
+        await apiPost('/auth/logout', {});
+    } catch (e) {
+        console.error("Aviso: No se pudo conectar con el servidor para hacer logout", e);
+    }
+
     localStorage.removeItem('binglish_token');
-    localStorage.removeItem('binglish_refresh_token');
+    localStorage.removeItem('binglish_refresh_token'); // Limpieza por si quedó de la versión anterior
     localStorage.removeItem('binglish_user');
     window.location.href = 'index.html';
 }

@@ -213,3 +213,115 @@
     });
 
 })();
+
+/* ============================================================
+   LÓGICA DEL EQUIPO (STAFF)
+   ============================================================ */
+
+const staff = [
+    { id: 1, name: "Maria", role: "Cargo / Rol", category: "coordinacion", bio: "Licenciada en Administración de Empresas, TS. Informática, encargada del área comercial y administrativa.", email: "nacoruziel@gmail.com", initials: "M", featured: true, image: "assets/miembros/maria.jpg" },
+    { id: 2, name: "Nombre del Miembro", role: "Cargo / Rol", category: "docente", bio: "Breve descripción o frase inspiradora sobre este profesional y su dedicación a la enseñanza.", email: "nacoruziel@gmail.com", initials: "N", image: "https://via.placeholder.com/150" },
+    { id: 3, name: "Nombre del Miembro", role: "Cargo / Rol", category: "docente", bio: "Breve descripción o frase inspiradora sobre este profesional y su dedicación a la enseñanza.", email: "nacoruziel@gmail.com", initials: "N", image: "https://via.placeholder.com/150" },
+    { id: 4, name: "Nombre del Miembro", role: "Cargo / Rol", category: "docente", bio: "Breve descripción o frase inspiradora sobre este profesional y su dedicación a la enseñanza.", email: "nacoruziel@gmail.com", initials: "N", image: "https://via.placeholder.com/150" },
+    { id: 5, name: "Nombre del Miembro", role: "Cargo / Rol", category: "administrativo", bio: "Breve descripción o frase inspiradora sobre este profesional y su dedicación a la enseñanza.", email: "nacoruziel@gmail.com", initials: "N", image: "https://via.placeholder.com/150" },
+    { id: 6, name: "Nombre del Miembro", role: "Cargo / Rol", category: "administrativo", bio: "Breve descripción o frase inspiradora sobre este profesional y su dedicación a la enseñanza.", email: "nacoruziel@gmail.com", initials: "N", image: "https://via.placeholder.com/150" },
+    { id: 7, name: "Nombre del Miembro", role: "Cargo / Rol", category: "administrativo", bio: "Breve descripción o frase inspiradora sobre este profesional y su dedicación a la enseñanza.", email: "nacoruziel@gmail.com", initials: "N", image: "https://via.placeholder.com/150" },
+    { id: 8, name: "Nombre del Miembro", role: "Cargo / Rol", category: "docente", bio: "Breve descripción o frase inspiradora sobre este profesional y su dedicación a la enseñanza.", email: "nacoruziel@gmail.com", initials: "N", image: "https://via.placeholder.com/150" }
+];
+
+let currentFilter = 'todos';
+
+window.loadPhoto = function (event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        const img = document.getElementById('groupPhotoImg');
+        if (img) img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+};
+
+window.setFilter = function (cat, btn) {
+    currentFilter = cat;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    renderStaff();
+};
+
+function updateCounts() {
+    ['todos', 'docente', 'administrativo', 'coordinacion'].forEach(cat => {
+        const count = staff.filter(p => cat === 'todos' || p.category === cat).length;
+        const el = document.getElementById('count-' + cat);
+        if (el) el.textContent = count;
+    });
+}
+
+function renderStaff() {
+    const container = document.getElementById('staffContainer');
+    if (!container) return;
+
+    const filtered = staff.filter(p => currentFilter === 'todos' || p.category === currentFilter);
+
+    if (filtered.length === 0) {
+        container.innerHTML = '<div class="no-results"><i class="bi bi-people" style="font-size:32px;display:block;margin-bottom:8px;color:var(--text-muted)"></i>No hay miembros en esta categoría.</div>';
+        return;
+    }
+
+    const featured = currentFilter === 'todos' ? filtered.filter(p => p.featured) : [];
+    const rest = currentFilter === 'todos' ? filtered.filter(p => !p.featured) : filtered;
+
+    let html = '';
+
+    if (featured.length > 0) {
+        html += '<p class="section-label">Dirección</p>';
+        featured.forEach(p => {
+            let photoHtml = p.image && p.image !== '' ? `<img src='${p.image}' alt='${p.name}'>` : p.initials;
+            html += `<div class="team-featured-card" data-aos="fade-up" data-aos-duration="600">
+                <div class="team-featured-photo">${photoHtml}</div>
+                <div class="team-featured-info">
+                    <span class="featured-badge">Dirección</span>
+                    <p class="featured-name">${p.name}</p>
+                    <p class="featured-role">${p.role}</p>
+                    <p class="featured-bio">${p.bio}</p>
+                    <a href="mailto:${p.email}" class="featured-email"><i class="bi bi-envelope"></i>${p.email}</a>
+                </div>
+            </div>`;
+        });
+        if (rest.length > 0) html += '<p class="section-label mt-5">Equipo</p>';
+    }
+
+    if (rest.length > 0) {
+        html += '<div class="row g-4 justify-content-center">';
+        rest.forEach((p, index) => {
+            let delay = 100 + (index * 100);
+            let photoHtml = p.image && p.image !== '' ? `<img src='${p.image}' alt='${p.name}' class='team-img'>` : p.initials;
+            html += `
+                <div class="col-md-6 col-lg-3" data-aos="zoom-in" data-aos-duration="600" data-aos-delay="${delay}">
+                    <div class="team-card">
+                        <div class="team-img-wrapper">
+                            ${photoHtml}
+                        </div>
+                        <h5>${p.name}</h5>
+                        <p class="team-role">${p.role}</p>
+                        <p class="team-desc">${p.bio}</p>
+                        <div class="d-inline-flex flex-column mt-3 w-100 align-items-center">
+                            <div class="text-start">
+                                <a href="mailto:${p.email}" target="_blank" class="team-text-link mb-0">
+                                    <i class="bi bi-envelope"></i>${p.email}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+        });
+        html += '</div>';
+    }
+
+    container.innerHTML = html;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    updateCounts();
+    renderStaff();
+});

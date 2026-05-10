@@ -3,7 +3,7 @@
    ============================================================ */
 
 /* ---------- Google Fonts ---------- */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800&family=Dancing+Script:wght@700&display=swap');
 
 /* ---------- Custom Fonts ---------- */
 @font-face {
@@ -115,8 +115,7 @@ body {
 }
 
 .welcome-text {
-    font-family: var(--font-heading);
-    font-style: italic;
+    font-family: 'Dancing Script', cursive;
     font-size: clamp(2.8rem, 8vw, 6rem);
     font-weight: 800;
     letter-spacing: 0.15em;
@@ -124,6 +123,7 @@ body {
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
+    -webkit-text-stroke: 2px rgba(255, 255, 255, 0.9);
     opacity: 0;
     transform: translateY(30px) scale(0.9);
     animation: welcomeTextIn 1s cubic-bezier(0.22, 1, 0.36, 1) 0.3s forwards;
@@ -764,6 +764,211 @@ a:hover {
     border: 1px solid rgba(79, 195, 247, 0.3);
     color: var(--accent-blue);
     box-shadow: 0 0 20px rgba(79, 195, 247, 0.15);
+}
+
+/* ============================================================
+   TEAM CARDS — Premium Glassmorphism
+   ============================================================ */
+.team-card {
+    background: var(--glass);
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    border-radius: var(--radius-xl);
+    padding: 2.5rem 2rem;
+    border: 1px solid var(--glass-border);
+    transition: var(--transition);
+    height: 100%;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.team-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 120px;
+    background: linear-gradient(180deg, rgba(0, 229, 255, 0.08) 0%, transparent 100%);
+    z-index: 0;
+}
+
+.team-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-lg), 0 0 30px rgba(0, 229, 255, 0.1);
+    border-color: rgba(0, 229, 255, 0.3);
+    background: var(--surface-hover);
+}
+
+.team-img-wrapper {
+    width: 140px;
+    height: 140px;
+    margin: 0 auto 1.5rem;
+    border-radius: 50%;
+    padding: 4px;
+    background: var(--gradient-primary);
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    transition: var(--transition);
+}
+
+.team-card:hover .team-img-wrapper {
+    transform: scale(1.05) rotate(3deg);
+    box-shadow: 0 0 25px rgba(0, 229, 255, 0.4);
+}
+
+.team-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--bg-secondary);
+    border: 3px solid var(--bg);
+}
+
+.team-card h5 {
+    color: #fff;
+    margin-bottom: 0.3rem;
+    font-size: 1.3rem;
+    position: relative;
+    z-index: 1;
+}
+
+.team-role {
+    color: var(--accent);
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 1;
+}
+
+.team-desc {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+.team-social {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    position: relative;
+    z-index: 1;
+}
+
+.team-social a {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--glass-border);
+    transition: var(--transition);
+}
+
+.team-social a:hover {
+    background: var(--accent);
+    color: #000;
+    border-color: var(--accent);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 229, 255, 0.3);
+}
+
+.team-contact-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-pill);
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    transition: var(--transition);
+    text-decoration: none;
+    margin-bottom: 0.5rem;
+}
+
+.team-contact-badge:hover {
+    background: rgba(0, 229, 255, 0.1);
+    border-color: var(--accent);
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 229, 255, 0.2);
+}
+
+.team-contact-badge i {
+    color: var(--accent);
+}
+
+.team-text-link {
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: var(--transition);
+    font-size: 0.85rem;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.team-text-link:hover {
+    color: var(--accent);
+}
+
+.team-text-link i {
+    color: var(--accent);
+    margin-right: 0.5rem;
+    font-size: 1rem;
+}
+
+/* ============================================================
+   GROUP PHOTO CARDS
+   ============================================================ */
+.group-photo-card {
+    background: var(--glass);
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    border-radius: var(--radius-xl);
+    padding: 1.5rem;
+    border: 1px solid var(--glass-border);
+    transition: var(--transition);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    margin-top: 3rem;
+}
+
+.group-photo-card:hover {
+    box-shadow: var(--shadow-lg), 0 0 30px rgba(0, 229, 255, 0.1);
+    border-color: rgba(0, 229, 255, 0.3);
+    background: var(--surface-hover);
+}
+
+.group-photo-img {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-lg);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    object-fit: cover;
+    max-height: 500px;
+}
+
+.group-photo-caption {
+    margin-top: 1.5rem;
+    color: var(--text-secondary);
+    font-size: 1rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
 }
 
 /* ============================================================
@@ -1739,3 +1944,82 @@ div:where(.swal2-container) button:where(.swal2-confirm),
 div:where(.swal2-container) button:where(.swal2-cancel) {
     border-radius: 10px !important;
 }
+/* ======================================
+   NUEVO EQUIPO DINAMICO - GLASSMORPHISM
+   ====================================== */
+.filters-container { gap: 8px; margin-bottom: 20px; }
+.filter-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-muted);
+    padding: 8px 20px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+.filter-btn:hover {
+    border-color: var(--accent-color);
+    color: var(--text-color);
+    background: rgba(255, 255, 255, 0.1);
+}
+.filter-btn.active {
+    background: var(--accent-color);
+    color: #fff;
+    border-color: var(--accent-color);
+}
+.count-badge { font-size: 11px; opacity: 0.8; margin-left: 6px; }
+
+.team-featured-card {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    background: var(--surface);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+    transition: var(--transition);
+}
+.team-featured-card:hover {
+    border-color: var(--accent-color);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+.team-featured-photo {
+    width: 130px;
+    height: 130px;
+    border-radius: var(--radius-md);
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    color: var(--accent-color);
+    flex-shrink: 0;
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+}
+.team-featured-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.team-featured-info { display: flex; flex-direction: column; justify-content: center; text-align: left; }
+.featured-badge { display: inline-block; background: rgba(255,255,255,0.1); color: var(--accent-color); font-size: 11px; padding: 4px 12px; border-radius: 999px; margin-bottom: 8px; width: fit-content; text-transform: uppercase; font-weight: 600; border: 1px solid var(--accent-color); }
+.featured-name { font-size: 1.3rem; font-weight: 600; color: var(--text-color); margin: 0 0 4px; }
+.featured-role { font-size: 0.9rem; color: var(--accent-color); font-weight: 500; margin: 0 0 8px; }
+.featured-bio { font-size: 0.95rem; color: var(--text-muted); line-height: 1.5; margin: 0 0 12px; }
+.featured-email { font-size: 0.9rem; color: var(--text-muted); text-decoration: none; display: flex; align-items: center; gap: 6px; }
+.featured-email i { color: var(--accent-color); }
+
+@media (max-width: 768px) {
+    .team-featured-card { flex-direction: column; text-align: center; }
+    .team-featured-info { align-items: center; text-align: center; }
+}
+
+.section-label { font-size: 13px; font-weight: 600; letter-spacing: 2px; color: var(--text-muted); text-transform: uppercase; margin: 2rem 0 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; }
+.no-results { text-align: center; color: var(--text-muted); padding: 3rem; background: var(--surface); border-radius: var(--radius-lg); border: 1px solid var(--border-color); backdrop-filter: blur(10px); }
