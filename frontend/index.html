@@ -95,7 +95,7 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#equipo">
-                            <i class="bi bi-person-badge me-1"></i>Equipo
+                            <i class="bi bi-person-badge me-1"></i>Personal
                         </a>
                     </li>
                     <li class="nav-item">
@@ -251,14 +251,9 @@
             <div class="row mb-4" data-aos="fade-up" data-aos-duration="600" data-aos-delay="300">
                 <div class="col-12">
                     <div class="d-flex justify-content-center flex-wrap filters-container">
-                        <button class="filter-btn active" onclick="setFilter('todos', this)">Todos <span
-                                class="count-badge" id="count-todos"></span></button>
-                        <button class="filter-btn" onclick="setFilter('docente', this)">Docentes <span
-                                class="count-badge" id="count-docente"></span></button>
-                        <button class="filter-btn" onclick="setFilter('administrativo', this)">Administrativos <span
-                                class="count-badge" id="count-administrativo"></span></button>
-                        <button class="filter-btn" onclick="setFilter('coordinacion', this)">Coordinación <span
-                                class="count-badge" id="count-coordinacion"></span></button>
+                        <button class="filter-btn active" onclick="setFilter('todos', this)">Todos</button>
+                        <button class="filter-btn" onclick="setFilter('docente', this)">Docentes</button>
+                        <button class="filter-btn" onclick="setFilter('administrativo', this)">Administrativos</button>
                     </div>
                 </div>
             </div>
@@ -773,13 +768,16 @@
 
     <!-- AOS (Animate On Scroll) -->
     <script src="libs/aos.js"></script>
+    <script src="libs/aos.js"></script>
     <script>
-        AOS.init({
-            duration: 800,
-            easing: 'ease-in-out',
-            once: true,
-            offset: 50
-        });
+        setTimeout(() => {
+            AOS.init({
+                duration: 800,
+                easing: 'ease-in-out',
+                once: true,
+                offset: 50
+            });
+        }, 2800);
     </script>
 
     <!-- Welcome Overlay Cleanup -->
@@ -789,12 +787,11 @@
             _wo.addEventListener('animationend', (e) => {
                 if (e.animationName === 'welcomeFadeOut') _wo.remove();
             });
-            setTimeout(() => { if (_wo.parentNode) _wo.remove(); }, 2500);
+            setTimeout(() => { if (_wo.parentNode) _wo.remove(); }, 4500);
         }
     </script>
 
     <!-- Custom JS -->
-    <script src="js/convenios.js"></script>
     <script src="js/main.js"></script>
 
 </body>

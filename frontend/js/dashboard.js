@@ -1201,38 +1201,77 @@ async function renderCursos(container) {
 window.paginationState = window.paginationState || {};
 
 function paginateArray(items, page, pageSize) {
-    const start = (page - 1) * pageSize;
-    return items.slice(start, start + pageSize);
+    // Para scroll infinito, expandimos la vista en lugar de paginar (0 hasta page * pageSize)
+    const end = page * pageSize;
+    return items.slice(0, end);
 }
 
 function renderPaginationControls(containerId, totalItems, pageSize, currentPage, onPageChangeCallback) {
     const totalPages = Math.ceil(totalItems / pageSize) || 1;
     const container = document.getElementById(containerId);
     if (!container) return;
-    if (totalPages <= 1) { container.innerHTML = ''; return; }
 
-    let html = `<nav><ul class="pagination pagination-sm justify-content-center mb-0 gap-1 pb-3">`;
-    html += `<li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
-                <button class="page-link shadow-none rounded-pill border-0 bg-transparent text-secondary" onclick="${onPageChangeCallback}(${currentPage - 1})">Anterior</button>
-             </li>`;
-    for (let i = 1; i <= totalPages; i++) {
-        if (totalPages > 7) {
-            if (i !== 1 && i !== totalPages && Math.abs(i - currentPage) > 1) {
-                if (i === 2 && currentPage > 3) html += `<li class="page-item disabled"><span class="page-link border-0 bg-transparent text-secondary fw-bold">...</span></li>`;
-                if (i === totalPages - 1 && currentPage < totalPages - 2) html += `<li class="page-item disabled"><span class="page-link border-0 bg-transparent text-secondary fw-bold">...</span></li>`;
-                continue;
-            }
-        }
-        let activeClass = i === currentPage ? 'active rounded-circle' : 'border-0 bg-transparent text-secondary rounded-circle';
-        html += `<li class="page-item">
-                    <button class="page-link shadow-none ${activeClass} px-3 mx-1" onclick="${onPageChangeCallback}(${i})">${i}</button>
-                 </li>`;
+    // Recuperar el contenedor externo si lo habíamos metido dentro antes
+    let tableResponsive = container.closest('.table-responsive');
+    if (tableResponsive) {
+        tableResponsive.parentNode.insertBefore(container, tableResponsive.nextSibling);
+    } else {
+        // Asumimos que normalmente está justo después del table-responsive
+        tableResponsive = container.previousElementSibling;
     }
-    html += `<li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
-                <button class="page-link shadow-none rounded-pill border-0 bg-transparent text-secondary" onclick="${onPageChangeCallback}(${currentPage + 1})">Siguiente</button>
-             </li>`;
-    html += `</ul></nav>`;
-    container.innerHTML = html;
+
+    if (tableResponsive && tableResponsive.classList.contains('table-responsive')) {
+        // Garantizar que la tabla tenga scroll interno (altura reducida para forzar scroll con 6 items)
+        tableResponsive.style.maxHeight = '350px';
+        tableResponsive.style.overflowY = 'auto';
+        tableResponsive.style.overflowX = 'auto';
+
+        // 1. Mostrar texto '# Restantes' fuera de la tabla (lado izquierdo inferior)
+        const currentShowing = Math.min(currentPage * pageSize, totalItems);
+        const remaining = Math.max(0, totalItems - currentShowing);
+
+        container.className = 'd-flex justify-content-start pt-2 px-1';
+        container.innerHTML = `<span class="text-secondary small fw-bold" style="letter-spacing: 0.5px;">${remaining} Restantes</span>`;
+
+        // 2. Crear/Buscar centinela interno para el spinner
+        let sentinel = tableResponsive.querySelector('.infinite-sentinel');
+        if (!sentinel) {
+            sentinel = document.createElement('div');
+            sentinel.className = 'infinite-sentinel text-center py-3 w-100 mt-2';
+            tableResponsive.appendChild(sentinel);
+        }
+
+        // Si ya no hay más páginas, ocultamos el spinner y desconectamos el observer
+        if (currentPage >= totalPages || totalItems === 0) {
+            sentinel.innerHTML = '';
+            if (window._infiniteObservers && window._infiniteObservers[containerId]) {
+                window._infiniteObservers[containerId].disconnect();
+            }
+            return;
+        }
+
+        // Mostrar solo el spinner en el centinela interno
+        sentinel.innerHTML = `<div class="spinner-border text-info" role="status" style="width: 1.5rem; height: 1.5rem; opacity: 0.7;"></div>`;
+
+        // 3. Lógica del IntersectionObserver
+        window._infiniteObservers = window._infiniteObservers || {};
+        if (window._infiniteObservers[containerId]) {
+            window._infiniteObservers[containerId].disconnect();
+        }
+
+        window._infiniteObservers[containerId] = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting) {
+                window._infiniteObservers[containerId].disconnect();
+                setTimeout(() => {
+                    if (typeof window[onPageChangeCallback] === 'function') {
+                        window[onPageChangeCallback](currentPage + 1);
+                    }
+                }, 400);
+            }
+        }, { root: tableResponsive, rootMargin: '0px', threshold: 0.1 });
+
+        window._infiniteObservers[containerId].observe(sentinel);
+    }
 }
 
 window.changeCursosPage = (page) => {
@@ -3892,43 +3931,49 @@ function _internalRenderBackups() {
         return;
     }
 
-    const pageData = paginateArray(state.data, state.page, state.size);
-    tableContainer.innerHTML = `
-        <div class="table-responsive">
-            <table class="table table-sm table-hover text-nowrap align-middle mb-0">
-                <thead>
-                    <tr>
-                        <th class="text-uppercase small fw-bold text-muted"><i class="bi bi-file-earmark-code me-1"></i>Archivo</th>
-                        <th class="text-uppercase small fw-bold text-muted"><i class="bi bi-hdd me-1"></i>Tamaño</th>
-                        <th class="text-uppercase small fw-bold text-muted"><i class="bi bi-calendar3 me-1"></i>Fecha y hora</th>
-                        <th class="text-end text-uppercase small fw-bold text-muted">Acción</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${pageData.map(b => `
+    let tbody = tableContainer.querySelector('tbody');
+    if (!tbody) {
+        // Renderizar estructura solo si no existe para no resetear el scroll
+        tableContainer.innerHTML = `
+            <div class="table-responsive">
+                <table class="table table-sm table-hover text-nowrap align-middle mb-0">
+                    <thead>
                         <tr>
-                            <td><code class="small px-2 py-1 bg-dark bg-opacity-10 rounded">${b.filename}</code></td>
-                            <td><span class="badge bg-secondary bg-opacity-25 text-light">${b.size_kb} KB</span></td>
-                            <td class="small text-white-50">${new Date(b.created).toLocaleString('es-BO')}</td>
-                            <td class="text-end">
-                                <a href="${API_BASE}/backups/download/${b.filename}" 
-                                   class="btn btn-sm btn-outline-primary" 
-                                   download="${b.filename}" title="Descargar">
-                                    <i class="bi bi-cloud-download"></i>
-                                </a>
-                                    <button class="btn btn-sm btn-outline-danger" 
-                                            title="Eliminar"
-                                            onclick="confirmDeleteBackup('${b.filename}')">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
+                            <th class="text-uppercase small fw-bold text-muted"><i class="bi bi-file-earmark-code me-1"></i>Archivo</th>
+                            <th class="text-uppercase small fw-bold text-muted"><i class="bi bi-hdd me-1"></i>Tamaño</th>
+                            <th class="text-uppercase small fw-bold text-muted"><i class="bi bi-calendar3 me-1"></i>Fecha y hora</th>
+                            <th class="text-end text-uppercase small fw-bold text-muted">Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
                 </table>
             </div>
             <div id="backupsPagination" class="mt-3"></div>
         `;
+        tbody = tableContainer.querySelector('tbody');
+    }
+
+    const pageData = paginateArray(state.data, state.page, state.size);
+    tbody.innerHTML = pageData.map(b => `
+        <tr>
+            <td><code class="small px-2 py-1 bg-dark bg-opacity-10 rounded">${b.filename}</code></td>
+            <td><span class="badge bg-secondary bg-opacity-25 text-light">${b.size_kb} KB</span></td>
+            <td class="small text-white-50">${new Date(b.created).toLocaleString('es-BO')}</td>
+            <td class="text-end">
+                <a href="${API_BASE}/backups/download/${b.filename}" 
+                   class="btn btn-sm btn-outline-primary" 
+                   download="${b.filename}" title="Descargar">
+                    <i class="bi bi-cloud-download"></i>
+                </a>
+                <button class="btn btn-sm btn-outline-danger" 
+                        title="Eliminar"
+                        onclick="confirmDeleteBackup('${b.filename}')">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </td>
+        </tr>
+    `).join('');
+
     renderPaginationControls('backupsPagination', state.data.length, state.size, state.page, 'changeBackupsPage');
 }
 

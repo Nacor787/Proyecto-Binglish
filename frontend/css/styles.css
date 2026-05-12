@@ -102,87 +102,105 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #020614, #0a1628 50%, #050510);
-    animation: welcomeFadeOut 0.7s ease-in-out 2s forwards;
+    /* Fondo 95% opaco para que se intuya el Vanta.js borroso detrás */
+    background: radial-gradient(circle at center, rgba(10, 22, 40, 0.96) 0%, rgba(2, 6, 20, 0.98) 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    animation: welcomeFadeOut 1.2s cubic-bezier(0.7, 0, 0.3, 1) 2.8s forwards;
     pointer-events: none;
+    will-change: opacity, transform;
 }
 
 .welcome-content {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1rem;
+    gap: 0.2rem;
 }
 
 .welcome-text {
     font-family: 'Dancing Script', cursive;
-    font-size: clamp(2.8rem, 8vw, 6rem);
-    font-weight: 800;
-    letter-spacing: 0.15em;
-    background: linear-gradient(135deg, #ffffff 0%, #b0d4ff 40%, #00E5FF 70%, #00B8D4 100%);
+    background: linear-gradient(to bottom, #ffffff 10%, #b0d4ff 50%, #00E5FF 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    -webkit-text-stroke: 2px rgba(255, 255, 255, 0.9);
+    filter: drop-shadow(0 0 15px rgba(0, 229, 255, 0.3));
     opacity: 0;
-    transform: translateY(30px) scale(0.9);
-    animation: welcomeTextIn 1s cubic-bezier(0.22, 1, 0.36, 1) 0.3s forwards;
-    text-shadow: none;
-    filter: drop-shadow(0 0 30px rgba(0, 229, 255, 0.3));
+    /* Añadido scale para efecto de profundidad/aterrizaje */
+    transform: translateY(25px) scale(0.92);
+    animation: welcomeTextIn 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    will-change: transform, opacity;
+}
+
+#welcomeTextWelcome {
+    font-size: clamp(3rem, 8vw, 5.5rem);
+    animation-delay: 0.2s;
+}
+
+#welcomeTextTo {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.8rem;
+    font-weight: 400;
+    letter-spacing: 0.3em;
+    text-transform: lowercase;
+    background: none;
+    -webkit-text-fill-color: #b0d4ff;
+    opacity: 0;
+    margin: -10px 0;
+    transform: translateY(20px) scale(0.95);
+    animation-delay: 0.6s;
+}
+
+#welcomeTextBinglish {
+    font-size: clamp(3.2rem, 9vw, 6rem);
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    animation-delay: 0.9s;
+    /* Extra glow para la palabra principal */
+    filter: drop-shadow(0 0 25px rgba(0, 229, 255, 0.4));
 }
 
 .welcome-line {
     width: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, #00E5FF, transparent);
-    border-radius: 2px;
-    animation: welcomeLineExpand 0.8s cubic-bezier(0.22, 1, 0.36, 1) 1.1s forwards;
+    height: 1px;
+    margin-top: 25px;
+    background: linear-gradient(90deg, transparent, #00E5FF, #ffffff, #00E5FF, transparent);
+    animation: welcomeLineExpand 1.2s cubic-bezier(0.22, 1, 0.36, 1) 1.5s forwards;
     box-shadow: 0 0 15px rgba(0, 229, 255, 0.5);
+    will-change: width;
 }
 
-.welcome-bold {
-    font-weight: 900;
-}
-
-.welcome-light {
-    font-weight: 400;
-}
-
-/* Welcome Text Slide Up + Fade In */
+/* Keyframes */
 @keyframes welcomeTextIn {
-    0% {
-        opacity: 0;
-        transform: translateY(30px) scale(0.9);
-    }
-
-    100% {
+    to {
         opacity: 1;
         transform: translateY(0) scale(1);
     }
 }
 
-/* Decorative Line Expand from Center */
 @keyframes welcomeLineExpand {
-    0% {
-        width: 0;
+    50% {
+        opacity: 1;
     }
 
     100% {
-        width: min(280px, 50vw);
+        width: 180px;
+        opacity: 0.8;
     }
 }
 
-/* Overlay Fade Out + Slide Up */
 @keyframes welcomeFadeOut {
     0% {
         opacity: 1;
-        transform: translateY(0);
+        transform: scale(1);
     }
 
     100% {
         opacity: 0;
-        transform: translateY(-20px);
         visibility: hidden;
+        transform: scale(1.05);
+        /* Ligero zoom hacia la pantalla al desaparecer */
     }
 }
 
@@ -774,13 +792,15 @@ a:hover {
     backdrop-filter: blur(20px) saturate(150%);
     -webkit-backdrop-filter: blur(20px) saturate(150%);
     border-radius: var(--radius-xl);
-    padding: 2.5rem 2rem;
+    padding: 0;
     border: 1px solid var(--glass-border);
     transition: var(--transition);
     height: 100%;
     text-align: center;
     position: relative;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 .team-card::before {
@@ -792,6 +812,7 @@ a:hover {
     height: 120px;
     background: linear-gradient(180deg, rgba(0, 229, 255, 0.08) 0%, transparent 100%);
     z-index: 0;
+    pointer-events: none;
 }
 
 .team-card:hover {
@@ -802,38 +823,43 @@ a:hover {
 }
 
 .team-img-wrapper {
-    width: 140px;
-    height: 140px;
-    margin: 0 auto 1.5rem;
-    border-radius: 50%;
-    padding: 4px;
-    background: var(--gradient-primary);
+    width: 100%;
+    height: 180px;
+    margin: 0;
+    border-radius: 0;
+    padding: 0;
     position: relative;
     z-index: 1;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-    transition: var(--transition);
+    overflow: hidden;
 }
 
-.team-card:hover .team-img-wrapper {
-    transform: scale(1.05) rotate(3deg);
-    box-shadow: 0 0 25px rgba(0, 229, 255, 0.4);
+.team-card:hover .team-img {
+    transform: scale(1.05);
 }
 
 .team-img {
     width: 100%;
     height: 100%;
-    border-radius: 50%;
+    border-radius: 0;
     object-fit: cover;
-    background: var(--bg-secondary);
-    border: 3px solid var(--bg);
+    border: none;
+    transition: transform 0.4s ease;
+}
+
+.team-card-body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    justify-content: flex-start;
+    position: relative;
+    z-index: 1;
 }
 
 .team-card h5 {
     color: #fff;
     margin-bottom: 0.3rem;
     font-size: 1.3rem;
-    position: relative;
-    z-index: 1;
 }
 
 .team-role {
@@ -843,16 +869,29 @@ a:hover {
     text-transform: uppercase;
     letter-spacing: 1px;
     margin-bottom: 1rem;
-    position: relative;
-    z-index: 1;
 }
 
 .team-desc {
     color: var(--text-secondary);
     font-size: 0.95rem;
-    margin-bottom: 1.5rem;
-    position: relative;
-    z-index: 1;
+    margin-bottom: 0;
+}
+
+.team-card-email {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    margin-top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.team-card:hover .team-card-email {
+    max-height: 40px;
+    opacity: 1;
+    margin-top: 1rem;
 }
 
 .team-social {
@@ -1944,10 +1983,15 @@ div:where(.swal2-container) button:where(.swal2-confirm),
 div:where(.swal2-container) button:where(.swal2-cancel) {
     border-radius: 10px !important;
 }
+
 /* ======================================
    NUEVO EQUIPO DINAMICO - GLASSMORPHISM
    ====================================== */
-.filters-container { gap: 8px; margin-bottom: 20px; }
+.filters-container {
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
 .filter-btn {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -1959,17 +2003,24 @@ div:where(.swal2-container) button:where(.swal2-cancel) {
     transition: all 0.3s ease;
     backdrop-filter: blur(10px);
 }
+
 .filter-btn:hover {
     border-color: var(--accent-color);
     color: var(--text-color);
     background: rgba(255, 255, 255, 0.1);
 }
+
 .filter-btn.active {
     background: var(--accent-color);
     color: #fff;
     border-color: var(--accent-color);
 }
-.count-badge { font-size: 11px; opacity: 0.8; margin-left: 6px; }
+
+.count-badge {
+    font-size: 11px;
+    opacity: 0.8;
+    margin-left: 6px;
+}
 
 .team-featured-card {
     display: flex;
@@ -1984,16 +2035,18 @@ div:where(.swal2-container) button:where(.swal2-cancel) {
     -webkit-backdrop-filter: blur(var(--blur));
     transition: var(--transition);
 }
+
 .team-featured-card:hover {
     border-color: var(--accent-color);
     transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
+
 .team-featured-photo {
     width: 130px;
     height: 130px;
     border-radius: var(--radius-md);
-    background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2003,23 +2056,108 @@ div:where(.swal2-container) button:where(.swal2-cancel) {
     border: 1px solid var(--border-color);
     overflow: hidden;
 }
+
 .team-featured-photo img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
-.team-featured-info { display: flex; flex-direction: column; justify-content: center; text-align: left; }
-.featured-badge { display: inline-block; background: rgba(255,255,255,0.1); color: var(--accent-color); font-size: 11px; padding: 4px 12px; border-radius: 999px; margin-bottom: 8px; width: fit-content; text-transform: uppercase; font-weight: 600; border: 1px solid var(--accent-color); }
-.featured-name { font-size: 1.3rem; font-weight: 600; color: var(--text-color); margin: 0 0 4px; }
-.featured-role { font-size: 0.9rem; color: var(--accent-color); font-weight: 500; margin: 0 0 8px; }
-.featured-bio { font-size: 0.95rem; color: var(--text-muted); line-height: 1.5; margin: 0 0 12px; }
-.featured-email { font-size: 0.9rem; color: var(--text-muted); text-decoration: none; display: flex; align-items: center; gap: 6px; }
-.featured-email i { color: var(--accent-color); }
 
-@media (max-width: 768px) {
-    .team-featured-card { flex-direction: column; text-align: center; }
-    .team-featured-info { align-items: center; text-align: center; }
+.team-featured-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: left;
 }
 
-.section-label { font-size: 13px; font-weight: 600; letter-spacing: 2px; color: var(--text-muted); text-transform: uppercase; margin: 2rem 0 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; }
-.no-results { text-align: center; color: var(--text-muted); padding: 3rem; background: var(--surface); border-radius: var(--radius-lg); border: 1px solid var(--border-color); backdrop-filter: blur(10px); }
+.featured-badge {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--accent-color);
+    font-size: 11px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    margin-bottom: 8px;
+    width: fit-content;
+    text-transform: uppercase;
+    font-weight: 600;
+    border: 1px solid var(--accent-color);
+}
+
+.featured-name {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin: 0 0 4px;
+}
+
+.featured-role {
+    font-size: 0.9rem;
+    color: var(--accent-color);
+    font-weight: 500;
+    margin: 0 0 8px;
+}
+
+.featured-bio {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin: 0 0 12px;
+}
+
+.featured-email {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    margin-top: 0;
+}
+
+.team-featured-card:hover .featured-email {
+    max-height: 40px;
+    opacity: 1;
+    margin-top: 8px;
+}
+
+.featured-email i {
+    color: var(--accent-color);
+}
+
+@media (max-width: 768px) {
+    .team-featured-card {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .team-featured-info {
+        align-items: center;
+        text-align: center;
+    }
+}
+
+.section-label {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin: 2rem 0 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 8px;
+}
+
+.no-results {
+    text-align: center;
+    color: var(--text-muted);
+    padding: 3rem;
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    backdrop-filter: blur(10px);
+}

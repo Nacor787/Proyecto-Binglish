@@ -9,7 +9,7 @@ const IS_LOCAL = window.location.hostname === 'localhost' || window.location.hos
 
 // Configuración para Cloudflare Tunnel + Nginx
 // Nginx en producción se encarga de recibir las peticiones en /apib
-const API_BASE = IS_LOCAL ? 'http://localhost:8000/api' : '/api';
+const API_BASE = IS_LOCAL ? 'http://localhost:8000' : '/api';
 
 /**
  * Obtiene el token JWT almacenado en localStorage.
