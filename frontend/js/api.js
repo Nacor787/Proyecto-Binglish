@@ -117,10 +117,14 @@ async function apiFetch(endpoint, options = {}) {
         isRefreshing = true;
 
         try {
-            // Intentar renovar token (el navegador enviará la cookie automáticamente gracias a credentials: 'include')
+            // Intentar renovar token usando el refresh_token guardado en localStorage
+            const storedRefreshToken = localStorage.getItem('binglish_refresh_token');
+            if (!storedRefreshToken) throw new Error('No hay refresh token');
+
             const refreshRes = await fetch(`${API_BASE}/auth/refresh`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ refresh_token: storedRefreshToken }),
                 credentials: 'include',
                 mode: 'cors'
             });
@@ -129,6 +133,9 @@ async function apiFetch(endpoint, options = {}) {
 
             const data = await refreshRes.json();
             localStorage.setItem('binglish_token', data.access_token);
+            if (data.refresh_token) {
+                localStorage.setItem('binglish_refresh_token', data.refresh_token);
+            }
 
             // Reanudar todas las peticiones fallidas encoladas
             processQueue(null, data.access_token);

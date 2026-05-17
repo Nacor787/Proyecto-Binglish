@@ -9,7 +9,7 @@
 async function login(codigo, password) {
     const data = await apiPost('/auth/login', { codigo, password });
     localStorage.setItem('binglish_token', data.access_token);
-    // El refresh token ahora se maneja automáticamente vía cookies HttpOnly por seguridad.
+    localStorage.setItem('binglish_refresh_token', data.refresh_token);
 
     // Obtener info del usuario autenticado
     const user = await apiGet('/usuarios/me');

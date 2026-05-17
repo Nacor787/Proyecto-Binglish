@@ -905,7 +905,7 @@
 }
 
 .table-card .table thead th {
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(13, 18, 28, 0.95);
     border: none;
     font-weight: 600;
     font-size: 0.85rem;
@@ -913,6 +913,11 @@
     letter-spacing: 0.5px;
     color: var(--text-muted);
     padding: 1rem 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
 .table-card .table tbody tr:nth-of-type(odd) {

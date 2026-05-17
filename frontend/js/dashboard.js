@@ -1216,8 +1216,15 @@ function renderPaginationControls(containerId, totalItems, pageSize, currentPage
     if (tableResponsive) {
         tableResponsive.parentNode.insertBefore(container, tableResponsive.nextSibling);
     } else {
-        // Asumimos que normalmente está justo después del table-responsive
-        tableResponsive = container.previousElementSibling;
+        // Buscamos el table-responsive que está justo antes del contenedor de paginación
+        let prev = container.previousElementSibling;
+        if (prev) {
+            if (prev.classList.contains('table-responsive')) {
+                tableResponsive = prev;
+            } else {
+                tableResponsive = prev.querySelector('.table-responsive');
+            }
+        }
     }
 
     if (tableResponsive && tableResponsive.classList.contains('table-responsive')) {
@@ -2858,8 +2865,9 @@ async function renderPagos(container) {
                                     <th>Estudiante</th>
                                     <th>Consigna</th>
                                     <th>Monto</th>
-                                    <th>Estado</th>
                                     <th>Último Pago</th>
+                                    <th>Estado</th>
+                                    <th>Deuda</th>
                                     <th>Observación</th>
                                     <th class="text-end">Acciones</th>
                                 </tr>
@@ -2936,6 +2944,10 @@ async function renderPagos(container) {
                                 <select class="form-select" id="pagoConsignaId" required>
                                     <option value="">Selecciona una consigna...</option>
                                 </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Último Pago (Fecha de inicio del plan)</label>
+                                <input type="date" class="form-control" id="pagoFechaInicio">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Observación (opcional)</label>
@@ -3039,12 +3051,37 @@ function _internalRenderPagos() {
     const pageData = paginateArray(state.data, state.page, state.size);
     tbody.innerHTML = pageData.map(p => {
         let badge = '';
+        let deudaInfo = '';
+        const montoBase = p.consigna ? parseFloat(p.consigna.monto) : 0;
+
+        // Calcular deuda acumulada basada en meses transcurridos
+        let deudaAcumulada = montoBase;
+        let mesesTranscurridos = 0;
+        if (p.fecha_inicio && p.estado !== 'pagado') {
+            const fechaInicio = new Date(p.fecha_inicio);
+            const ahora = new Date();
+            const diasTranscurridos = Math.floor((ahora - fechaInicio) / (1000 * 60 * 60 * 24));
+            mesesTranscurridos = Math.max(1, Math.floor(diasTranscurridos / 30));
+            deudaAcumulada = montoBase * mesesTranscurridos;
+        }
+
         if (p.estado === 'pagado') {
             badge = '<span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25"><i class="bi bi-check-circle-fill me-1"></i>Pagado</span>';
         } else if (p.estado === 'vencido') {
             badge = '<span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25"><i class="bi bi-x-circle-fill me-1"></i>Vencido</span>';
         } else {
             badge = '<span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-50"><i class="bi bi-clock-fill me-1"></i>Pendiente</span>';
+        }
+
+        // Build the Deuda cell content
+        let deudaCell = '';
+        if (p.estado === 'pagado') {
+            deudaCell = '<span class="text-muted small">—</span>';
+        } else if (mesesTranscurridos > 1) {
+            const color = p.estado === 'vencido' ? 'text-danger' : 'text-warning';
+            deudaCell = `<span class="fw-bold ${color}">Bs. ${deudaAcumulada.toFixed(2)}</span><br><small class="text-muted">${mesesTranscurridos} mes × Bs. ${montoBase.toFixed(2)}</small>`;
+        } else {
+            deudaCell = `<span class="fw-bold text-warning">Bs. ${montoBase.toFixed(2)}</span><br><small class="text-muted">1 mes</small>`;
         }
 
         let studentInfo = `<code class="text-info">${p.estudiante ? p.estudiante.codigo : p.usuario_id}</code>`;
@@ -3057,13 +3094,13 @@ function _internalRenderPagos() {
                 <td>${studentInfo}</td>
                 <td><span class="badge bg-secondary bg-opacity-25 text-white">${p.consigna ? p.consigna.codigo : p.consigna_id}</span></td>
                 <td class="fw-bold">Bs. ${p.consigna ? parseFloat(p.consigna.monto).toFixed(2) : '—'}</td>
+                <td class="text-muted small">${p.fecha_inicio ? new Date(p.fecha_inicio).toLocaleDateString() : '—'}</td>
                 <td>${badge}</td>
-                <td class="text-muted small">${p.fecha_pago ? new Date(p.fecha_pago).toLocaleDateString() : '—'}</td>
+                <td>${deudaCell}</td>
                 <td class="text-muted small">${p.observacion ? p.observacion : '—'}</td>
                 <td class="text-end">
                     <button class="btn btn-sm btn-outline-info border-0 py-0 px-2 fs-6 me-1" onclick="showAsignarPagoModal(${p.id})" title="Editar"><i class="bi bi-pencil"></i></button>
                     ${p.estado !== 'pagado' ? `<button class="btn btn-sm btn-success py-0 px-2 fs-6 me-1" onclick="marcarPagado(${p.id})" title="Marcar pagado"><i class="bi bi-check2"></i></button>` : ''}
-                    ${p.estado !== 'vencido' && p.estado !== 'pagado' ? `<button class="btn btn-sm btn-warning py-0 px-2 fs-6 me-1 text-white" onclick="marcarVencido(${p.id})" title="Marcar vencido"><i class="bi bi-exclamation-triangle"></i></button>` : ''}
                     <button class="btn btn-sm btn-outline-danger border-0 py-0 px-2 fs-6" onclick="deletePago(${p.id})" title="Eliminar"><i class="bi bi-trash"></i></button>
                 </td>
             </tr>
@@ -3179,12 +3216,23 @@ async function showAsignarPagoModal(id = null) {
         if (p) {
             document.getElementById('pagoId').value = p.id;
 
-            // Extract the numeric part if it already has 'BTRM-'
-            let code = p.estudiante ? p.estudiante.codigo : p.usuario_id;
-            code = String(code).toUpperCase().replace('BTRM-', '');
+            // Strip prefix when pre-filling edit form (admin only types the numeric part)
+            let code = p.estudiante ? p.estudiante.codigo : String(p.usuario_id);
+            code = code.toUpperCase().replace(/^BTRM-/, '');
             document.getElementById('pagoUsuarioCodigo').value = code;
 
             document.getElementById('pagoConsignaId').value = p.consigna_id;
+
+            // Format fecha_inicio to YYYY-MM-DD for the input[type=date]
+            if (p.fecha_inicio) {
+                const date = new Date(p.fecha_inicio);
+                const tzOffset = date.getTimezoneOffset() * 60000; // offset in milliseconds
+                const localISOTime = (new Date(date - tzOffset)).toISOString().split('T')[0];
+                document.getElementById('pagoFechaInicio').value = localISOTime;
+            } else {
+                document.getElementById('pagoFechaInicio').value = '';
+            }
+
             document.getElementById('pagoObservacion').value = p.observacion || '';
             document.getElementById('pagoEstado').value = p.estado;
         }
@@ -3193,6 +3241,10 @@ async function showAsignarPagoModal(id = null) {
     } else {
         document.getElementById('pagoEstadoContainer').classList.add('d-none');
         document.getElementById('pagoEstado').value = 'pendiente';
+        // Auto-select today
+        const today = new Date();
+        const tzOffset = today.getTimezoneOffset() * 60000;
+        document.getElementById('pagoFechaInicio').value = (new Date(today - tzOffset)).toISOString().split('T')[0];
         document.querySelector('#asignarPagoModal .modal-title').innerText = 'Asignar Pago a Estudiante';
     }
 
@@ -3208,12 +3260,20 @@ function initAsignarPagoForm() {
         try {
             const id = document.getElementById('pagoId').value;
             const codigoBase = document.getElementById('pagoUsuarioCodigo').value.trim();
-            const codigoCompleto = codigoBase.toUpperCase().startsWith('BTRM-') ? codigoBase : 'BTRM-' + codigoBase;
+            const codigoCompleto = 'BTRM-' + codigoBase;
+
+            let fechaInicioVal = document.getElementById('pagoFechaInicio').value;
+            // Convert to naive ISO string (no Z) to avoid timezone issues with PostgreSQL
+            if (fechaInicioVal) {
+                // fechaInicioVal is YYYY-MM-DD; send as naive datetime string
+                fechaInicioVal = fechaInicioVal + 'T00:00:00';
+            }
 
             const payload = {
                 usuario_codigo: codigoCompleto,
                 consigna_id: parseInt(document.getElementById('pagoConsignaId').value),
-                observacion: document.getElementById('pagoObservacion').value.trim() || null,
+                fecha_inicio: fechaInicioVal || null,
+                observacion: document.getElementById('pagoObservacion').value.trim(), // empty string = clear it
             };
 
             if (id) {
@@ -3228,7 +3288,9 @@ function initAsignarPagoForm() {
             bootstrap.Modal.getInstance(document.getElementById('asignarPagoModal')).hide();
             loadPagosTable();
         } catch (err) {
-            Swal.fire({ icon: 'error', title: 'Error', text: err.message });
+            const errMsg = err.message || 'Error desconocido';
+            Swal.fire({ icon: 'error', title: 'Error al guardar pago', text: errMsg });
+            console.error('[Pagos] Error:', err);
         }
     });
 }
@@ -3237,16 +3299,6 @@ async function marcarPagado(id) {
     try {
         await apiPut(`/pagos/${id}`, { estado: 'pagado' });
         Swal.fire({ icon: 'success', title: 'Marcado como pagado', timer: 1500, showConfirmButton: false });
-        loadPagosTable();
-    } catch (err) {
-        Swal.fire({ icon: 'error', title: 'Error', text: err.message });
-    }
-}
-
-async function marcarVencido(id) {
-    try {
-        await apiPut(`/pagos/${id}`, { estado: 'vencido' });
-        Swal.fire({ icon: 'success', title: 'Marcado como vencido', timer: 1500, showConfirmButton: false });
         loadPagosTable();
     } catch (err) {
         Swal.fire({ icon: 'error', title: 'Error', text: err.message });
@@ -3323,11 +3375,44 @@ async function renderMisPagos(container) {
         `;
 
         estado.pagos.forEach(p => {
+            const montoBase = p.consigna ? parseFloat(p.consigna.monto) : 0;
+
+            // Calcular deuda acumulada mensualmente
+            let deudaAcumulada = montoBase;
+            let mesesTranscurridos = 1;
+            if (p.fecha_inicio && p.estado !== 'pagado') {
+                const fechaInicio = new Date(p.fecha_inicio);
+                const ahora = new Date();
+                const dias = Math.floor((ahora - fechaInicio) / (1000 * 60 * 60 * 24));
+                mesesTranscurridos = Math.max(1, Math.floor(dias / 30));
+                deudaAcumulada = montoBase * mesesTranscurridos;
+            }
+
+            const isOverdue = p.estado !== 'pagado';
+            const montoColor = p.estado === 'pagado' ? 'var(--accent)' : (mesesTranscurridos > 1 ? '#ff4757' : '#f39c12');
+
             const badge = p.estado === 'pagado'
-                ? '<span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25">Pagado</span>'
+                ? '<span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25"><i class="bi bi-check-circle-fill me-1"></i>Pagado</span>'
                 : p.estado === 'vencido'
-                    ? '<span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25">Vencido</span>'
-                    : '<span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25">Pendiente</span>';
+                    ? '<span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25"><i class="bi bi-x-circle-fill me-1"></i>Vencido</span>'
+                    : '<span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-50"><i class="bi bi-clock-fill me-1"></i>Pendiente</span>';
+
+            // Bloque de deuda acumulada (solo si no está pagado)
+            const deudaBlock = isOverdue ? `
+                <div style="margin: 0.6rem 0; padding: 0.5rem 0.75rem; background: rgba(255,71,87,0.08); border-radius: 8px; border-left: 3px solid ${montoColor};">
+                    <div style="font-size: 1.4rem; font-weight: 800; color: ${montoColor};">
+                        Bs. ${deudaAcumulada.toFixed(2)}
+                    </div>
+                    ${mesesTranscurridos > 1
+                    ? `<div class="text-muted small">${mesesTranscurridos} meses × Bs. ${montoBase.toFixed(2)}/mes</div>`
+                    : `<div class="text-muted small">Monto del mes: Bs. ${montoBase.toFixed(2)}</div>`
+                }
+                </div>
+            ` : `
+                <p style="font-size: 1.5rem; font-weight: 800; color: var(--accent); margin: 0.5rem 0;">
+                    Bs. ${montoBase.toFixed(2)}
+                </p>
+            `;
 
             html += `
                 <div class="col-md-6 col-lg-4">
@@ -3336,10 +3421,9 @@ async function renderMisPagos(container) {
                             <h6 class="mb-0 text-white">Consigna ${p.consigna ? p.consigna.codigo : p.consigna_id}</h6>
                             ${badge}
                         </div>
-                        <p style="font-size: 1.5rem; font-weight: 800; color: var(--accent); margin: 0.5rem 0;">
-                            Bs. ${p.consigna ? parseFloat(p.consigna.monto).toFixed(2) : '—'}
-                        </p>
+                        ${deudaBlock}
                         <div class="text-muted small">
+                            ${p.fecha_inicio ? `<div><i class="bi bi-play-circle me-1"></i> Inicio: ${new Date(p.fecha_inicio).toLocaleDateString()}</div>` : ''}
                             <div><i class="bi bi-calendar3 me-1"></i> Asignado: ${p.fecha_asignacion ? new Date(p.fecha_asignacion).toLocaleDateString() : '—'}</div>
                             ${p.fecha_pago ? `<div><i class="bi bi-calendar-check me-1"></i> Pagado: ${new Date(p.fecha_pago).toLocaleDateString()}</div>` : ''}
                             ${p.observacion ? `<div class="mt-1"><i class="bi bi-chat-dots me-1"></i> ${p.observacion}</div>` : ''}
@@ -3569,11 +3653,11 @@ async function renderBackups(container) {
                             </div>
                             <h6 class="mb-0 fw-bold">Restaurar Sistema</h6>
                         </div>
-                        <p class="text-white-50 small mt-2">Repón la base de datos a un punto anterior usando un archivo SQL validado. Esta acción no se puede deshacer.</p>
+                        <p class="text-white-50 small mt-2">Repón la base de datos a un punto anterior usando un archivo SQL (.sql) o ZIP (.zip). Esta acción no se puede deshacer.</p>
                         
                         <div class="mb-3">
-                            <label class="form-label small fw-semibold text-secondary">Archivo de Respaldo (.sql)</label>
-                            <input type="file" class="form-control form-control-sm" id="restoreFile" accept=".sql">
+                            <label class="form-label small fw-semibold text-secondary">Archivo de Respaldo (zip)</label>
+                            <input type="file" class="form-control form-control-sm" id="restoreFile" accept=".sql,.zip">
                         </div>
                         <button class="btn btn-success w-100 fw-semibold shadow-sm" id="btnRestoreBackup" disabled>
                             <i class="bi bi-arrow-counterclockwise me-2"></i>Iniciar Restauración

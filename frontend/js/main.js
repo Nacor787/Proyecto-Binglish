@@ -400,10 +400,10 @@ document.addEventListener('scroll', () => {
    ============================================================ */
 
 const staff = [
-    { id: 1, name: "Maria", role: "Cargo / Rol", category: "coordinacion", bio: "Licenciada en Administración de Empresas, TS. Informática, encargada del área comercial y administrativa.", email: "nacoruziel@gmail.com", initials: "M", featured: true, image: "assets/miembros/maria.jpg" },
-    { id: 2, name: "Nombre del Miembro", role: "Cargo / Rol", category: "docente", bio: "Breve descripción o frase inspiradora sobre este profesional y su dedicación a la enseñanza.", email: "nacoruziel@gmail.com", initials: "N", image: "assets/miembros/maria.jpg" },
-    { id: 3, name: "Nombre del Miembro", role: "Cargo / Rol", category: "docente", bio: "Breve descripción o frase inspiradora sobre este profesional y su dedicación a la enseñanza.", email: "nacoruziel@gmail.com", initials: "N", image: "https://via.placeholder.com/150" },
-    { id: 4, name: "Nombre del Miembro", role: "Cargo / Rol", category: "docente", bio: "Breve descripción o frase inspiradora sobre este profesional y su dedicación a la enseñanza.", email: "nacoruziel@gmail.com", initials: "N", image: "https://via.placeholder.com/150" },
+    { id: 1, name: "Jhon Khea", role: "CEO - Fundador", category: "docente", bio: "Licenciada en Administración de Empresas, TS. Informática, encargada del área comercial y administrativa.", email: "nacoruziel@gmail.com", initials: "M", featured: true, image: "assets/miembros/maria.jpg" },
+    { id: 2, name: "Valeria Poma", role: "Directora Academica", category: "docente", bio: "Breve descripción o frase inspiradora sobre este profesional y su dedicación a la enseñanza.", email: "nacoruziel@gmail.com", initials: "N", image: "assets/miembros/maria.jpg" },
+    { id: 3, name: "Maria Cahuaya", role: "Administradora", category: "administrativo", bio: "Licenciada en Administración de Empresas, TS. Informática, encargada del área comercial y administrativa.", email: "nacoruziel@gmail.com", initials: "N", image: "assets/miembros/maria.jpeg" },
+    { id: 4, name: "Nacor Ayala", role: "Area de Sistemas", category: "administrativo", bio: "Sistemas, Redes, Programación, Mantenimiento y Soporte Técnico, Diseño y Desarrollo de Software.", email: "nacoruziel@gmail.com", initials: "N", image: "assets/miembros/nacor.jpeg" },
     { id: 5, name: "Nombre del Miembro", role: "Cargo / Rol", category: "administrativo", bio: "Breve descripción o frase inspiradora sobre este profesional y su dedicación a la enseñanza.", email: "nacoruziel@gmail.com", initials: "N", image: "https://via.placeholder.com/150" },
     { id: 6, name: "Nombre del Miembro", role: "Cargo / Rol", category: "administrativo", bio: "Breve descripción o frase inspiradora sobre este profesional y su dedicación a la enseñanza.", email: "nacoruziel@gmail.com", initials: "N", image: "https://via.placeholder.com/150" },
     { id: 7, name: "Nombre del Miembro", role: "Cargo / Rol", category: "administrativo", bio: "Breve descripción o frase inspiradora sobre este profesional y su dedicación a la enseñanza.", email: "nacoruziel@gmail.com", initials: "N", image: "https://via.placeholder.com/150" },
@@ -478,7 +478,7 @@ function renderStaff() {
             let delay = 100 + (index * 100);
             let photoHtml = p.image && p.image !== '' ? `<img src='${p.image}' alt='${p.name}' class='team-img'>` : p.initials;
             html += `
-                <div class="col-md-6 col-lg-3" data-aos="zoom-in" data-aos-duration="600" data-aos-delay="${delay}">
+                <div class="col-10 col-sm-8 col-md-6 col-lg-3" data-aos="zoom-in" data-aos-duration="600" data-aos-delay="${delay}">
                     <div class="team-card">
                         <div class="team-img-wrapper">
                             ${photoHtml}

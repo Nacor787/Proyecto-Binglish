@@ -3,7 +3,7 @@
  * Cierra la sesión automáticamente tras un periodo de inactividad de 15 minutos.
  */
 
-const INACTIVITY_LIMIT_MINUTES = 15;
+const INACTIVITY_LIMIT_MINUTES = 30;
 const INACTIVITY_LIMIT_MS = INACTIVITY_LIMIT_MINUTES * 60 * 1000;
 let inactivityTimer;
 
