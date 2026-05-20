@@ -5,11 +5,11 @@
 
 // Configuración para Cloudflare Tunnel con dominio propio
 // En desarrollo local: conecta directo al backend en el puerto 8000.
-const IS_LOCAL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+//const IS_LOCAL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 
 // Configuración para Cloudflare Tunnel + Nginx
 // Nginx en producción se encarga de recibir las peticiones en /apib
-const API_BASE = IS_LOCAL ? 'http://localhost:8000' : '/api';
+const API_BASE = '/apib';
 
 /**
  * Obtiene el token JWT almacenado en localStorage.

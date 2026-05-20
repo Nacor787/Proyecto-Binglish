@@ -127,11 +127,15 @@ function initLoginForm() {
             const modal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
             if (modal) modal.hide();
 
+            // Obtener el primer nombre y primer apellido
+            const primerNombre = user.nombre ? user.nombre.trim().split(' ')[0] : '';
+            const primerApellido = user.apellido ? user.apellido.trim().split(' ')[0] : '';
+
             // SweetAlert2 - éxito
             await Swal.fire({
                 icon: 'success',
                 title: '¡Bienvenido!',
-                text: `Hola ${user.nombre}, has iniciado sesión correctamente`,
+                text: `Hola ${primerNombre} ${primerApellido}, has iniciado sesión correctamente`,
                 timer: 2000,
                 showConfirmButton: false,
             });

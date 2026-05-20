@@ -400,10 +400,10 @@ document.addEventListener('scroll', () => {
    ============================================================ */
 
 const staff = [
-    { id: 1, name: "Jhon Khea", role: "CEO - Fundador", category: "docente", bio: "Licenciada en Administración de Empresas, TS. Informática, encargada del área comercial y administrativa.", email: "nacoruziel@gmail.com", initials: "M", featured: true, image: "assets/miembros/maria.jpg" },
+    { id: 1, name: "Jhon Khea", role: "CEO - Fundador", category: "docente", bio: "El fundador de BINGLISH, dedicado a crear experiencias de aprendizaje únicas y significativas. Un visionario con una pasión por la excelencia y la innovación.", email: "jhonkea@gmail.com", initials: "J", featured: true, image: "assets/miembros/maria.jpg" },
     { id: 2, name: "Valeria Poma", role: "Directora Academica", category: "docente", bio: "Breve descripción o frase inspiradora sobre este profesional y su dedicación a la enseñanza.", email: "nacoruziel@gmail.com", initials: "N", image: "assets/miembros/maria.jpg" },
-    { id: 3, name: "Maria Cahuaya", role: "Administradora", category: "administrativo", bio: "Licenciada en Administración de Empresas, TS. Informática, encargada del área comercial y administrativa.", email: "nacoruziel@gmail.com", initials: "N", image: "assets/miembros/maria.jpeg" },
-    { id: 4, name: "Nacor Ayala", role: "Area de Sistemas", category: "administrativo", bio: "Sistemas, Redes, Programación, Mantenimiento y Soporte Técnico, Diseño y Desarrollo de Software.", email: "nacoruziel@gmail.com", initials: "N", image: "assets/miembros/nacor.jpeg" },
+    { id: 3, name: "Maria Cahuaya", role: "Administradora", category: "administrativo", bio: "Área comercial y administrativo.", email: "nacoruziel@gmail.com", initials: "N", image: "assets/miembros/maria.jpeg" },
+    { id: 4, name: "Nacor Ayala", role: "Area de Sistemas", category: "administrativo", bio: "Sistemas y administración", email: "nacoruziel@gmail.com", initials: "N", image: "assets/miembros/nacor.jpeg" },
     { id: 5, name: "Nombre del Miembro", role: "Cargo / Rol", category: "administrativo", bio: "Breve descripción o frase inspiradora sobre este profesional y su dedicación a la enseñanza.", email: "nacoruziel@gmail.com", initials: "N", image: "https://via.placeholder.com/150" },
     { id: 6, name: "Nombre del Miembro", role: "Cargo / Rol", category: "administrativo", bio: "Breve descripción o frase inspiradora sobre este profesional y su dedicación a la enseñanza.", email: "nacoruziel@gmail.com", initials: "N", image: "https://via.placeholder.com/150" },
     { id: 7, name: "Nombre del Miembro", role: "Cargo / Rol", category: "administrativo", bio: "Breve descripción o frase inspiradora sobre este profesional y su dedicación a la enseñanza.", email: "nacoruziel@gmail.com", initials: "N", image: "https://via.placeholder.com/150" },
@@ -482,14 +482,15 @@ function renderStaff() {
                     <div class="team-card">
                         <div class="team-img-wrapper">
                             ${photoHtml}
+                            <div class="team-img-overlay">
+                                <h5>${p.name}</h5>
+                                <p class="team-desc-overlay">${p.bio}</p>
+                            </div>
                         </div>
                         <div class="team-card-body">
-                            <h5>${p.name}</h5>
-                            <p class="team-role">${p.role}</p>
-                            <p class="team-desc">${p.bio}</p>
                             <div class="team-card-email">
                                 <a href="mailto:${p.email}" target="_blank" class="team-text-link mb-0">
-                                    <i class="bi bi-envelope"></i>${p.email}
+                                    <i class="bi bi-envelope-at"></i>${p.email}
                                 </a>
                             </div>
                         </div>

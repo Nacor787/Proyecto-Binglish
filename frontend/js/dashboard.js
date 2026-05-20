@@ -424,11 +424,15 @@ function loadSection(section) {
 
 async function renderInicio(container) {
     const user = getCurrentUser();
+    const primerNombre = user && user.nombre ? user.nombre.trim().split(' ')[0] : '';
+    const primerApellido = user && user.apellido ? user.apellido.trim().split(' ')[0] : '';
+    const nombreFormateado = `${primerNombre} ${primerApellido}`.trim() || (user ? user.nombre : '');
+
     container.innerHTML = `
         <div class="row g-3 mb-4">
             <div class="col-12">
                 <div class="dash-stat-card purple" style="border-left: 4px solid var(--primary);">
-                    <h4 class="mb-1">¡Welcome ${user.nombre}! 👋</h4>
+                    <h4 class="mb-1">¡Welcome ${nombreFormateado}! 👋</h4>
                     <p class="text-muted mb-0">Bienvenid@ a la plataforma de Binglish</p>
                 </div>
             </div>
