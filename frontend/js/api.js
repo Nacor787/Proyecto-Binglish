@@ -3,13 +3,10 @@
  * Módulo centralizado para comunicación con el backend FastAPI.
  */
 
-// Configuración para Cloudflare Tunnel con dominio propio
-// En desarrollo local: conecta directo al backend en el puerto 8000.
-//const IS_LOCAL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const IS_LOCAL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 
-// Configuración para Cloudflare Tunnel + Nginx
-// Nginx en producción se encarga de recibir las peticiones en /apib
-const API_BASE = '/apib';
+// En producción usa el proxy de Nginx (/api). En local conecta directo a FastAPI (puerto 8000).
+const API_BASE = IS_LOCAL ? 'http://localhost:8000' : '/api';
 
 /**
  * Obtiene el token JWT almacenado en localStorage.
@@ -44,7 +41,7 @@ function handleSessionExpired() {
             localStorage.removeItem('binglish_token');
             localStorage.removeItem('binglish_refresh_token');
             localStorage.removeItem('binglish_user');
-            window.location.href = 'index.html';
+            window.location.href = '/';
         }
     };
 

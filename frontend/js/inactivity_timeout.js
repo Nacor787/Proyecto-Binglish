@@ -62,11 +62,11 @@ function handleLogoutDueToInactivity() {
             allowOutsideClick: false,
             confirmButtonColor: '#6C63FF'
         }).then(() => {
-            window.location.href = 'index.html';
+            window.location.href = '/';
         });
     } else {
         alert('Tu sesión se ha cerrado automáticamente por inactividad.');
-        window.location.href = 'index.html';
+        window.location.href = '/';
     }
 }
 

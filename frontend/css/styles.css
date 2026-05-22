@@ -2187,8 +2187,9 @@ div:where(.swal2-container) button:where(.swal2-cancel) {
 }
 
 .team-featured-photo {
-    width: 130px;
-    height: 130px;
+    width: 260px;
+    height: auto;
+    aspect-ratio: 4/5;
     border-radius: var(--radius-md);
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
     display: flex;
@@ -2230,21 +2231,21 @@ div:where(.swal2-container) button:where(.swal2-cancel) {
 }
 
 .featured-name {
-    font-size: 1.3rem;
+    font-size: 1.8rem;
     font-weight: 600;
     color: var(--text-color);
     margin: 0 0 4px;
 }
 
 .featured-role {
-    font-size: 0.9rem;
+    font-size: 1rem;
     color: var(--accent-color);
     font-weight: 500;
     margin: 0 0 8px;
 }
 
 .featured-bio {
-    font-size: 0.95rem;
+    font-size: 1rem;
     color: var(--text-muted);
     line-height: 1.5;
     margin: 0 0 12px;

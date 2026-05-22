@@ -400,14 +400,15 @@ document.addEventListener('scroll', () => {
    ============================================================ */
 
 const staff = [
-    { id: 1, name: "Jhon Khea", role: "CEO - Fundador", category: "docente", bio: "El fundador de BINGLISH, dedicado a crear experiencias de aprendizaje únicas y significativas. Un visionario con una pasión por la excelencia y la innovación.", email: "jhonkea@gmail.com", initials: "J", featured: true, image: "assets/miembros/maria.jpg" },
-    { id: 2, name: "Valeria Poma", role: "Directora Academica", category: "docente", bio: "Breve descripción o frase inspiradora sobre este profesional y su dedicación a la enseñanza.", email: "nacoruziel@gmail.com", initials: "N", image: "assets/miembros/maria.jpg" },
-    { id: 3, name: "Maria Cahuaya", role: "Administradora", category: "administrativo", bio: "Área comercial y administrativo.", email: "nacoruziel@gmail.com", initials: "N", image: "assets/miembros/maria.jpeg" },
-    { id: 4, name: "Nacor Ayala", role: "Area de Sistemas", category: "administrativo", bio: "Sistemas y administración", email: "nacoruziel@gmail.com", initials: "N", image: "assets/miembros/nacor.jpeg" },
-    { id: 5, name: "Nombre del Miembro", role: "Cargo / Rol", category: "administrativo", bio: "Breve descripción o frase inspiradora sobre este profesional y su dedicación a la enseñanza.", email: "nacoruziel@gmail.com", initials: "N", image: "https://via.placeholder.com/150" },
-    { id: 6, name: "Nombre del Miembro", role: "Cargo / Rol", category: "administrativo", bio: "Breve descripción o frase inspiradora sobre este profesional y su dedicación a la enseñanza.", email: "nacoruziel@gmail.com", initials: "N", image: "https://via.placeholder.com/150" },
-    { id: 7, name: "Nombre del Miembro", role: "Cargo / Rol", category: "administrativo", bio: "Breve descripción o frase inspiradora sobre este profesional y su dedicación a la enseñanza.", email: "nacoruziel@gmail.com", initials: "N", image: "https://via.placeholder.com/150" },
-    { id: 8, name: "Nombre del Miembro", role: "Cargo / Rol", category: "docente", bio: "Breve descripción o frase inspiradora sobre este profesional y su dedicación a la enseñanza.", email: "nacoruziel@gmail.com", initials: "N", image: "https://via.placeholder.com/150" }
+    { id: 1, name: "Jhon Khea", role: "CEO - Fundador", category: "docente", bio: "El fundador de BINGLISH, dedicado a crear experiencias de aprendizaje únicas y significativas. Un visionario con una pasión por la excelencia y la innovación.", email: "jhonkea@gmail.com", initials: "J", featured: true, image: "assets/miembros/jhon.jpeg" },
+    { id: 2, name: "Valeria Poma", role: "Directora Academica", category: "docente", bio: "Docente y Directora Academica de Binglish", email: "belenpoma80@gmail.com", initials: "V", image: "assets/miembros/valeria.jpeg" },
+    { id: 3, name: "Maria Cahuaya", role: "Administradora", category: "administrativo", bio: "Área comercial y administrativo.", email: "cahuayamaria71@gmail.com", initials: "M", image: "assets/miembros/maria.jpeg" },
+    { id: 4, name: "Nacor Ayala", role: "Area de Sistemas", category: "administrativo", bio: "Sistemas y administración", email: "ayalanacor@gmail.com", initials: "N", image: "assets/miembros/nacor.jpeg" },
+    { id: 5, name: "Miguel Valverde", role: "Administrador", category: "administrativo", bio: "Área audiovisual y administración", email: "mickhacking.official@gmail.com", initials: "M", image: "assets/miembros/miguel.jpeg" },
+    { id: 6, name: "Erika Cruz", role: "Docente", category: "docente", bio: "Docente de ingles A1 - C1", email: "lauracruzfl@gmail.com", initials: "E", image: "assets/miembros/erika.jpeg" },
+    { id: 7, name: "Noelia Oliden", role: "Docente", category: "docente", bio: "Docente de Francés", email: "aileonnedilo@gmail.com", initials: "N", image: "assets/miembros/noelia.jpeg" },
+    { id: 8, name: "Jessika Rocha", role: "Docente", category: "docente", bio: "Docente de Francés", email: "rochajhessika@gmail.com", initials: "J", image: "assets/miembros/jessika.jpeg" },
+    { id: 9, name: "Richard Condori", role: "Docente", category: "docente", bio: "Docente de ingles A1 - C1", email: "richard.cep.oi@gmail.com", initials: "R", image: "assets/miembros/richard.jpeg" },
 ];
 
 let currentFilter = 'todos';

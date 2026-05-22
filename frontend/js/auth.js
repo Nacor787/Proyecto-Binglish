@@ -6,8 +6,8 @@
 /**
  * Inicia sesión con código de usuario y contraseña.
  */
-async function login(codigo, password) {
-    const data = await apiPost('/auth/login', { codigo, password });
+async function login(codigo, password, turnstileToken) {
+    const data = await apiPost('/auth/login', { codigo, password, turnstile_token: turnstileToken });
     localStorage.setItem('binglish_token', data.access_token);
     localStorage.setItem('binglish_refresh_token', data.refresh_token);
 
@@ -31,7 +31,7 @@ async function logout() {
     localStorage.removeItem('binglish_token');
     localStorage.removeItem('binglish_refresh_token'); // Limpieza por si quedó de la versión anterior
     localStorage.removeItem('binglish_user');
-    window.location.href = 'index.html';
+    window.location.href = '/';
 }
 
 /**
@@ -66,7 +66,7 @@ function requireAuth() {
 function renderUnauthorizedView() {
     // Determinar la ruta relativa dinámica dependiendo de dónde estemos (/pages/ o raíz)
     const inPagesDir = window.location.pathname.includes('/pages/');
-    const redirectPath = inPagesDir ? '../401.html' : '401.html';
+    const redirectPath = inPagesDir ? '../401' : '/401';
 
     // Redirigir al usuario
     window.location.href = redirectPath;
@@ -99,8 +99,20 @@ function initLoginForm() {
         const rawInput = document.getElementById('loginCodigo').value.trim();
         const prefix = document.getElementById('tipoUsuario').value;
         const password = document.getElementById('loginPassword').value;
+        const turnstileElement = document.querySelector('[name="cf-turnstile-response"]');
+        const turnstileResponse = turnstileElement ? turnstileElement.value : null;
+
         const btnSubmit = form.querySelector('button[type="submit"]');
         const originalText = btnSubmit.innerHTML;
+
+        if (!turnstileResponse) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Verificación requerida',
+                text: 'Por favor, completa la verificación de seguridad. Si el recuadro no aparece, espera un momento o recarga la página.'
+            });
+            return;
+        }
 
         // Validar que el input sea numérico
         if (!rawInput || !/^\d+$/.test(rawInput)) {
@@ -121,7 +133,7 @@ function initLoginForm() {
             btnSubmit.disabled = true;
             btnSubmit.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Iniciando sesión...';
 
-            const user = await login(codigo, password);
+            const user = await login(codigo, password, turnstileResponse);
 
             // Cerrar modal
             const modal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
@@ -141,7 +153,7 @@ function initLoginForm() {
             });
 
             // Redirigir al dashboard
-            window.location.href = 'dashboard.html';
+            window.location.href = '/dashboard';
 
         } catch (error) {
             const detail = error.detail;
@@ -188,12 +200,16 @@ function initLoginForm() {
                 });
 
                 // Caso: error genérico
-            } else {
                 Swal.fire({
                     icon: 'error',
                     title: 'Error de autenticación',
                     text: error.message || 'Credenciales inválidas'
                 });
+            }
+
+            // Reiniciar el widget de turnstile si ocurre algún error
+            if (typeof turnstile !== 'undefined') {
+                turnstile.reset();
             }
         } finally {
             // Solo restaurar botón si NO está en modo countdown
