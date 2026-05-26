@@ -62,6 +62,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+// Botón de App Móvil - Próximamente
+const appCelBtn = document.getElementById('appCelBtn');
+if (appCelBtn) {
+    appCelBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        Swal.fire({
+            title: '¡Próximamente!',
+            text: 'Nuestra aplicación móvil estará disponible muy pronto para iOS y Android.',
+            icon: 'info',
+            confirmButtonColor: 'var(--accent-color)',
+            confirmButtonText: 'Entendido',
+            background: 'var(--surface)',
+            color: 'var(--text-color)',
+            customClass: {
+                popup: 'glass-panel'
+            }
+        });
+    });
+}
 
 function smoothScrollTo(targetY, duration) {
     const startY = window.scrollY;
