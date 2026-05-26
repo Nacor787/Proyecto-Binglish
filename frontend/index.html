@@ -14,7 +14,7 @@
     <link rel="canonical" href="https://binglish-trm.com" />
 
     <!-- Favicon -->
-    <link rel="icon" href="assets/logo.png" type="image/png" />
+    <link rel="icon" href="assets/logo.svg" type="image/svg" />
 
     <!-- Open Graph / Facebook (Para compartir en WhatsApp, Facebook, etc.) -->
     <meta property="og:title" content="Binglish-TRM — Centro de Idiomas" />
@@ -22,7 +22,7 @@
     <meta property="og:url" content="https://binglish-trm.com" />
     <meta property="og:description"
         content="Aprende inglés de forma moderna e interactiva con Binglish-TRM. Cursos, certificaciones y contenido profesional." />
-    <meta property="og:image" content="https://binglish-trm.com/assets/share-preview.png" />
+    <meta property="og:image" content="https://binglish-trm.com/assets/logo.svg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
 
@@ -30,7 +30,7 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Binglish-TRM — Centro de Idiomas" />
     <meta name="twitter:description" content="Aprende inglés de forma moderna e interactiva con Binglish-TRM." />
-    <meta name="twitter:image" content="https://binglish-trm.com/assets/share-preview.png" />
+    <meta name="twitter:image" content="https://binglish-trm.com/assets/logo.svg" />
 
     <!-- Google Fonts: Inter + Outfit + Great Vibes (Welcome overlay) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -49,6 +49,8 @@
     <link href="libs/css/aos.css" rel="stylesheet">
     <!-- Custom CSS -->
     <link href="css/styles.css" rel="stylesheet">
+    <!-- Placement Test CSS -->
+    <link href="css/test.css" rel="stylesheet">
 
     <!-- Datos estructurados JSON-LD (Schema.org) para Google -->
     <script type="application/ld+json">
@@ -57,8 +59,8 @@
       "@type": "EducationalOrganization",
       "name": "Binglish-TRM",
       "url": "https://binglish-trm.com",
-      "logo": "https://binglish-trm.com/assets/logo.png",
-      "image": "https://binglish-trm.com/assets/share-preview.png",
+      "logo": "https://binglish-trm.com/assets/logo.svg",
+      "image": "https://binglish-trm.com/assets/logo.svg",
       "description": "Plataforma de aprendizaje de inglés moderna y profesional con cursos y certificaciones.",
       "sameAs": []
     }
@@ -197,7 +199,7 @@
                             <a href="#nosotros" class="btn btn-hero btn-hero-outline">
                                 <i class="bi bi-info-circle me-2"></i>Conócenos
                             </a>
-                            <button class="btn-start" onclick="openModal()">
+                            <button class="btn-start btn-electric" onclick="openTestModal()">
                                 Start Test
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                     stroke-width="2.5">
@@ -210,7 +212,7 @@
                         data-aos-delay="200">
                         <!-- Logo flotante con halo glass -->
                         <div class="hero-logo-float">
-                            <img src="assets/logo.png" alt="Binglish Logo">
+                            <img src="assets/logo.svg" alt="Binglish Logo">
                         </div>
                         <!-- Ilustración con contenedor glass -->
                         <div class="hero-illustration-wrapper">
@@ -460,14 +462,14 @@
                             <i class="bi bi-geo-alt-fill"></i>
                             <div>
                                 <strong>Dirección</strong>
-                                <p class="mb-0 small">Av. Villazón edificio Román N°1790</p>
+                                <p class="mb-0 small">Av. Villazón edificio Román N°1790 Piso 3</p>
                             </div>
                         </div>
                         <div class="contact-info-item">
                             <i class="bi bi-telephone-fill"></i>
                             <div>
                                 <strong>Teléfono</strong>
-                                <p class="mb-0 small">+591 73302492</p>
+                                <p class="mb-0 small">+591 73302492 - 60592864</p>
                             </div>
                         </div>
                         <div class="contact-info-item">
@@ -481,7 +483,8 @@
                             <i class="bi bi-clock-fill"></i>
                             <div>
                                 <strong>Horario</strong>
-                                <p class="mb-0 small">Lun - Sab: 8:00 AM - 8:00 PM</p>
+                                <p class="mb-0 small">Lun - Vie: 14:30 - 19:00</p>
+                                <p class="mb-0 small">Sab: 09:00 - 13:00</p>
                             </div>
                         </div>
                         <hr>
@@ -587,6 +590,7 @@
                     <ul class="footer-links list-unstyled">
                         <li><a href="#inicio"><i class="bi bi-house-door me-2"></i>Inicio</a></li>
                         <li><a href="#nosotros"><i class="bi bi-people me-2"></i>Nosotros</a></li>
+                        <li><a href="#equipo"><i class="bi bi-person-badge me-2"></i>Personal</a></li>
                         <li><a href="#metodologia"><i class="bi bi-lightbulb me-2"></i>Metodología</a></li>
                         <li><a href="#contacto"><i class="bi bi-envelope-arrow-up me-2"></i>Contacto</a></li>
                         <li><a href="#ubicacion"><i class="bi bi-geo-alt me-2"></i>Ubicación</a></li>
@@ -599,8 +603,10 @@
                         <li><a href="mailto:binglishtherightmove@gmail.com" target="_blank"><i
                                     class="bi bi-envelope me-1"></i>binglishtherightmove@gmail.com</a>
                         </li>
-                        <li><a href="tel:+591 73302492"><i class="bi bi-telephone me-1"></i>+591 73302492</a></li>
-                        <li><a href="#ubicacion"><i class="bi bi-geo-alt me-1"></i>Av. Villazón edificio Román N°1790,
+                        <li><a href="tel:+591 73302492"><i class="bi bi-telephone me-1"></i>+591 73302492 - 60592864</a>
+                        </li>
+                        <li><a href="#ubicacion"><i class="bi bi-geo-alt me-1"></i>Av. Villazón edificio Román N°1790
+                                Piso 3,
                                 frente Monoblock UMSA, La Paz, Bolivia</a></li>
                     </ul>
                 </div>
@@ -894,6 +900,124 @@
 
     <!-- Custom JS -->
     <script src="js/main.js"></script>
+
+    <!-- ============================================================
+     PLACEMENT TEST MODAL OVERLAY
+     ============================================================ -->
+    <div class="test-overlay" id="testOverlay" onclick="handleTestOverlayClick(event)">
+        <div class="test-modal" id="testModal">
+
+            <!-- Header -->
+            <div class="test-modal-header">
+                <div class="test-modal-title">
+                    <div class="test-modal-logo">
+                        <img src="assets/logo.svg" alt="Binglish Logo">
+                    </div>
+                    <div>
+                        <h2>Test de Nivel de Inglés</h2>
+                        <span>BINGLISH — The Right Move</span>
+                    </div>
+                </div>
+                <button class="test-btn-close" onclick="closeTestModal()">×</button>
+            </div>
+
+            <!-- Progress -->
+            <div class="test-progress-bar">
+                <div class="test-progress-info" id="testProgressInfo">
+                    <span id="testProgressLabel">Grammar — A1 & A2</span>
+                    <span
+                        style="margin-left: 8px; font-size: 11px; color: rgba(255, 255, 255, 0.4); font-style: italic;">
+                        (Puedes dejar sin responder las que no sepas)
+                    </span>
+                    <span id="testProgressPct">0% completado</span>
+                </div>
+                <div class="test-progress-track" id="testProgressTrack">
+                    <div class="test-progress-fill" id="testProgressFill" style="width:0%"></div>
+                </div>
+                <div class="test-page-dots" id="testPageDots"></div>
+            </div>
+
+            <!-- Body (questions injected by JS) -->
+            <div class="test-modal-body" id="testModalBody"></div>
+
+            <!-- Loading spinner -->
+            <div class="test-loading" id="testLoading">
+                <div class="test-spinner"></div>
+                <p>Evaluando tus respuestas...</p>
+            </div>
+
+            <!-- Results panel -->
+            <div class="test-results-panel" id="testResultsPanel">
+                <div class="test-results-layout">
+                    <!-- Columna Izquierda: Resultados -->
+                    <div class="test-results-left">
+                        <div class="test-level-badge" id="testLevelBadge">—</div>
+                        <div class="test-level-name" id="testLevelName">—</div>
+                        <div class="test-results-score" id="testScoreNum">—/60</div>
+                        <div class="test-results-score-label" id="testScoreLabel">respuestas correctas</div>
+                        <div class="test-sections-breakdown" id="testSectionsBreakdown"></div>
+                        <div class="test-anchor-badge" id="testAnchorBadge" style="display:none;">
+                            <i class="bi bi-star-fill"></i>
+                            Tu rendimiento en las secciones avanzadas sugiere que estás listo para el <strong>Nivel
+                                B1</strong>.
+                        </div>
+                    </div>
+
+                    <!-- Columna Derecha: CTA -->
+                    <div class="test-results-right">
+                        <div class="test-cta">
+                            <div class="test-cta-emoji">🎓</div>
+                            <h3>¡Comienza tu aventura con Binglish!</h3>
+                            <p>Contáctanos y descubre el curso perfecto para tu nivel.<br>Nuestro equipo está listo para
+                                ayudarte a alcanzar tus metas en el inglés.</p>
+                            <div class="test-cta-buttons">
+                                <a href="https://wa.me/59173302492?text=Hola,%20acabo%20de%20hacer%20el%20test%20de%20nivel%20en%20Binglish%20y%20me%20gustaría%20información%20sobre%20los%20cursos."
+                                    target="_blank" class="test-cta-btn whatsapp">
+                                    <i class="bi bi-whatsapp"></i> Contáctanos por WhatsApp
+                                </a>
+                                <button class="test-cta-btn home" onclick="closeTestModal()">
+                                    <i class="bi bi-house-fill"></i> Volver al Inicio
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CAPTCHA Container -->
+            <div id="testCaptchaContainer" style="display: none; justify-content: flex-end; padding: 0 24px 16px;">
+                <div class="cf-turnstile" data-sitekey="0x4AAAAAADThGHT71f4ZsfbF" data-theme="dark"
+                    id="testTurnstileWidget"></div>
+            </div>
+
+            <!-- Footer (navigation) -->
+            <div class="test-modal-footer" id="testModalFooter">
+                <div class="test-footer-left">
+                    <span class="test-answered-count">Respondidas: <strong id="testAnsweredCount">0</strong> / 60</span>
+                </div>
+                <div class="test-footer-right">
+                    <button class="test-btn-nav test-btn-prev" id="testBtnPrev" onclick="prevTestPage()" disabled>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5">
+                            <path d="M19 12H5M12 19l-7-7 7-7" />
+                        </svg>
+                        Anterior
+                    </button>
+                    <button class="test-btn-nav test-btn-next" id="testBtnNext" onclick="nextTestPage()">
+                        Siguiente
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5">
+                            <path d="M5 12h14M12 5l7 7-7 7" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Placement Test JS -->
+    <script src="js/test.js"></script>
 
 </body>
 

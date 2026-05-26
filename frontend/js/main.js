@@ -402,13 +402,14 @@ document.addEventListener('scroll', () => {
 const staff = [
     { id: 1, name: "Jhon Khea", role: "CEO - Fundador", category: "docente", bio: "El fundador de BINGLISH, dedicado a crear experiencias de aprendizaje únicas y significativas. Un visionario con una pasión por la excelencia y la innovación.", email: "jhonkea@gmail.com", initials: "J", featured: true, image: "assets/miembros/jhon.jpeg" },
     { id: 2, name: "Valeria Poma", role: "Directora Academica", category: "docente", bio: "Docente y Directora Academica de Binglish", email: "belenpoma80@gmail.com", initials: "V", image: "assets/miembros/valeria.jpeg" },
-    { id: 3, name: "Maria Cahuaya", role: "Administradora", category: "administrativo", bio: "Área comercial y administrativo.", email: "cahuayamaria71@gmail.com", initials: "M", image: "assets/miembros/maria.jpeg" },
+    { id: 3, name: "Maria Cahuaya", role: "Administradora", category: "administrativo", bio: "Área comercial / Marketing y administración.", email: "cahuayamaria71@gmail.com", initials: "M", image: "assets/miembros/maria.jpeg" },
     { id: 4, name: "Nacor Ayala", role: "Area de Sistemas", category: "administrativo", bio: "Sistemas y administración", email: "ayalanacor@gmail.com", initials: "N", image: "assets/miembros/nacor.jpeg" },
     { id: 5, name: "Miguel Valverde", role: "Administrador", category: "administrativo", bio: "Área audiovisual y administración", email: "mickhacking.official@gmail.com", initials: "M", image: "assets/miembros/miguel.jpeg" },
-    { id: 6, name: "Erika Cruz", role: "Docente", category: "docente", bio: "Docente de ingles A1 - C1", email: "lauracruzfl@gmail.com", initials: "E", image: "assets/miembros/erika.jpeg" },
+    { id: 6, name: "Erika Cruz", role: "Docente", category: "docente", bio: "Docente de inglés A1 - C1", email: "lauracruzfl@gmail.com", initials: "E", image: "assets/miembros/erika.jpeg" },
     { id: 7, name: "Noelia Oliden", role: "Docente", category: "docente", bio: "Docente de Francés", email: "aileonnedilo@gmail.com", initials: "N", image: "assets/miembros/noelia.jpeg" },
     { id: 8, name: "Jessika Rocha", role: "Docente", category: "docente", bio: "Docente de Francés", email: "rochajhessika@gmail.com", initials: "J", image: "assets/miembros/jessika.jpeg" },
-    { id: 9, name: "Richard Condori", role: "Docente", category: "docente", bio: "Docente de ingles A1 - C1", email: "richard.cep.oi@gmail.com", initials: "R", image: "assets/miembros/richard.jpeg" },
+    { id: 9, name: "Richard Condori", role: "Docente", category: "docente", bio: "Docente de inglés A1 - C1", email: "richard.cep.oi@gmail.com", initials: "R", image: "assets/miembros/richard.png" },
+    { id: 10, name: "Walter Coaquira", role: "Docente", category: "docente", bio: "Docente de inglés A1 - C1", email: "yassir6744@gmail.com", initials: "Y", image: "assets/miembros/walter.jpeg" }
 ];
 
 let currentFilter = 'todos';
@@ -458,15 +459,20 @@ function renderStaff() {
     if (featured.length > 0) {
         html += '<p class="section-label">Dirección</p>';
         featured.forEach(p => {
-            let photoHtml = p.image && p.image !== '' ? `<img src='${p.image}' alt='${p.name}'>` : p.initials;
+            let photoHtml = p.image && p.image !== '' ? `<img src='${p.image}' alt='${p.name}' class='team-img'>` : p.initials;
             html += `<div class="team-featured-card" data-aos="fade-up" data-aos-duration="600">
-                <div class="team-featured-photo">${photoHtml}</div>
+                <div class="team-featured-photo">
+                    ${photoHtml}
+                    <img src="assets/logo.svg" class="team-watermark" alt="Binglish Logo">
+                </div>
                 <div class="team-featured-info">
                     <span class="featured-badge">Gerente General</span>
                     <p class="featured-name">${p.name}</p>
                     <p class="featured-role">${p.role}</p>
                     <p class="featured-bio">${p.bio}</p>
-                    <a href="mailto:${p.email}" target="_blank" class="featured-email"><i class="bi bi-envelope"></i>${p.email}</a>
+                    <a href="mailto:${p.email}" target="_blank" class="featured-email mt-2" style="text-decoration: none;">
+                        <i class="bi bi-envelope me-2"></i>${p.email}
+                    </a>
                 </div>
             </div>`;
         });
@@ -483,6 +489,7 @@ function renderStaff() {
                     <div class="team-card">
                         <div class="team-img-wrapper">
                             ${photoHtml}
+                            <img src="assets/logo.svg" class="team-watermark" alt="Binglish Logo">
                             <div class="team-img-overlay">
                                 <h5>${p.name}</h5>
                                 <p class="team-desc-overlay">${p.bio}</p>
