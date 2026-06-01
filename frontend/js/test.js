@@ -596,11 +596,20 @@ async function startPlacementTest(e) {
     return;
   }
 
-  // Validar el número de teléfono con intl-tel-input
+  // Validar el número de teléfono con intl-tel-input de forma más relajada
+  // Si window.iti falla, verificamos el valor directo del input.
   if (window.iti) {
-    if (!window.iti.isValidNumber()) {
+    const isStrictValid = window.iti.isValidNumber();
+    // Tomamos el valor de la librería, o el valor directo si la librería falló
+    const val = window.iti.getNumber();
+    // Para la longitud, usamos directamente lo que escribió el usuario (telefono) 
+    // ignorando el código de país que devuelve getNumber() si está incompleto.
+    const rawNumber = telefono.replace(/\D/g, ''); // solo dígitos
+
+    // Si no es válido estrictamente y además tiene menos de 8 dígitos, bloqueamos
+    if (!isStrictValid && rawNumber.length < 8) {
       if (typeof Swal !== 'undefined') {
-        Swal.fire({ icon: 'error', title: 'Número Inválido', text: 'El número ingresado no es válido para el país seleccionado.' });
+        Swal.fire({ icon: 'error', title: 'Número Inválido', text: 'El número ingresado parece demasiado corto o no es válido.' });
       } else {
         alert('Número de teléfono inválido.');
       }
@@ -608,7 +617,11 @@ async function startPlacementTest(e) {
     }
   }
 
-  const fullTelefono = window.iti ? window.iti.getNumber() : telefono;
+  let fullTelefono = telefono;
+  if (window.iti) {
+    const dialCode = window.iti.getSelectedCountryData().dialCode || '591';
+    fullTelefono = '+' + dialCode + ' ' + telefono;
+  }
 
   if (!turnstileResponse) {
     if (typeof Swal !== 'undefined') {

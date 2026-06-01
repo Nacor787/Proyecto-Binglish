@@ -167,12 +167,7 @@ function filtrarNoticias() {
 window.changeNewsPage = function (page) {
     currentPage = page;
     renderGrid(lastFilteredNoticias);
-    const target = document.getElementById('noticiasFilters');
-    if (target) {
-        const yOffset = -100;
-        const y = target.getBoundingClientRect().top + window.scrollY + yOffset;
-        window.scrollTo({ top: y, behavior: 'smooth' });
-    }
+    scrollToGrid();
 };
 
 function renderGrid(noticias) {

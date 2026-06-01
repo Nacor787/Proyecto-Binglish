@@ -5222,7 +5222,7 @@ async function renderProspectos(container) {
                         <table class="table table-hover" id="prospectosTable">
                             <thead>
                                 <tr class="text-muted small uppercase fw-bold" style="letter-spacing: 0.5px;">
-                                    <th class="ps-4">Fecha</th>
+                                    <th class="ps-4">Fecha / Hora</th>
                                     <th>Nombre Completo</th>
                                     <th>Teléfono</th>
                                     <th>Puntaje</th>
@@ -5326,13 +5326,13 @@ function renderProspectosTableUI() {
         });
         const nombre = `${p.nombres} ${p.apellidos}`;
 
-        let telClean = p.telefono.replace(/\\s+/g, '');
-        if (!telClean.startsWith('+') && telClean.length === 8) {
-            telClean = '+591' + telClean;
+        let telClean = p.telefono.replace(/\D/g, '');
+        if (telClean.length === 8) {
+            telClean = '591' + telClean;
         }
 
         const msg = encodeURIComponent(`Hola ${p.nombres}, vimos que realizaste nuestro test de nivelación en Binglish y obtuviste un nivel ${p.nivel || '?'}. ¡Nos encantaría ayudarte a mejorar tu inglés!`);
-        const waLink = `https://wa.me/${telClean.replace('+', '')}?text=${msg}`;
+        const waLink = `https://wa.me/${telClean}?text=${msg}`;
 
         const scoreDisplay = p.score !== null ? `${p.score}/60` : '<span class="text-muted">Incompleto</span>';
         const nivelDisplay = p.nivel ? `<span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25">${p.nivel}</span>` : '-';
