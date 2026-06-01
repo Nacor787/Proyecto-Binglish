@@ -533,5 +533,168 @@ function renderStaff() {
 document.addEventListener('DOMContentLoaded', () => {
     updateCounts();
     renderStaff();
+    cargarNoticiasIndex();
 });
 
+/* ============================================================
+   LÓGICA DE NOTICIAS EN EL INDEX
+   ============================================================ */
+
+function buildFeaturedCard(noticia, containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    let imgUrl = null;
+    if (noticia.imagenes && noticia.imagenes.length > 0) {
+        const portada = noticia.imagenes.find(img => img.es_portada) || noticia.imagenes[0];
+        if (portada) imgUrl = `${API_BASE}/${portada.image_path}`;
+    }
+
+    const fecha = new Date(noticia.fecha_publicacion).toLocaleDateString('es-BO', { day: '2-digit', month: 'long', year: 'numeric' });
+
+    let icon = 'bi-newspaper';
+    if (noticia.categoria === 'anuncio') icon = 'bi-megaphone-fill';
+    else if (noticia.categoria === 'promo') icon = 'bi-tag-fill';
+    else if (noticia.categoria === 'evento') icon = 'bi-calendar-event-fill';
+
+    container.style.display = 'block';
+    container.innerHTML = `
+        <div class="featured-news-card" onclick="verNoticiaIndex(${noticia.id})" style="cursor:pointer;">
+            <div class="featured-news-img-col">
+                ${imgUrl
+                    ? `<img src="${imgUrl}" alt="Noticia Destacada">`
+                    : `<div class="featured-news-img-placeholder"><i class="bi ${noticia.icono || 'bi-image'} text-white-50" style="font-size: 5rem;"></i></div>`
+                }
+                <div class="featured-news-img-overlay"></div>
+            </div>
+            <div class="featured-news-body">
+                <div class="featured-news-badge">
+                    <i class="bi bi-star-fill me-1"></i> Noticia Destacada
+                </div>
+                <div class="featured-news-category mb-2">
+                    <i class="bi ${icon} me-1"></i> ${noticia.categoria.toUpperCase()}
+                </div>
+                <h2 class="featured-news-title">${noticia.titulo}</h2>
+                <p class="featured-news-extract">${noticia.extracto || ''}</p>
+                <div class="featured-news-meta">
+                    <span><i class="bi bi-calendar3 me-1"></i> ${fecha}</span>
+                </div>
+                <a href="javascript:void(0)" class="featured-news-btn mt-auto">
+                    Leer Más <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+            </div>
+        </div>
+    `;
+}
+
+async function cargarNoticiasIndex() {
+    const grid = document.getElementById('indexNewsGrid');
+    if (!grid) return; // Si no estamos en la página que tiene el grid, salir
+
+    try {
+        const response = await fetch(`${API_BASE}/noticias/`);
+        if (!response.ok) throw new Error('Error al cargar noticias');
+
+        const data = await response.json();
+
+        // Separar noticia destacada
+        const destacada = data.find(n => n.es_destacado);
+        if (destacada) {
+            buildFeaturedCard(destacada, 'indexFeaturedNews');
+        }
+
+        // Filtrar por anuncios y promociones (excluyendo la destacada), tomar las últimas 3
+        const sinDestacada = data.filter(n => !n.es_destacado);
+        const noticiasFiltradas = sinDestacada
+            .filter(n => n.categoria === 'anuncio' || n.categoria === 'promo')
+            .slice(0, 3);
+
+        // Si no hay suficientes, rellenar con otras categorías hasta llegar a 3
+        if (noticiasFiltradas.length < 3) {
+            const otrasNoticias = sinDestacada.filter(n => n.categoria !== 'anuncio' && n.categoria !== 'promo');
+            const faltantes = 3 - noticiasFiltradas.length;
+            noticiasFiltradas.push(...otrasNoticias.slice(0, faltantes));
+        }
+
+        if (noticiasFiltradas.length === 0) {
+            grid.innerHTML = '<div class="col-12 text-center text-white-50"><p>No hay noticias recientes por el momento.</p></div>';
+            return;
+        }
+
+        let html = '';
+        noticiasFiltradas.forEach((noticia, index) => {
+            const delay = 100 + (index * 100);
+
+            // Icono según categoría
+            let icon = 'bi-newspaper';
+            if (noticia.categoria === 'anuncio') icon = 'bi-megaphone-fill';
+            else if (noticia.categoria === 'promo') icon = 'bi-tag-fill text-warning';
+            else if (noticia.categoria === 'evento') icon = 'bi-calendar-event-fill text-info';
+
+            // Extraer imagen de portada
+            let imgUrl = null;
+            if (noticia.imagenes && noticia.imagenes.length > 0) {
+                const portada = noticia.imagenes.find(img => img.es_portada) || noticia.imagenes[0];
+                if (portada) imgUrl = `${API_BASE}/${portada.image_path}`;
+            }
+
+            html += `
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-duration="800" data-aos-delay="${delay}">
+                    <div class="noticia-card h-100 d-flex flex-column" onclick="verNoticiaIndex(${noticia.id})" style="cursor: pointer; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; overflow: hidden; backdrop-filter: blur(10px); transition: transform 0.3s ease;">
+                        <div class="noticia-img" style="height: 200px; overflow: hidden; position: relative;">
+                            ${imgUrl ?
+                                `<img src="${imgUrl}" alt="Portada" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">` :
+                                `<div style="width: 100%; height: 100%; display:flex; align-items:center; justify-content:center; background:#1A233A;">
+                                    <i class="bi ${noticia.icono || 'bi-image'} text-white-50" style="font-size: 3rem;"></i>
+                                 </div>`
+                            }
+                            <span class="badge position-absolute top-0 start-0 m-3" style="background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); border: 1px solid rgba(0,229,255,0.2); color: #00E5FF;">
+                                <i class="bi ${icon} me-1"></i> ${noticia.categoria.toUpperCase()}
+                            </span>
+                        </div>
+                        <div class="p-4 d-flex flex-column flex-grow-1">
+                            <small class="text-info mb-2"><i class="bi bi-calendar3 me-1"></i> ${new Date(noticia.fecha_publicacion).toLocaleDateString()}</small>
+                            <h5 class="text-white fw-bold mb-3" style="font-family: 'Playfair Display', serif;">${noticia.titulo}</h5>
+                            <p class="text-white-50 small flex-grow-1" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                                ${noticia.extracto || ''}
+                            </p>
+                            <a href="javascript:void(0)" class="mt-auto d-inline-flex align-items-center fw-bold" style="color: #00E5FF; text-decoration: none; font-size: 0.95rem; gap: 5px; transition: gap 0.3s ease;" onmouseover="this.style.gap='10px'" onmouseout="this.style.gap='5px'">
+                                Leer Más <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+
+        grid.innerHTML = html;
+
+        // Add hover effect via JS since inline style hover is limited
+        const cards = grid.querySelectorAll('.noticia-card');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-5px)';
+                card.style.borderColor = 'rgba(0, 229, 255, 0.3)';
+                card.style.boxShadow = '0 10px 30px rgba(0, 229, 255, 0.1)';
+                const img = card.querySelector('img');
+                if (img) img.style.transform = 'scale(1.05)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'none';
+                card.style.borderColor = 'rgba(255,255,255,0.1)';
+                card.style.boxShadow = 'none';
+                const img = card.querySelector('img');
+                if (img) img.style.transform = 'none';
+            });
+        });
+
+    } catch (error) {
+        console.error('Error al cargar noticias en el index:', error);
+        grid.innerHTML = '<div class="col-12 text-center text-danger"><p>Error al cargar las novedades.</p></div>';
+    }
+}
+
+function verNoticiaIndex(id) {
+    localStorage.setItem('noticia_abrir_id', id);
+    window.location.href = 'noticias.html?t=' + new Date().getTime();
+}

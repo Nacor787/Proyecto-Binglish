@@ -277,6 +277,13 @@ function getMenuForRole(rol) {
                     { id: 'pagos', emoji: '💳', label: 'Pagos' },
                     { id: 'reportes', emoji: '📊', label: 'Reportes' },
                     { id: 'backups', emoji: '💾', label: 'Backups' },
+                    { id: 'prospectos', emoji: '📝', label: 'Prospectos Test' },
+                ]
+            },
+            {
+                label: 'COMUNICACIÓN',
+                items: [
+                    { id: 'noticias', emoji: '📰', label: 'Noticias' },
                 ]
             },
         ];
@@ -396,6 +403,8 @@ function loadSection(section) {
         'backups': 'Backups',
         'biblioteca': 'Biblioteca Virtual',
         'asignaciones': 'Gestión de Asignaciones',
+        'prospectos': 'Prospectos Test',
+        'noticias': 'Noticias y Anuncios',
     };
 
     if (topTitle) topTitle.textContent = titles[section] || 'Dashboard';
@@ -414,6 +423,8 @@ function loadSection(section) {
         case 'mis-pagos': renderMisPagos(content); break;
         case 'biblioteca': renderBiblioteca(content); break;
         case 'asignaciones': renderAsignaciones(content); break;
+        case 'prospectos': renderProspectos(content); break;
+        case 'noticias': renderNoticiasAdmin(content); break;
         default: renderInicio(content);
     }
 }
@@ -5128,6 +5139,843 @@ function pdfToggleFullscreen() {
     } else {
         document.exitFullscreen().then(() => {
             icon.className = 'bi bi-fullscreen';
+        });
+    }
+}
+
+/* ==========================================================
+   PROSPECTOS TEST (Admin)
+   ========================================================== */
+
+async function renderProspectos(container) {
+    container.innerHTML = `
+        <div class="row g-4 mb-4">
+            <div class="col-12">
+                <div class="d-flex align-items-center justify-content-between">
+                    <h5 class="mb-0 text-dark fw-bold"><i class="bi bi-person-lines-fill me-2 text-primary"></i>Prospectos del Placement Test</h5>
+                </div>
+                <p class="text-muted small mt-2">Lista de personas que han realizado el test de nivelación. Puedes contactarlos directamente por WhatsApp.</p>
+            </div>
+            
+            <!-- Tarjetas de Estadísticas de Prospectos -->
+            <div class="col-md-4">
+                <div class="stat-card glass-panel text-white p-3 border-0 shadow-sm" style="border-radius: 12px; background: linear-gradient(135deg, rgba(0,229,255,0.1) 0%, rgba(10,15,30,0.6) 100%); border-left: 4px solid #00E5FF !important;">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-white-50 small text-uppercase mb-1">Total Prospectos</h6>
+                            <h3 class="fw-bold mb-0" id="statTotalProspectos">0</h3>
+                        </div>
+                        <div class="p-3 bg-info bg-opacity-10 rounded-circle text-info">
+                            <i class="bi bi-people-fill fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="stat-card glass-panel text-white p-3 border-0 shadow-sm" style="border-radius: 12px; background: linear-gradient(135deg, rgba(255,213,0,0.1) 0%, rgba(10,15,30,0.6) 100%); border-left: 4px solid #FFD500 !important;">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-white-50 small text-uppercase mb-1">Puntaje Promedio</h6>
+                            <h3 class="fw-bold mb-0" id="statPromedioPuntaje">0</h3>
+                        </div>
+                        <div class="p-3 bg-warning bg-opacity-10 rounded-circle text-warning">
+                            <i class="bi bi-bar-chart-fill fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="stat-card glass-panel text-white p-3 border-0 shadow-sm" style="border-radius: 12px; background: linear-gradient(135deg, rgba(255,0,85,0.1) 0%, rgba(10,15,30,0.6) 100%); border-left: 4px solid #FF0055 !important;">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-white-50 small text-uppercase mb-1">Mejor Nivel</h6>
+                            <h6 class="fw-bold mb-0 text-truncate" id="statMejorNivel" style="max-width: 150px;">-</h6>
+                            <small class="text-white-50" id="statMejorProspecto">N/A</small>
+                        </div>
+                        <div class="p-3 bg-danger bg-opacity-10 rounded-circle text-danger">
+                            <i class="bi bi-award-fill fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-12 mt-4">
+                <h6 class="mb-3 fw-bold text-dark"><i class="bi bi-list-ul me-1 text-primary"></i>Listado</h6>
+                <div class="table-card">
+                    <div class="d-flex flex-wrap justify-content-start align-items-center p-3 border-bottom border-secondary border-opacity-10">
+                        <div class="d-flex flex-wrap gap-2 align-items-center">
+                            <div class="input-group" style="width: 250px;">
+                                <span class="input-group-text border-secondary text-muted bg-white"><i class="bi bi-search"></i></span>
+                                <input type="text" class="form-control border-secondary text-dark" id="prospectosSearchInput" placeholder="Buscar prospecto..." onkeyup="filterProspectosAdmin()" style="border-radius: 0 8px 8px 0;">
+                            </div>
+                            <select class="form-select border-secondary text-muted" id="prospectosFilterNivel" onchange="filterProspectosAdmin()" style="width: 200px; border-radius: 8px;">
+                                <option value="">Todos los niveles</option>
+                                <option value="a1">A1</option>
+                                <option value="a2">A2</option>
+                                <option value="b1">B1</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="prospectosTable">
+                            <thead>
+                                <tr class="text-muted small uppercase fw-bold" style="letter-spacing: 0.5px;">
+                                    <th class="ps-4">Fecha</th>
+                                    <th>Nombre Completo</th>
+                                    <th>Teléfono</th>
+                                    <th>Puntaje</th>
+                                    <th>Nivel</th>
+                                    <th class="text-end pe-4">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbodyProspectos">
+                                <tr><td colspan="6" class="text-center py-4">
+                                    <div class="spinner-border spinner-border-sm text-primary"></div> Cargando prospectos...
+                                </td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="prospectosPagination"></div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    window.allProspectosAdmin = [];
+    window.filteredProspectosAdmin = [];
+    window.paginationState.prospectos = { page: 1, pageSize: 6 };
+
+    loadProspectosTable();
+}
+
+window.changeProspectosPage = (page) => {
+    window.paginationState.prospectos.page = page;
+    renderProspectosTableUI();
+};
+
+async function loadProspectosTable() {
+    try {
+        const prospectos = await apiGet('/placement-test/leads');
+        window.allProspectosAdmin = prospectos;
+        filterProspectosAdmin();
+    } catch (error) {
+        document.getElementById('tbodyProspectos').innerHTML =
+            '<tr><td colspan="6" class="text-center py-4 text-danger"><i class="bi bi-exclamation-triangle"></i> Error al cargar prospectos</td></tr>';
+    }
+}
+
+function filterProspectosAdmin() {
+    const nivel = document.getElementById('prospectosFilterNivel').value.toLowerCase();
+    const query = document.getElementById('prospectosSearchInput').value.toLowerCase();
+
+    window.filteredProspectosAdmin = window.allProspectosAdmin.filter(p => {
+        const rowNivel = (p.nivel || '').toLowerCase();
+        const nombre = `${p.nombres} ${p.apellidos}`;
+        const rowSearch = (nombre + ' ' + (p.telefono || '')).toLowerCase();
+
+        const matchesNivel = nivel === '' || rowNivel === nivel;
+        const matchesSearch = query === '' || rowSearch.includes(query);
+
+        return matchesNivel && matchesSearch;
+    });
+
+    window.paginationState.prospectos.page = 1;
+    renderProspectosTableUI();
+}
+
+function renderProspectosTableUI() {
+    const tbody = document.getElementById('tbodyProspectos');
+    const prospectos = window.filteredProspectosAdmin;
+
+    if (prospectos.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-muted">No hay prospectos registrados o que coincidan con la búsqueda.</td></tr>';
+        document.getElementById('statTotalProspectos').textContent = '0';
+        document.getElementById('statPromedioPuntaje').textContent = '0';
+        document.getElementById('statMejorNivel').textContent = '-';
+        document.getElementById('statMejorProspecto').textContent = 'N/A';
+        renderPaginationControls('prospectosPagination', 0, window.paginationState.prospectos.pageSize, 1, 'changeProspectosPage');
+        return;
+    }
+
+    const totalPuntaje = window.allProspectosAdmin.reduce((sum, p) => sum + (p.score || 0), 0);
+    const promedio = Math.round(totalPuntaje / window.allProspectosAdmin.length);
+    let mejor = window.allProspectosAdmin[0];
+    window.allProspectosAdmin.forEach(p => {
+        if ((p.score || 0) > (mejor.score || 0)) {
+            mejor = p;
+        }
+    });
+
+    document.getElementById('statTotalProspectos').textContent = window.allProspectosAdmin.length;
+    document.getElementById('statPromedioPuntaje').textContent = promedio;
+    document.getElementById('statMejorNivel').textContent = mejor.nivel || '-';
+    document.getElementById('statMejorProspecto').textContent = `${mejor.nombres} ${mejor.apellidos}`;
+
+    const paginatedProspectos = paginateArray(prospectos, window.paginationState.prospectos.page, window.paginationState.prospectos.pageSize);
+
+    const htmlRows = paginatedProspectos.map(p => {
+        let fechaStr = p.fecha_registro;
+        if (!fechaStr.endsWith('Z')) fechaStr += 'Z';
+
+        const fecha = new Date(fechaStr).toLocaleString('es-BO', {
+            day: '2-digit', month: '2-digit', year: 'numeric',
+            hour: '2-digit', minute: '2-digit',
+            hour12: false
+        });
+        const nombre = `${p.nombres} ${p.apellidos}`;
+
+        let telClean = p.telefono.replace(/\\s+/g, '');
+        if (!telClean.startsWith('+') && telClean.length === 8) {
+            telClean = '+591' + telClean;
+        }
+
+        const msg = encodeURIComponent(`Hola ${p.nombres}, vimos que realizaste nuestro test de nivelación en Binglish y obtuviste un nivel ${p.nivel || '?'}. ¡Nos encantaría ayudarte a mejorar tu inglés!`);
+        const waLink = `https://wa.me/${telClean.replace('+', '')}?text=${msg}`;
+
+        const scoreDisplay = p.score !== null ? `${p.score}/60` : '<span class="text-muted">Incompleto</span>';
+        const nivelDisplay = p.nivel ? `<span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25">${p.nivel}</span>` : '-';
+
+        return `
+            <tr>
+                <td class="ps-4 small text-muted">${fecha}</td>
+                <td class="fw-500">${nombre}</td>
+                <td>${p.telefono}</td>
+                <td>${scoreDisplay}</td>
+                <td>${nivelDisplay}</td>
+                <td class="text-end pe-4">
+                    <div class="d-flex justify-content-end gap-2">
+                        <a href="${waLink}" target="_blank" class="btn btn-sm btn-icon btn-success" style="border-radius: 8px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;" title="Contactar por WhatsApp">
+                            <i class="bi bi-whatsapp"></i>
+                        </a>
+                        <button class="btn btn-sm btn-icon btn-danger" style="border-radius: 8px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;" onclick="eliminarProspecto(${p.id})" title="Eliminar Prospecto">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join('');
+
+    tbody.innerHTML = htmlRows;
+    renderPaginationControls('prospectosPagination', prospectos.length, window.paginationState.prospectos.pageSize, window.paginationState.prospectos.page, 'changeProspectosPage');
+}
+
+async function eliminarProspecto(id) {
+    if (typeof Swal !== 'undefined') {
+        const result = await Swal.fire({
+            title: '¿Estás seguro?',
+            text: 'Esta acción eliminará permanentemente a este prospecto.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#CC2936',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar',
+            background: '#1A233A',
+            color: '#fff'
+        });
+
+        if (!result.isConfirmed) return;
+    } else {
+        if (!confirm('¿Estás seguro de que deseas eliminar este prospecto? Esta acción no se puede deshacer.')) return;
+    }
+
+    try {
+        await apiDelete(`/placement-test/leads/${id}`);
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'success',
+                title: 'Eliminado',
+                text: 'El prospecto fue eliminado correctamente.',
+                timer: 2000,
+                showConfirmButton: false,
+                background: '#1A233A',
+                color: '#fff'
+            });
+        }
+        // Recargar la tabla
+        renderProspectos(document.getElementById('contentArea'));
+    } catch (error) {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Ocurrió un problema al eliminar el prospecto.',
+                background: '#1A233A',
+                color: '#fff'
+            });
+        } else {
+            alert('Error al eliminar prospecto');
+        }
+    }
+}
+
+
+/* ==========================================================
+   NOTICIAS (Admin)
+   ========================================================== */
+
+let quillNoticia = null;
+
+async function renderNoticiasAdmin(container) {
+    container.innerHTML = `
+        <style>
+            .ql-editor blockquote {
+                border-left: 3px solid #00E5FF;
+                padding: 14px 22px;
+                margin: 28px 0;
+                background: rgba(0, 229, 255, 0.05);
+                border-radius: 0 8px 8px 0;
+                font-family: 'Playfair Display', serif;
+                font-size: 1.15rem;
+                color: #00E5FF;
+                font-style: italic;
+            }
+            /* Fix para que los dropdowns (fuente, tamaño, colores) de Quill no queden ocultos en el modal */
+            .ql-snow .ql-picker-options {
+                z-index: 100000 !important;
+                background-color: #1A233A !important;
+                border: 1px solid rgba(255, 255, 255, 0.2) !important;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.5) !important;
+            }
+            .ql-snow .ql-picker-item, .ql-snow .ql-picker-label {
+                color: #e2e8f0 !important;
+            }
+            .ql-snow .ql-picker-item:hover, .ql-snow .ql-picker-label:hover,
+            .ql-snow .ql-picker-item.ql-selected, .ql-snow .ql-picker-label.ql-active {
+                color: #00E5FF !important;
+            }
+            .ql-toolbar.ql-snow {
+                position: relative;
+                z-index: 99999;
+            }
+            .modal-dashboard .modal-content, .modal-dashboard .modal-body {
+                overflow: visible !important;
+            }
+        </style>
+        <div class="row g-4 mb-4">
+            <div class="col-12">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h5 class="mb-0 text-dark fw-bold"><i class="bi bi-newspaper me-2 text-primary"></i>Gestión de Noticias</h5>
+                </div>
+            </div>
+            
+            <!-- Tarjetas de Estadísticas de Noticias -->
+            <div class="col-md-4">
+                <div class="stat-card glass-panel text-white p-3 border-0 shadow-sm" style="border-radius: 12px; background: linear-gradient(135deg, rgba(0,229,255,0.1) 0%, rgba(10,15,30,0.6) 100%); border-left: 4px solid #00E5FF !important;">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-white-50 small text-uppercase mb-1">Total Noticias</h6>
+                            <h3 class="fw-bold mb-0" id="statTotalNoticias">0</h3>
+                        </div>
+                        <div class="p-3 bg-info bg-opacity-10 rounded-circle text-info">
+                            <i class="bi bi-journal-text fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="stat-card glass-panel text-white p-3 border-0 shadow-sm" style="border-radius: 12px; background: linear-gradient(135deg, rgba(255,213,0,0.1) 0%, rgba(10,15,30,0.6) 100%); border-left: 4px solid #FFD500 !important;">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-white-50 small text-uppercase mb-1">Vistas Totales</h6>
+                            <h3 class="fw-bold mb-0" id="statTotalVistas">0</h3>
+                        </div>
+                        <div class="p-3 bg-warning bg-opacity-10 rounded-circle text-warning">
+                            <i class="bi bi-eye fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="stat-card glass-panel text-white p-3 border-0 shadow-sm" style="border-radius: 12px; background: linear-gradient(135deg, rgba(255,0,85,0.1) 0%, rgba(10,15,30,0.6) 100%); border-left: 4px solid #FF0055 !important;">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-white-50 small text-uppercase mb-1">Noticia Más Vista</h6>
+                            <h6 class="fw-bold mb-0 text-truncate" id="statMasVista" style="max-width: 150px;">-</h6>
+                            <small class="text-white-50" id="statMasVistaCount">0 vistas</small>
+                        </div>
+                        <div class="p-3 bg-danger bg-opacity-10 rounded-circle text-danger">
+                            <i class="bi bi-graph-up-arrow fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 mt-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="mb-0 fw-bold text-dark"><i class="bi bi-list-ul me-2 text-primary"></i>Listado</h6>
+                    <button class="btn btn-primary shadow-sm px-4 py-2" onclick="showNoticiaModal()" style="border-radius: 8px;">
+                        <i class="bi bi-plus-lg me-2"></i>Nueva Noticia
+                    </button>
+                </div>
+                <div class="table-card">
+                    <div class="d-flex flex-wrap justify-content-start align-items-center p-3 border-bottom border-secondary border-opacity-10">
+                        <div class="d-flex flex-wrap gap-2 align-items-center">
+                            <div class="input-group" style="width: 250px;">
+                                <span class="input-group-text border-secondary text-muted bg-white"><i class="bi bi-search"></i></span>
+                                <input type="text" class="form-control border-secondary text-dark" id="noticiasSearchInput" placeholder="Buscar noticia..." onkeyup="filterNoticiasAdmin()" style="border-radius: 0 8px 8px 0;">
+                            </div>
+                            <select class="form-select border-secondary text-muted" id="noticiasFilterCategory" onchange="filterNoticiasAdmin()" style="width: 200px; border-radius: 8px;">
+                                <option value="">Todas las categorías</option>
+                                <option value="anuncio">Anuncio Institucional</option>
+                                <option value="evento">Evento</option>
+                                <option value="promo">Promoción</option>
+                                <option value="academia">Académico</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="noticiasTable">
+                            <thead>
+                                <tr class="text-muted small uppercase fw-bold" style="letter-spacing: 0.5px;">
+                                    <th>Fecha</th>
+                                    <th>Título</th>
+                                    <th>Categoría</th>
+                                    <th class="text-center">Ícono</th>
+                                    <th class="text-center">Destacada</th>
+                                    <th>Imágenes</th>
+                                    <th class="text-center">Vistas</th>
+                                    <th class="text-end pe-4">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbodyNoticias">
+                                <tr><td colspan="8" class="text-center py-4"><div class="spinner-border spinner-border-sm text-primary"></div> Cargando...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="noticiasPagination"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Crear/Editar Noticia -->
+        <div class="modal fade modal-dashboard" id="noticiaModal" tabindex="-1">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content glass-panel border-0 shadow-lg">
+                    <div class="modal-header border-bottom border-secondary border-opacity-25">
+                        <h5 class="modal-title fw-bold text-white"><i class="bi bi-journal-text me-2"></i><span id="noticiaModalTitle">Nueva Noticia</span></h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <form id="formNoticia">
+                            <input type="hidden" id="noticiaId">
+                            <div class="row g-4">
+                                <!-- Columna Izquierda: Datos Básicos -->
+                                <div class="col-lg-5">
+                                    <div class="row g-3">
+                                        <div class="col-12">
+                                            <label class="form-label text-white-50 small">Título</label>
+                                            <input type="text" class="form-control glass-input text-white" id="noticiaTitulo" required>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <label class="form-label text-white-50 small">Ícono de Portada</label>
+                                            <select class="form-select glass-select text-white" id="noticiaIcono">
+                                                <option value="" class="text-dark">Ninguno / Foto</option>
+                                                <option value="bi-image" class="text-dark">📷 Imagen Genérica</option>
+                                                <option value="bi-trophy-fill" class="text-dark">🏆 Copa / Trofeo</option>
+                                                <option value="bi-star-fill" class="text-dark">⭐ Estrella</option>
+                                                <option value="bi-megaphone-fill" class="text-dark">📢 Megáfono</option>
+                                                <option value="bi-calendar-event-fill" class="text-dark">📅 Calendario</option>
+                                                <option value="bi-award-fill" class="text-dark">🥇 Medalla</option>
+                                                <option value="bi-newspaper" class="text-dark">📰 Periódico</option>
+                                                <option value="bi-bell-fill" class="text-dark">🔔 Aviso</option>
+                                                <option value="bi-gift-fill" class="text-dark">🎁 Regalo</option>
+                                                <option value="bi-briefcase-fill" class="text-dark">💼 Maletín</option>
+                                                <option value="bi-book-fill" class="text-dark">📖 Libro</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <label class="form-label text-white-50 small">Categoría</label>
+                                            <select class="form-select glass-select text-white" id="noticiaCategoria" required>
+                                                <option value="evento" class="text-dark">Evento</option>
+                                                <option value="anuncio" class="text-dark">Anuncio</option>
+                                                <option value="promo" class="text-dark">Promoción</option>
+                                                <option value="academia" class="text-dark">Academia</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label text-white-50 small">Extracto (Resumen corto)</label>
+                                            <textarea class="form-control glass-input text-white" id="noticiaExtracto" rows="4" maxlength="500" required></textarea>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="d-flex align-items-center gap-3 py-2 px-3" style="background: rgba(255,213,0,0.08); border: 1px solid rgba(255,213,0,0.25); border-radius: 10px;">
+                                                <div class="form-check form-switch mb-0">
+                                                    <input class="form-check-input" type="checkbox" id="noticiaDestacado" style="width: 2.5em; height: 1.3em; cursor: pointer;">
+                                                </div>
+                                                <div>
+                                                    <label class="form-check-label text-warning fw-bold d-block" for="noticiaDestacado" style="cursor: pointer;">
+                                                        <i class="bi bi-star-fill me-1"></i> Noticia Destacada
+                                                    </label>
+                                                    <small class="text-white-50 d-block mt-1" style="font-size: 0.75rem; line-height: 1.2;">Aparecerá en grande al inicio.</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Columna Derecha: Editor e Imágenes -->
+                                <div class="col-lg-7 d-flex flex-column">
+                                    <div class="flex-grow-1 mb-3 d-flex flex-column position-relative">
+                                        <label class="form-label text-white-50 small">Contenido Principal</label>
+                                        <div id="quillLoader" class="position-absolute d-flex justify-content-center align-items-center z-3 d-none" style="top: 28px; left:0; right: 0; bottom: 0; background: rgba(26, 35, 58, 0.8); border-radius: 8px; backdrop-filter: blur(2px);">
+                                            <div class="spinner-border text-primary" role="status">
+                                                <span class="visually-hidden">Cargando editor...</span>
+                                            </div>
+                                        </div>
+                                        <!-- EDITOR QUILL CON ALTURA MODIFICADA Y SIN BACKGROUND EN LÍNEA -->
+                                        <div id="editor-container" class="flex-grow-1" style="min-height: 350px; color: #fff; border-radius: 0 0 8px 8px;"></div>
+                                    </div>
+                                    <div>
+                                        <label class="form-label text-white-50 small">Imágenes Adicionales (La primera será portada)</label>
+                                        <input type="file" class="form-control glass-input text-white" id="noticiaImages" multiple accept="image/*">
+                                        <div id="noticiaImagesPreview" class="d-flex flex-wrap gap-2 mt-3"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer border-top border-secondary border-opacity-25">
+                        <button type="button" class="btn btn-outline-light rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary rounded-pill px-4 fw-bold" onclick="saveNoticia()">Guardar Noticia</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Inicializar Quill
+    if (typeof Quill !== 'undefined' && !quillNoticia) {
+        quillNoticia = new Quill('#editor-container', {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    [{ 'font': [] }],
+                    [{ 'size': ['small', false, 'large', 'huge'] }],
+                    [{ 'header': [1, 2, 3, false] }],
+                    ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+                    [{ 'color': [] }, { 'background': [] }],
+                    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                    ['link', 'video'],
+                    ['clean']
+                ]
+            }
+        });
+        window.quillNoticia = quillNoticia;
+
+        // Agregar tooltips en español
+        setTimeout(() => {
+            const tooltips = {
+                'ql-font': 'Tipo de Letra',
+                'ql-size': 'Tamaño de Letra',
+                'ql-header': 'Título / Encabezado',
+                'ql-bold': 'Negrita',
+                'ql-italic': 'Cursiva',
+                'ql-underline': 'Subrayado',
+                'ql-strike': 'Tachado',
+                'ql-blockquote': 'Cita Periodística',
+                'ql-color': 'Color de Letra',
+                'ql-background': 'Fondo de Letra',
+                'ql-list[value="ordered"]': 'Lista Numerada',
+                'ql-list[value="bullet"]': 'Lista con Viñetas',
+                'ql-link': 'Insertar Enlace',
+                'ql-video': 'Insertar Video',
+                'ql-clean': 'Limpiar Formato'
+            };
+            Object.keys(tooltips).forEach(selector => {
+                document.querySelectorAll(`.ql-toolbar .${selector}`).forEach(el => {
+                    el.setAttribute('title', tooltips[selector]);
+                });
+            });
+        }, 300);
+    } else if (quillNoticia) {
+        // Re-render the editor container after innerHTML reset
+        quillNoticia.root.innerHTML = '';
+    }
+
+    loadNoticiasTable();
+}
+
+window.allNoticiasAdmin = [];
+window.filteredNoticiasAdmin = [];
+window.paginationState.noticias = { page: 1, pageSize: 6 };
+
+window.changeNoticiasPage = (page) => {
+    window.paginationState.noticias.page = page;
+    renderNoticiasTableUI();
+};
+
+async function loadNoticiasTable() {
+    try {
+        const noticias = await apiGet('/noticias/');
+        window.allNoticiasAdmin = noticias;
+        filterNoticiasAdmin(); // This will populate filteredNoticiasAdmin and call renderNoticiasTableUI
+    } catch (error) {
+        document.getElementById('tbodyNoticias').innerHTML = '<tr><td colspan="8" class="text-center py-4 text-danger">Error al cargar noticias</td></tr>';
+    }
+}
+
+function filterNoticiasAdmin() {
+    const category = document.getElementById('noticiasFilterCategory').value.toLowerCase();
+    const query = document.getElementById('noticiasSearchInput').value.toLowerCase();
+
+    window.filteredNoticiasAdmin = window.allNoticiasAdmin.filter(n => {
+        const rowCategory = (n.categoria || '').toLowerCase();
+        const rowSearch = ((n.titulo || '') + ' ' + (n.categoria || '')).toLowerCase();
+
+        const matchesCategory = category === '' || rowCategory === category;
+        const matchesSearch = query === '' || rowSearch.includes(query);
+
+        return matchesCategory && matchesSearch;
+    });
+
+    // Reset page on filter
+    window.paginationState.noticias.page = 1;
+    renderNoticiasTableUI(true);
+}
+
+function renderNoticiasTableUI(reset = false) {
+    const tbody = document.getElementById('tbodyNoticias');
+    const noticias = window.filteredNoticiasAdmin;
+
+    if (noticias.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" class="text-center py-4 text-muted">No hay noticias registradas o que coincidan con la búsqueda</td></tr>';
+        document.getElementById('statTotalNoticias').textContent = '0';
+        document.getElementById('statTotalVistas').textContent = '0';
+        document.getElementById('statMasVista').textContent = '-';
+        document.getElementById('statMasVistaCount').textContent = '0 vistas';
+        renderPaginationControls('noticiasPagination', 0, window.paginationState.noticias.pageSize, 1, 'changeNoticiasPage');
+        return;
+    }
+
+    // Calcular estadísticas
+    const totalVistas = window.allNoticiasAdmin.reduce((sum, n) => sum + (n.vistas || 0), 0);
+    let masVista = window.allNoticiasAdmin[0];
+    window.allNoticiasAdmin.forEach(n => {
+        if ((n.vistas || 0) > (masVista.vistas || 0)) {
+            masVista = n;
+        }
+    });
+
+    document.getElementById('statTotalNoticias').textContent = window.allNoticiasAdmin.length;
+    document.getElementById('statTotalVistas').textContent = totalVistas;
+    if (masVista && (masVista.vistas || 0) > 0) {
+        document.getElementById('statMasVista').textContent = masVista.titulo;
+        document.getElementById('statMasVistaCount').textContent = `${masVista.vistas || 0} vistas`;
+    } else {
+        document.getElementById('statMasVista').textContent = '-';
+        document.getElementById('statMasVistaCount').textContent = '0 vistas';
+    }
+
+    const paginatedNoticias = paginateArray(noticias, window.paginationState.noticias.page, window.paginationState.noticias.pageSize);
+
+    const htmlRows = paginatedNoticias.map(n => {
+        const fecha = new Date(n.fecha_publicacion + 'Z').toLocaleString('es-BO', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        return `
+            <tr class="noticia-row" data-category="${n.categoria}" data-search="${n.titulo.toLowerCase()} ${n.categoria.toLowerCase()}">
+                <td class="ps-4 small text-muted">${fecha}</td>
+                <td class="fw-500">${n.titulo}</td>
+                <td><span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 text-uppercase">${n.categoria}</span></td>
+                <td class="text-center">${n.icono ? `<i class="bi ${n.icono} text-info fs-5" title="${n.icono}"></i>` : '<span class="text-muted small">-</span>'}</td>
+                <td class="text-center">${n.es_destacado ? '<i class="bi bi-star-fill text-warning fs-5" title="Destacada"></i>' : '<i class="bi bi-star text-muted" title="No destacada"></i>'}</td>
+                <td>${n.imagenes.length} <i class="bi bi-images text-muted"></i></td>
+                <td class="text-center fw-bold text-info"><i class="bi bi-eye me-1"></i>${n.vistas || 0}</td>
+                <td class="text-end pe-4">
+                    <div class="d-flex justify-content-end gap-2">
+                        <button class="btn btn-sm btn-icon btn-outline-primary" style="border-radius: 8px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;" onclick='editNoticia(${JSON.stringify(n).replace(/'/g, "&#39;")})' title="Editar">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-sm btn-icon btn-danger" style="border-radius: 8px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;" onclick="deleteNoticia(${n.id})" title="Eliminar">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join('');
+
+    tbody.innerHTML = htmlRows;
+    renderPaginationControls('noticiasPagination', noticias.length, window.paginationState.noticias.pageSize, window.paginationState.noticias.page, 'changeNoticiasPage');
+}
+
+function showNoticiaModal() {
+    document.getElementById('formNoticia').reset();
+    document.getElementById('noticiaId').value = '';
+    document.getElementById('noticiaModalTitle').textContent = 'Nueva Noticia';
+    document.getElementById('noticiaImagesPreview').innerHTML = '';
+    document.getElementById('noticiaDestacado').checked = false;
+    document.getElementById('noticiaIcono').value = '';
+    if (quillNoticia) quillNoticia.root.innerHTML = '';
+
+    const loader = document.getElementById('quillLoader');
+    if (loader) {
+        loader.classList.remove('d-none');
+        setTimeout(() => loader.classList.add('d-none'), 600);
+    }
+
+    const modal = new bootstrap.Modal(document.getElementById('noticiaModal'));
+    modal.show();
+}
+
+function editNoticia(noticia) {
+    document.getElementById('formNoticia').reset();
+    document.getElementById('noticiaId').value = noticia.id;
+    document.getElementById('noticiaTitulo').value = noticia.titulo;
+    document.getElementById('noticiaCategoria').value = noticia.categoria;
+    document.getElementById('noticiaExtracto').value = noticia.extracto;
+    document.getElementById('noticiaIcono').value = noticia.icono || '';
+    document.getElementById('noticiaDestacado').checked = noticia.es_destacado || false;
+    document.getElementById('noticiaModalTitle').textContent = 'Editar Noticia';
+
+    if (quillNoticia) {
+        quillNoticia.root.innerHTML = noticia.contenido || '';
+    }
+
+    const loader = document.getElementById('quillLoader');
+    if (loader) {
+        loader.classList.remove('d-none');
+        setTimeout(() => loader.classList.add('d-none'), 600);
+    }
+
+    // Render imágenes existentes
+    const previewContainer = document.getElementById('noticiaImagesPreview');
+    previewContainer.innerHTML = noticia.imagenes.map(img => `
+        <div class="position-relative" style="width: 100px; height: 100px;">
+            <img src="${API_BASE}/${img.image_path}" class="w-100 h-100 object-fit-cover rounded border border-secondary border-opacity-50">
+            <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1 rounded-circle p-1" style="width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 10px;" onclick="deleteNoticiaImage(${noticia.id}, ${img.id}, this)">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+    `).join('');
+
+    const modal = new bootstrap.Modal(document.getElementById('noticiaModal'));
+    modal.show();
+}
+
+async function saveNoticia() {
+    const id = document.getElementById('noticiaId').value;
+    const titulo = document.getElementById('noticiaTitulo').value.trim();
+    const categoria = document.getElementById('noticiaCategoria').value;
+    const extracto = document.getElementById('noticiaExtracto').value.trim();
+    const contenido = quillNoticia ? quillNoticia.root.innerHTML : '';
+    const icono = document.getElementById('noticiaIcono').value.trim();
+    const es_destacado = document.getElementById('noticiaDestacado').checked;
+    const imagesInput = document.getElementById('noticiaImages');
+
+    if (!titulo || !extracto || (quillNoticia && quillNoticia.getText().trim().length === 0)) {
+        Swal.fire({ icon: 'warning', title: 'Campos incompletos', text: 'Por favor, llena los campos requeridos y el contenido de la noticia.', background: '#1A233A', color: '#fff' });
+        return;
+    }
+
+    const payload = { titulo, categoria, extracto, contenido, es_destacado, icono };
+
+    try {
+        let noticiaResult = null;
+        if (id) {
+            noticiaResult = await apiPut(`/noticias/${id}`, payload);
+        } else {
+            noticiaResult = await apiPost('/noticias/', payload);
+        }
+
+        if (imagesInput && imagesInput.files.length > 0) {
+            const formData = new FormData();
+            for (let i = 0; i < imagesInput.files.length; i++) {
+                formData.append('files', imagesInput.files[i]);
+            }
+
+            const token = localStorage.getItem('binglish_token');
+            const response = await fetch(`${API_BASE}/noticias/${noticiaResult.id}/images`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` },
+                body: formData
+            });
+
+            if (!response.ok) {
+                const errJson = await response.json().catch(() => ({}));
+                throw new Error(errJson.detail || 'Error al subir imágenes');
+            }
+        }
+
+        Swal.fire({ icon: 'success', title: 'Guardado', text: 'La noticia se ha guardado correctamente.', timer: 2000, showConfirmButton: false, background: '#1A233A', color: '#fff' });
+
+        const modalEl = document.getElementById('noticiaModal');
+        if (modalEl) {
+            const modal = bootstrap.Modal.getInstance(modalEl);
+            if (modal) modal.hide();
+        }
+        loadNoticiasTable();
+
+    } catch (error) {
+        console.error("Error al guardar noticia:", error);
+        Swal.fire({ icon: 'error', title: 'Error', text: 'Ocurrió un error al guardar la noticia: ' + (error.message || error), background: '#1A233A', color: '#fff' });
+    }
+}
+
+async function deleteNoticia(id) {
+    const result = await Swal.fire({
+        title: '¿Estás seguro?',
+        text: 'Se eliminará la noticia y todas sus imágenes permanentemente.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#CC2936',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+        background: '#1A233A',
+        color: '#fff'
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+        await apiDelete(`/noticias/${id}`);
+        Swal.fire({ icon: 'success', title: 'Eliminado', text: 'Noticia eliminada correctamente.', timer: 2000, showConfirmButton: false, background: '#1A233A', color: '#fff' });
+        loadNoticiasTable();
+    } catch (error) {
+        Swal.fire({ icon: 'error', title: 'Error', text: 'No se pudo eliminar la noticia.', background: '#1A233A', color: '#fff' });
+    }
+}
+
+async function deleteNoticiaImage(noticiaId, imageId, btnElement) {
+    const result = await Swal.fire({
+        title: '¿Eliminar imagen?',
+        text: "Esta acción no se puede deshacer.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+        background: '#1A233A',
+        color: '#fff'
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+        await apiDelete(`/noticias/${noticiaId}/images/${imageId}`);
+        btnElement.parentElement.remove();
+        loadNoticiasTable();
+        Swal.fire({
+            icon: 'success',
+            title: 'Eliminada',
+            text: 'La imagen ha sido eliminada.',
+            background: '#1A233A',
+            color: '#fff',
+            timer: 1500,
+            showConfirmButton: false
+        });
+    } catch (error) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo eliminar la imagen.',
+            background: '#1A233A',
+            color: '#fff'
         });
     }
 }

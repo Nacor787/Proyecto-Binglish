@@ -53,6 +53,12 @@
     <link href="css/styles.css" rel="stylesheet">
     <!-- Placement Test CSS -->
     <link href="css/test.css" rel="stylesheet">
+    <!-- Banner CSS -->
+    <link href="css/baner.css" rel="stylesheet">
+
+    <!-- Intl-Tel-Input CSS -->
+    <link rel="stylesheet" href="libs/css/intlTelInput.css" />
+    <link rel="stylesheet" href="css/intl.css" />
 
     <!-- Datos estructurados JSON-LD (Schema.org) para Google -->
     <script type="application/ld+json">
@@ -90,86 +96,95 @@
     <div id="vanta-bg"></div>
 
     <!-- ============================================================
-     NAVBAR (fixed-top con glass)
+     HEADER (fixed-top)
      ============================================================ -->
-    <nav class="navbar navbar-expand-lg navbar-binglish fixed-top" id="mainNavbar">
-        <div class="container-fluid px-4 px-lg-5">
-            <a class="navbar-brand d-flex align-items-center" href="#">
-                <img src="assets/logo.svg" alt="Binglish" height="50" class="me-2">
-                <div class="d-flex flex-column justify-content-center lh-1">
-                    <span class="brand-title">BINGLISH</span>
-                    <span class="brand-subtitle">The Right Move</span>
+    <header class="fixed-top" style="z-index: 1030;">
+        <nav class="navbar navbar-expand-lg navbar-binglish" id="mainNavbar">
+            <div class="container-fluid px-4 px-lg-5">
+                <a class="navbar-brand d-flex align-items-center" href="#">
+                    <img src="assets/logo.svg" alt="Binglish" height="50" class="me-2">
+                    <div class="d-flex flex-column justify-content-center lh-1">
+                        <span class="brand-title">BINGLISH</span>
+                        <span class="brand-subtitle">The Right Move</span>
+                    </div>
+                </a>
+                <!-- Botones externos en Móvil (SIEMPRE VISIBLES) -->
+                <div class="d-flex align-items-center order-1 order-lg-3 ms-auto pe-2 pe-lg-0 ms-lg-0 ps-lg-3 border-lg-start"
+                    style="border-color: rgba(0,229,255,0.2) !important;">
+                    <a class="nav-link nav-icon-circle" data-bs-toggle="modal" data-bs-target="#loginModal"
+                        id="btnLoginNav" style="cursor: pointer;" title="Ingresar">
+                        <i class="bi bi-person-fill"></i>
+                    </a>
+                    <a class="nav-link nav-icon-circle" href="/dashboard" id="btnDashNav"
+                        style="display:none; margin-left: 0.5rem;" title="Dashboard">
+                        <i class="bi bi-speedometer2"></i>
+                    </a>
                 </div>
-            </a>
-            <!-- Botones externos en Móvil (SIEMPRE VISIBLES) -->
-            <div class="d-flex align-items-center order-1 order-lg-3 ms-auto pe-2 pe-lg-0 ms-lg-0 ps-lg-3 border-lg-start"
-                style="border-color: rgba(0,229,255,0.2) !important;">
-                <a class="nav-link nav-icon-circle" data-bs-toggle="modal" data-bs-target="#loginModal" id="btnLoginNav"
-                    style="cursor: pointer;" title="Ingresar">
-                    <i class="bi bi-person-fill"></i>
-                </a>
-                <a class="nav-link nav-icon-circle" href="/dashboard" id="btnDashNav"
-                    style="display:none; margin-left: 0.5rem;" title="Dashboard">
-                    <i class="bi bi-speedometer2"></i>
-                </a>
-            </div>
 
-            <button class="navbar-toggler animated-burger collapsed border-0 order-2 order-lg-4 ms-2" type="button"
-                data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
-                aria-label="Toggle navigation" style="margin-top: 5px;">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
+                <button class="navbar-toggler animated-burger collapsed border-0 order-2 order-lg-4 ms-2" type="button"
+                    data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav"
+                    aria-expanded="false" aria-label="Toggle navigation" style="margin-top: 5px;">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
 
-            <div class="collapse navbar-collapse order-3 order-lg-2" id="navbarNav">
-                <!-- Menú Principal (Centro) -->
-                <ul class="navbar-nav mx-auto align-items-lg-center gap-1" id="navMenu">
-                    <span class="nav-indicator" id="navIndicator"></span>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#inicio">
-                            <i class="bi bi-house-door me-1"></i>Inicio
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#nosotros">
-                            <i class="bi bi-people me-1"></i>Nosotros
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#equipo">
-                            <i class="bi bi-person-badge me-1"></i>Personal
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#metodologia">
-                            <i class="bi bi-lightbulb me-1"></i>Metodología
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#becasModal">
-                            <i class="bi bi-mortarboard me-1"></i>Becas
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#contacto">
-                            <i class="bi bi-envelope me-1"></i>Contacto
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#ubicacion">
-                            <i class="bi bi-geo-alt me-1"></i>Ubicación
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/convenios">
-                            <i class="bi bi-building me-1"></i>Convenios
-                        </a>
-                    </li>
-                </ul>
+                <div class="collapse navbar-collapse order-3 order-lg-2" id="navbarNav">
+                    <!-- Menú Principal (Centro) -->
+                    <ul class="navbar-nav mx-auto align-items-lg-center gap-1" id="navMenu">
+                        <span class="nav-indicator" id="navIndicator"></span>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#inicio">
+                                <i class="bi bi-house-door me-1"></i>Inicio
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#nosotros">
+                                <i class="bi bi-people me-1"></i>Nosotros
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#noticias">
+                                <i class="bi bi-newspaper me-1"></i>Noticias
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#equipo">
+                                <i class="bi bi-person-badge me-1"></i>Personal
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#metodologia">
+                                <i class="bi bi-lightbulb me-1"></i>Metodología
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="javascript:void(0)" data-bs-toggle="modal"
+                                data-bs-target="#becasModal">
+                                <i class="bi bi-mortarboard me-1"></i>Becas
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#contacto">
+                                <i class="bi bi-envelope me-1"></i>Contacto
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#ubicacion">
+                                <i class="bi bi-geo-alt me-1"></i>Ubicación
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/convenios">
+                                <i class="bi bi-building me-1"></i>Convenios
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </div>
-        </div>
-    </nav>
+        </nav>
+        <div id="promoBannerContainer" class="promo-marquee-container" style="display:none;"></div>
+    </header>
 
     <!-- ============================================================
      HERO SECTION
@@ -202,7 +217,7 @@
                                 <i class="bi bi-info-circle me-2"></i>Conócenos
                             </a>
                             <button class="btn-start btn-electric" onclick="openTestModal()">
-                                Start Test
+                                Test your English
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                     stroke-width="2.5">
                                     <path d="M5 12h14M12 5l7 7-7 7" />
@@ -266,6 +281,36 @@
                             para los retos del mundo moderno.</p>
                     </div>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECCION - NOTICIAS  -->
+
+    <section class="section-padding" id="noticias">
+        <div class="container">
+            <div class="text-center" data-aos="fade-down" data-aos-duration="700">
+                <span class="section-badge"><i class="bi bi-newspaper me-1"></i>Últimas Novedades</span>
+                <h2 class="section-title">Noticias, Anuncios y Promociones</h2>
+                <p class="section-subtitle">Entérate de todo lo nuevo que Binglish tiene para ti.</p>
+            </div>
+
+            <!-- Noticia Destacada -->
+            <div id="indexFeaturedNews" class="mt-4" style="display:none;"></div>
+
+            <!-- Grid de noticias normales -->
+            <div class="row g-4 justify-content-center mt-3" id="indexNewsGrid">
+                <!-- Skeleton loader -->
+                <div class="col-12 text-center text-white-50">
+                    <div class="spinner-border text-info mb-3"></div>
+                    <p>Cargando noticias...</p>
+                </div>
+            </div>
+
+            <div class="text-center mt-5" data-aos="fade-up" data-aos-delay="200">
+                <a href="noticias.html" class="btn btn-hero btn-hero-outline">
+                    Ver todas las noticias <i class="bi bi-arrow-right ms-2"></i>
+                </a>
             </div>
         </div>
     </section>
@@ -876,35 +921,106 @@
     <!-- AOS (Animate On Scroll) — se inicializa después del welcome overlay -->
     <script src="libs/aos.js"></script>
     <script>
-        // Overlay: 4.4s delay + 0.9s fade = 5.3s total
-        // AOS arranca justo después para que las animaciones de la página funcionen
-        setTimeout(() => {
+        const _wo = document.getElementById('welcomeOverlay');
+        const hasSeenWelcome = sessionStorage.getItem('welcomeShown');
+
+        if (hasSeenWelcome) {
+            // Ya vio la intro: remover overlay inmediatamente y arrancar AOS
+            if (_wo) _wo.remove();
             AOS.init({
                 duration: 800,
                 easing: 'ease-in-out',
                 once: true,
                 offset: 50
             });
-        }, 4500);
-    </script>
+        } else {
+            // Primera vez: marcar como visto, esperar la animación y arrancar AOS
+            sessionStorage.setItem('welcomeShown', 'true');
 
-    <!-- Welcome Overlay Cleanup -->
-    <script>
-        const _wo = document.getElementById('welcomeOverlay');
-        if (_wo) {
-            _wo.addEventListener('animationend', (e) => {
-                if (e.animationName === 'wFadeOut') _wo.remove();
-            });
-            // Fallback: 4.4s delay + 0.9s animation + buffer
-            setTimeout(() => { if (_wo && _wo.parentNode) _wo.remove(); }, 5000);
+            setTimeout(() => {
+                AOS.init({
+                    duration: 800,
+                    easing: 'ease-in-out',
+                    once: true,
+                    offset: 50
+                });
+            }, 4500);
+
+            if (_wo) {
+                _wo.addEventListener('animationend', (e) => {
+                    if (e.animationName === 'wFadeOut') _wo.remove();
+                });
+                // Fallback: 4.4s delay + 0.9s animation + buffer
+                setTimeout(() => { if (_wo && _wo.parentNode) _wo.remove(); }, 5000);
+            }
         }
     </script>
-
     <!-- Custom JS -->
+    <script src="js/noticias.js"></script>
     <script src="js/main.js"></script>
 
     <!-- ============================================================
-     PLACEMENT TEST MODAL OVERLAY
+     BINGLISH REGISTRATION MODAL (Paso 0)
+     ============================================================ -->
+    <div class="test-overlay" id="registrationOverlay" onclick="handleRegOverlayClick(event)">
+        <div class="test-modal reg-modal-wrapper">
+            <button class="test-btn-close reg-btn-close" onclick="closeRegistrationModal()">×</button>
+
+            <!-- Left Column: Branding and Welcome -->
+            <div class="reg-modal-left">
+                <div class="test-modal-logo" style="margin-right: 0; margin-bottom: 20px;">
+                    <img src="assets/logo.svg" alt="Binglish Logo" style="width: 80px; height: 80px;">
+                </div>
+                <h2 style="font-size: 2rem; font-weight: 700; color: #fff; margin-bottom: 5px;">Placement Test</h2>
+                <span class="reg-subtitle">BINGLISH — The Right Move</span>
+
+                <div class="reg-welcome-box">
+                    <h3 style="font-size: 1.3rem; margin-bottom: 10px; color: #fff;">¡Bienvenido!</h3>
+                    <p style="color: #fff; font-size: 1rem; margin: 0; line-height: 1.5;">
+                        <strong>Por favor, ingresa tus datos para comenzar.</strong><br>
+                        <span style="color: rgba(255, 255, 255, 0.8);">Esto nos ayudará a brindarte una mejor asesoría
+                            según tu nivel.</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Right Column: Form -->
+            <div class="reg-modal-right">
+                <form id="testRegistrationForm" onsubmit="startPlacementTest(event)">
+                    <div class="mb-3">
+                        <label class="form-label"
+                            style="color: rgba(255, 255, 255, 0.8); font-size: 0.9rem; font-weight: 500; margin-bottom: 6px;">Nombres</label>
+                        <input type="text" class="form-control glass-input" id="testRegNombres" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"
+                            style="color: rgba(255, 255, 255, 0.8); font-size: 0.9rem; font-weight: 500; margin-bottom: 6px;">Apellidos</label>
+                        <input type="text" class="form-control glass-input" id="testRegApellidos" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label"
+                            style="color: rgba(255, 255, 255, 0.8); font-size: 0.9rem; font-weight: 500; margin-bottom: 6px;">Número
+                            de Teléfono (WhatsApp)</label>
+                        <input type="tel" class="form-control glass-input" id="testRegTelefono" required>
+                    </div>
+
+                    <!-- CAPTCHA Container -->
+                    <div id="testCaptchaContainer" style="display: flex; justify-content: center; margin-bottom: 20px;">
+                        <div class="cf-turnstile" data-sitekey="0x4AAAAAADThGHT71f4ZsfbF" data-theme="dark"
+                            id="testTurnstileWidget"></div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 py-3" id="btnStartTest"
+                        style="font-weight: bold; font-size: 1.1rem; border-radius: 12px;">
+                        Empezar Test
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+     BINGLISH PLACEMENT TEST MODAL (Preguntas)
      ============================================================ -->
     <div class="test-overlay" id="testOverlay" onclick="handleTestOverlayClick(event)">
         <div class="test-modal" id="testModal">
@@ -927,10 +1043,6 @@
             <div class="test-progress-bar">
                 <div class="test-progress-info" id="testProgressInfo">
                     <span id="testProgressLabel">Grammar — A1 & A2</span>
-                    <span
-                        style="margin-left: 8px; font-size: 11px; color: rgba(255, 255, 255, 0.4); font-style: italic;">
-                        (Puedes dejar sin responder las que no sepas)
-                    </span>
                     <span id="testProgressPct">0% completado</span>
                 </div>
                 <div class="test-progress-track" id="testProgressTrack">
@@ -969,9 +1081,8 @@
                     <div class="test-results-right">
                         <div class="test-cta">
                             <div class="test-cta-emoji">🎓</div>
-                            <h3>¡Comienza tu aventura con Binglish!</h3>
-                            <p>Contáctanos y descubre el curso perfecto para tu nivel.<br>Nuestro equipo está listo para
-                                ayudarte a alcanzar tus metas en el inglés.</p>
+                            <h3>¡Es momento del segundo round en Binglish!</h3>
+                            <p>Ya conocemos tu nivel, ahora da el golpe definitivo para dominar el inglés.</p>
                             <div class="test-cta-buttons">
                                 <a href="https://wa.me/59173302492?text=Hola,%20acabo%20de%20hacer%20el%20test%20de%20nivel%20en%20Binglish%20y%20me%20gustaría%20información%20sobre%20los%20cursos."
                                     target="_blank" class="test-cta-btn whatsapp">
@@ -986,17 +1097,16 @@
                 </div>
             </div>
 
-            <!-- CAPTCHA Container -->
-            <div id="testCaptchaContainer" style="display: none; justify-content: flex-end; padding: 0 24px 16px;">
-                <div class="cf-turnstile" data-sitekey="0x4AAAAAADThGHT71f4ZsfbF" data-theme="dark"
-                    id="testTurnstileWidget"></div>
-            </div>
+
 
             <!-- Footer (navigation) -->
             <div class="test-modal-footer" id="testModalFooter">
                 <div class="test-footer-left">
                     <span class="test-answered-count">Respondidas: <strong id="testAnsweredCount">0</strong> / 60</span>
                 </div>
+                <span style="margin-left: 8px; font-size: 11px; color: rgba(255, 255, 255, 0.4); font-style: italic;">
+                    (Puedes dejar sin responder las que no sepas)
+                </span>
                 <div class="test-footer-right">
                     <button class="test-btn-nav test-btn-prev" id="testBtnPrev" onclick="prevTestPage()" disabled>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -1020,6 +1130,10 @@
 
     <!-- Placement Test JS -->
     <script src="js/test.js"></script>
+
+    <!-- Intl-Tel-Input JS -->
+    <script src="libs/intlTelInput.min.js"></script>
+    <script src="js/intl.js"></script>
 
 </body>
 

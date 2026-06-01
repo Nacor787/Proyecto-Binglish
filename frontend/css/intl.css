@@ -1,0 +1,118 @@
+/* ============================================================
+   INTL-TEL-INPUT (Glassmorphism)
+   ============================================================ */
+
+/* Apuntar a los sprites de las banderas en el CDN porque no existen en local */
+:root {
+    --iti-path-flags-1x: url("https://cdn.jsdelivr.net/npm/intl-tel-input@25.10.5/build/img/flags.webp");
+    --iti-path-flags-2x: url("https://cdn.jsdelivr.net/npm/intl-tel-input@25.10.5/build/img/flags@2x.webp");
+    --iti-path-globe-1x: url("https://cdn.jsdelivr.net/npm/intl-tel-input@25.10.5/build/img/globe.webp");
+    --iti-path-globe-2x: url("https://cdn.jsdelivr.net/npm/intl-tel-input@25.10.5/build/img/globe@2x.webp");
+}
+
+.iti {
+    width: 100%;
+}
+
+/* Contenedor principal de la lista desplegable */
+.iti__dropdown-content {
+    background-color: rgba(13, 18, 28, 0.95) !important;
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+    padding: 8px !important;
+    margin-top: 8px !important;
+}
+
+.iti__country-list {
+    background-color: transparent !important;
+    color: #fff;
+    border: none !important;
+    box-shadow: none !important;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+}
+
+/* Scrollbar para la lista de países */
+.iti__country-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.iti__country-list::-webkit-scrollbar-thumb {
+    background: rgba(0, 229, 255, 0.3);
+    border-radius: 10px;
+}
+
+/* Estilo para cada país en la lista */
+.iti__country {
+    border-radius: 8px;
+    padding: 10px 12px !important;
+    transition: all 0.2s ease;
+    margin-bottom: 2px;
+}
+
+.iti__country:hover,
+.iti__country.iti__highlight {
+    background-color: rgba(0, 229, 255, 0.15) !important;
+    color: #00E5FF;
+}
+
+.iti__dial-code {
+    color: rgba(255, 255, 255, 0.5);
+    float: right;
+}
+
+.iti__country.iti__highlight .iti__dial-code,
+.iti__country:hover .iti__dial-code {
+    color: #00E5FF;
+}
+
+/* Barra de búsqueda (Search Input) */
+.iti__search-input {
+    background-color: rgba(0, 0, 0, 0.3) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #fff !important;
+    border-radius: 8px !important;
+    padding: 10px 15px 10px 35px !important;
+    margin-bottom: 10px !important;
+    width: 100% !important;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.iti__search-input:focus {
+    border-color: #00E5FF !important;
+    background-color: rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Selector de bandera principal */
+.iti__selected-flag {
+    background-color: transparent !important;
+    padding: 0 15px !important;
+    border-radius: 12px 0 0 12px !important;
+    transition: all 0.3s ease;
+}
+
+.iti__selected-flag:hover {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Flecha del selector de país */
+.iti__arrow {
+    border-top-color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.iti__arrow--up {
+    border-bottom-color: rgba(255, 255, 255, 0.6) !important;
+    border-top-color: transparent !important;
+}
+
+/* Ajustes específicos para el input de teléfono */
+.iti input[type=tel],
+.iti input[type=text] {
+    padding-left: 90px !important;
+    /* Espacio para el selector de país */
+}

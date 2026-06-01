@@ -1,0 +1,67 @@
+/* ============================================================
+   BANNER DE PROMOCIONES Y ANUNCIOS (Marquee)
+   ============================================================ */
+
+.promo-marquee-container {
+    width: 100%;
+    /* Estilos copiados de featured-news-card */
+    background: rgba(255, 255, 255, 0.03);
+    border-top: 1px solid rgba(0, 229, 255, 0.2);
+    border-bottom: 1px solid rgba(0, 229, 255, 0.2);
+    box-shadow: 0 12px 50px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(0, 229, 255, 0.05);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    color: #fff;
+    padding: 6px 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    /* Texto un poco mas grueso para que se note mejor */
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    /* Sombra para resaltar sobre el glass */
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.promo-marquee-content {
+    display: flex;
+    flex-shrink: 0;
+    min-width: 100%;
+    justify-content: space-around;
+    white-space: nowrap;
+    animation: marquee-scroll 25s linear infinite;
+    align-items: center;
+    gap: 40px;
+    padding-right: 40px;
+    /* Equivale al gap para que no haya salto al reiniciar el loop */
+}
+
+.promo-marquee-container:hover .promo-marquee-content {
+    animation-play-state: paused;
+}
+
+@keyframes marquee-scroll {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+.promo-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    letter-spacing: 0.5px;
+}
+
+.promo-item i {
+    color: #00E5FF;
+    font-size: 1rem;
+}
+
+/* Ajuste responsive para asegurar visibilidad en moviles si el navbar cambia de alto */
+/* (Ya no es necesario ajustar el top porque esta dentro del header flex) */

@@ -107,6 +107,7 @@ const TOTAL_PAGES = TEST_PAGES.length;
 
 let testCurrentPage = 0;
 let testAnswers = new Array(TOTAL_QUESTIONS).fill(-1); // -1 = sin responder
+let testProspectoId = null; // Guardará el ID del prospecto una vez registrado
 
 // ══════════════════════════════════════════════
 //  CHECK IF ALREADY COMPLETED
@@ -144,9 +145,39 @@ function openTestModal() {
 
   testCurrentPage = 0;
   testAnswers = new Array(TOTAL_QUESTIONS).fill(-1);
-  buildTestModal();
-  document.getElementById('testOverlay').classList.add('open');
+
+  // Check if we already have an active session (registered but not completed)
+  const savedProspecto = sessionStorage.getItem('binglish_prospecto_id');
+  if (savedProspecto) {
+    testProspectoId = savedProspecto;
+    buildTestModal();
+    document.getElementById('testOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    return;
+  }
+
+  testProspectoId = null;
+
+  // Reset form
+  document.getElementById('testRegistrationForm').reset();
+  if (typeof turnstile !== 'undefined') {
+    turnstile.reset();
+  }
+
+  // Show registration overlay
+  document.getElementById('registrationOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
+}
+
+function closeRegistrationModal() {
+  document.getElementById('registrationOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function handleRegOverlayClick(e) {
+  if (e.target === document.getElementById('registrationOverlay')) {
+    closeRegistrationModal();
+  }
 }
 
 function closeTestModal(force = false) {
@@ -352,9 +383,8 @@ function updateTestProgress() {
 
   refreshTestDots();
 
-  // Last page → show submit button and CAPTCHA
+  // Last page → show submit button (captcha is now in step 0)
   const isLast = testCurrentPage === TOTAL_PAGES - 1;
-  document.getElementById('testCaptchaContainer').style.display = isLast ? 'flex' : 'none';
 
   const nextBtn = document.getElementById('testBtnNext');
   nextBtn.className = 'test-btn-nav ' + (isLast ? 'test-btn-submit' : 'test-btn-next');
@@ -420,14 +450,8 @@ async function submitPlacementTest() {
     if (!result.isConfirmed) return;
   }
 
-  // Verify captcha before submitting
-  const turnstileResponse = document.querySelector('#testCaptchaContainer [name="cf-turnstile-response"]')?.value;
-  if (!turnstileResponse) {
-    if (typeof Swal !== 'undefined') {
-      Swal.fire({ icon: 'warning', title: 'Verificación requerida', text: 'Por favor, completa el Captcha antes de enviar el test.' });
-    } else {
-      alert('Por favor, completa el Captcha antes de enviar el test.');
-    }
+  if (!testProspectoId) {
+    alert("Error de sesión. Por favor, vuelve a iniciar el test.");
     return;
   }
 
@@ -446,7 +470,7 @@ async function submitPlacementTest() {
     const res = await fetch(`${endpoint}/placement-test/submit`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ answers: testAnswers, turnstile_token: turnstileResponse }),
+      body: JSON.stringify({ answers: testAnswers, prospecto_id: testProspectoId }),
     });
 
     if (!res.ok) {
@@ -467,20 +491,15 @@ async function submitPlacementTest() {
       level_name: data.level_name,
     }));
 
+    // Remove from sessionStorage as it is now fully completed
+    sessionStorage.removeItem('binglish_prospecto_id');
+
     showTestResults(data);
   } catch (error) {
     document.getElementById('testLoading').classList.remove('show');
     document.getElementById('testModalBody').style.display = '';
     document.getElementById('testProgressInfo').style.display = '';
-    document.getElementById('testCaptchaContainer').style.display = 'flex';
-    document.getElementById('testPageDots').style.display = '';
-    document.getElementById('testProgressTrack').style.display = '';
     document.getElementById('testModalFooter').style.display = '';
-
-    // Reset turnstile if it failed
-    if (typeof turnstile !== 'undefined') {
-      turnstile.reset();
-    }
 
     if (typeof Swal !== 'undefined') {
       Swal.fire({ icon: 'error', title: 'Error', text: error.message || 'No se pudo enviar el test. Por favor, inténtalo de nuevo.' });
@@ -560,5 +579,90 @@ document.addEventListener('keydown', e => {
   }
 });
 
-// Make openTestModal available globally (called from index.html button)
+// ══════════════════════════════════════════════
+//  REGISTRATION & START TEST (Step 0)
+// ══════════════════════════════════════════════
+
+async function startPlacementTest(e) {
+  e.preventDefault();
+
+  const nombres = document.getElementById('testRegNombres').value.trim();
+  const apellidos = document.getElementById('testRegApellidos').value.trim();
+  const telefono = document.getElementById('testRegTelefono').value.trim();
+  const turnstileResponse = document.querySelector('#testCaptchaContainer [name="cf-turnstile-response"]')?.value;
+
+  if (!nombres || !apellidos || !telefono) {
+    if (typeof Swal !== 'undefined') Swal.fire({ icon: 'warning', title: 'Campos requeridos', text: 'Por favor completa todos tus datos.' });
+    return;
+  }
+
+  // Validar el número de teléfono con intl-tel-input
+  if (window.iti) {
+    if (!window.iti.isValidNumber()) {
+      if (typeof Swal !== 'undefined') {
+        Swal.fire({ icon: 'error', title: 'Número Inválido', text: 'El número ingresado no es válido para el país seleccionado.' });
+      } else {
+        alert('Número de teléfono inválido.');
+      }
+      return;
+    }
+  }
+
+  const fullTelefono = window.iti ? window.iti.getNumber() : telefono;
+
+  if (!turnstileResponse) {
+    if (typeof Swal !== 'undefined') {
+      Swal.fire({ icon: 'warning', title: 'Verificación requerida', text: 'Por favor, completa el Captcha antes de continuar.' });
+    } else {
+      alert('Por favor, completa el Captcha.');
+    }
+    return;
+  }
+
+  const btn = document.getElementById('btnStartTest');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Iniciando...';
+
+  try {
+    const endpoint = (typeof API_BASE !== 'undefined') ? API_BASE : '/apib';
+    const res = await fetch(`${endpoint}/placement-test/start`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nombres, apellidos, telefono: fullTelefono, turnstile_token: turnstileResponse }),
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ detail: 'Error de servidor' }));
+      throw new Error(err.detail || `Error ${res.status}`);
+    }
+
+    const data = await res.json();
+    testProspectoId = data.prospecto_id;
+
+    // Guardar en sessionStorage por si cierra el modal por error
+    sessionStorage.setItem('binglish_prospecto_id', testProspectoId);
+
+    // All good! Build and show the test
+    closeRegistrationModal();
+    buildTestModal();
+    document.getElementById('testOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+
+  } catch (error) {
+    if (typeof turnstile !== 'undefined') turnstile.reset();
+    if (typeof Swal !== 'undefined') {
+      Swal.fire({ icon: 'error', title: 'No autorizado', text: error.message });
+    } else {
+      alert('Error: ' + error.message);
+    }
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = 'Empezar Test';
+  }
+}
+
+// Make functions available globally
 window.openTestModal = openTestModal;
+window.closeRegistrationModal = closeRegistrationModal;
+window.handleRegOverlayClick = handleRegOverlayClick;
+window.startPlacementTest = startPlacementTest;

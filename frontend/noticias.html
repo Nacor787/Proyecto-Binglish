@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="/">
+    <title>Noticias — Binglish The Right Move</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="libs/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="libs/css/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=DM+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="css/styles.css" rel="stylesheet">
+    <link href="css/noticias.css" rel="stylesheet">
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
+    <!-- Evitar el parpadeo de la vista de lista al cargar directamente un artículo de noticias mediante slug o localStorage. -->
+    <script>
+        const _pathParts = window.location.pathname.split('/').filter(Boolean);
+        const _hasSlug = _pathParts.length >= 2 && _pathParts[0] === 'noticias';
+        const _hasLocal = localStorage.getItem('noticia_abrir_id');
+        if (_hasSlug || _hasLocal) {
+            document.write('<style id="preHideListado">#vista-listado { display: none; }</style>');
+        }
+    </script>
+</head>
+
+<body class="noticias-page">
+
+    <!-- NAVBAR (Reusable de Binglish) -->
+    <nav class="navbar navbar-expand-lg navbar-binglish fixed-top" id="mainNavbar">
+        <div class="container-fluid px-4 px-lg-5">
+            <a class="navbar-brand d-flex align-items-center" href="index">
+                <img src="assets/logo.svg" alt="Binglish" height="50" class="me-2">
+                <div class="d-flex flex-column justify-content-center lh-1">
+                    <span class="brand-title">BINGLISH</span>
+                    <span class="brand-subtitle">The Right Move</span>
+                </div>
+            </a>
+            <!-- Botones externos en Móvil (SIEMPRE VISIBLES) -->
+            <div class="d-flex align-items-center order-1 order-lg-3 ms-auto pe-2 pe-lg-0 ms-lg-0 ps-lg-3 border-lg-start"
+                style="border-color: rgba(0,229,255,0.2) !important;">
+                <a class="nav-link nav-icon-circle" data-bs-toggle="modal" data-bs-target="#loginModal" id="btnLoginNav"
+                    style="cursor: pointer;" title="Ingresar">
+                    <i class="bi bi-person-fill"></i>
+                </a>
+                <a class="nav-link nav-icon-circle" href="dashboard" id="btnDashNav"
+                    style="display:none; margin-left: 0.5rem;" title="Dashboard">
+                    <i class="bi bi-speedometer2"></i>
+                </a>
+            </div>
+
+            <button class="navbar-toggler animated-burger collapsed border-0 order-2 order-lg-4 ms-2" type="button"
+                data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+                aria-label="Toggle navigation" style="margin-top: 5px;">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <div class="collapse navbar-collapse order-3 order-lg-2" id="navbarNav">
+                <!-- Menú Principal (Centro) -->
+                <ul class="navbar-nav mx-auto align-items-lg-center gap-1" id="navMenu">
+                    <span class="nav-indicator" id="navIndicator"></span>
+                    <li class="nav-item">
+                        <a class="nav-link" href="index#inicio">
+                            <i class="bi bi-house-door me-1"></i>Inicio
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="index#nosotros">
+                            <i class="bi bi-people me-1"></i>Nosotros
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="noticias">
+                            <i class="bi bi-newspaper me-1"></i>Noticias
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="index#equipo">
+                            <i class="bi bi-person-badge me-1"></i>Personal
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="index#metodologia">
+                            <i class="bi bi-lightbulb me-1"></i>Metodología
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="javascript:void(0)" data-bs-toggle="modal"
+                            data-bs-target="#becasModal">
+                            <i class="bi bi-mortarboard me-1"></i>Becas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="index#contacto">
+                            <i class="bi bi-envelope me-1"></i>Contacto
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="index#ubicacion">
+                            <i class="bi bi-geo-alt me-1"></i>Ubicación
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="convenios">
+                            <i class="bi bi-building me-1"></i>Convenios
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- PAGE WRAPPER -->
+    <div class="noticias-wrapper mt-5 pt-5">
+
+        <!-- ==============================================
+             VISTA: LISTADO DE NOTICIAS
+             ============================================== -->
+        <div id="vista-listado">
+
+            <div class="noticias-header">
+                <p class="noticias-eyebrow">
+                    <i class="bi bi-newspaper me-1"></i> Centro de Comunicación
+                </p>
+                <h1 class="noticias-title">Noticias y Novedades</h1>
+                <p class="noticias-subtitle">Mantente al día con eventos, anuncios institucionales, promociones y
+                    novedades académicas de Binglish.</p>
+            </div>
+
+            <div class="noticias-toolbar">
+                <div class="noticias-filters" id="noticiasFilters">
+                    <button class="filter-btn active" data-filter="todas">Todas</button>
+                    <button class="filter-btn" data-filter="evento">Eventos</button>
+                    <button class="filter-btn" data-filter="anuncio">Anuncios</button>
+                    <button class="filter-btn" data-filter="promo">Promociones</button>
+                    <button class="filter-btn" data-filter="academia">Academia</button>
+                </div>
+                <div class="search-wrap">
+                    <i class="bi bi-search"></i>
+                    <input type="text" id="searchInput" placeholder="Buscar noticia...">
+                </div>
+            </div>
+
+            <!-- Noticia Destacada -->
+            <div id="featuredNewsContainer" class="mb-4" style="display:none;"></div>
+
+            <div class="noticias-grid" id="newsGrid">
+                <!-- Skeleton loader -->
+                <div class="text-center w-100 py-5 text-white-50">
+                    <div class="spinner-border text-info mb-3"></div>
+                    <p>Cargando noticias...</p>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination-row mt-5" id="newsPaginationContainer" style="display: none;">
+                <p class="pagination-info" id="newsPaginationInfo"></p>
+                <div class="pagination" id="newsPaginationButtons"></div>
+            </div>
+
+        </div>
+
+        <!-- ==============================================
+         VISTA: DETALLE DE NOTICIA
+         ============================================== -->
+        <div id="vista-detalle">
+            <button class="btn-back" onclick="volverListado()">
+                <i class="bi bi-arrow-left"></i> Volver a Noticias
+            </button>
+
+            <div class="row g-5">
+                <!-- COLUMNA PRINCIPAL -->
+                <div class="col-lg-8">
+                    <!-- HERO SLIDER -->
+                    <div class="detalle-slider-wrapper mb-4" id="detalleSliderWrapper">
+                        <button class="slider-btn slider-btn-prev" id="sliderPrev" style="display:none;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                            </svg>
+                        </button>
+                        <div class="detalle-slider-viewport">
+                            <div class="detalle-slider-track" id="detalleSliderTrack">
+                                <!-- Imágenes dinámicas -->
+                            </div>
+                        </div>
+                        <button class="slider-btn slider-btn-next" id="sliderNext" style="display:none;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- HEADER -->
+                    <div class="noticia-detalle-header">
+                        <span class="noticia-detalle-meta" id="detalleCategoria">CATEGORIA</span>
+                        <span class="badge badge-warning" id="detalleDestacada">DESTACADO</span>
+                        <h1 class="noticia-detalle-title" id="detalleTitulo">Título de la noticia</h1>
+                        <p class="text-white-50" id="detalleFecha"><i class="bi bi-calendar3 me-1"></i> 00/00/0000</p>
+                    </div>
+
+                    <hr>
+
+                    <!-- CONTENIDO -->
+                    <div class="noticia-detalle-content" id="detalleContenido">
+                        <!-- Contenido HTML de la noticia (Quill) -->
+                    </div>
+
+                    <!-- Share -->
+                    <div class="share-row mb-5">
+                        <span class="share-label">Compartir:</span>
+                        <button class="share-btn wa" onclick="compartirWA()">
+                            <i class="bi bi-whatsapp"></i> WhatsApp
+                        </button>
+                        <button class="share-btn fb" onclick="compartirFB()">
+                            <i class="bi bi-facebook"></i> Facebook
+                        </button>
+                        <button class="share-btn" onclick="copiarLink()">
+                            <i class="bi bi-link-45deg"></i> Copiar enlace
+                        </button>
+                    </div>
+
+                </div>
+
+                <!-- SIDEBAR / CTA -->
+                <div class="col-lg-4">
+                    <div class="sticky-top" style="top: 120px; z-index: 10;">
+                        <!-- CTA -->
+                        <div class="p-4 rounded-4 text-center mb-4"
+                            style="background: rgba(0, 229, 255, 0.05); border: 1px solid rgba(0, 229, 255, 0.2);">
+                            <div class="mb-3">
+                                <i class="bi bi-whatsapp text-success" style="font-size: 3.5rem;"></i>
+                            </div>
+                            <h4 class="text-white fw-bold mb-3" style="font-family: 'Playfair Display', serif;">¿Te
+                                interesa inscribirte?</h4>
+                            <p class="text-white-50 small mb-4">Habla con nuestro equipo y empieza tu camino bilingüe
+                                hoy mismo.</p>
+                            <a href="https://api.whatsapp.com/send/?phone=59173302492&text=Hola%2C+me+gustar%C3%ADa+recibir+m%C3%A1s+informaci%C3%B3n+sobre+los+cursos+de+ingl%C3%A9s.&type=phone_number&app_absent=0"
+                                target="_blank"
+                                class="btn btn-primary w-100 rounded-pill fw-bold text-dark d-flex align-items-center justify-content-center"
+                                style="background: linear-gradient(45deg, #00E5FF, #00B4D8); border: none; padding: 14px 20px; box-shadow: 0 4px 15px rgba(0, 229, 255, 0.3); transition: transform 0.2s ease;"
+                                onmouseover="this.style.transform='scale(1.05)'"
+                                onmouseout="this.style.transform='scale(1)'">
+                                <i class="bi bi-chat-dots-fill me-2 fs-5"></i> Contáctanos
+                            </a>
+                        </div>
+
+                        <!-- MÁS LEÍDAS -->
+                        <div class="p-4 rounded-4 mb-4"
+                            style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05);">
+                            <h5 class="text-white fw-bold mb-4 border-bottom border-secondary pb-3">
+                                <i class="bi bi-fire me-2" style="color: #FF3D71;"></i> Más leídas
+                            </h5>
+                            <div id="masLeidasContainer">
+                                <!-- Las noticias más leídas se inyectarán aquí mediante JS -->
+                            </div>
+                        </div>
+
+                        <!-- CATEGORÍAS -->
+                        <div class="p-4 rounded-4"
+                            style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05);">
+                            <h5 class="text-white fw-bold mb-3 border-bottom border-secondary pb-3"><i
+                                    class="bi bi-tags me-2 text-info"></i> Categorías</h5>
+                            <div class="d-flex flex-wrap gap-2">
+                                <span class="badge rounded-pill px-3 py-2 fw-normal"
+                                    style="cursor:pointer; background:rgba(0, 229, 255, 0.1); border:1px solid rgba(0,229,255,0.3); color:#00E5FF;"
+                                    onclick="irACategoria('evento')">Eventos</span>
+                                <span class="badge rounded-pill px-3 py-2 fw-normal"
+                                    style="cursor:pointer; background:rgba(255, 61, 113, 0.1); border:1px solid rgba(255,61,113,0.3); color:#FF3D71;"
+                                    onclick="irACategoria('anuncio')">Anuncios</span>
+                                <span class="badge rounded-pill px-3 py-2 fw-normal"
+                                    style="cursor:pointer; background:rgba(255, 170, 0, 0.1); border:1px solid rgba(255,170,0,0.3); color:#FFAA00;"
+                                    onclick="irACategoria('promo')">Promociones</span>
+                                <span class="badge rounded-pill px-3 py-2 fw-normal"
+                                    style="cursor:pointer; background:rgba(0, 214, 143, 0.1); border:1px solid rgba(0,214,143,0.3); color:#00D68F;"
+                                    onclick="irACategoria('academia')">Academia</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> <!-- Cierre de noticias-wrapper -->
+
+    <!-- ==============================================
+         LIGHTBOX (Para galería)
+         ============================================== -->
+    <div class="lightbox-overlay" id="lightboxOverlay" onclick="closeLightbox()">
+        <button class="lightbox-close" onclick="closeLightbox()"><i class="bi bi-x-lg"></i></button>
+        <img src="" id="lightboxImg" onclick="event.stopPropagation()">
+    </div>
+
+    <!-- ============================================================
+     FOOTER
+     ============================================================ -->
+    <footer class="footer-binglish">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <div class="footer-brand">BINGLISH</div>
+                    <div class="footer-brand-subtitle">The Right Move</div>
+                    <p class="mt-3 small">Centro de idiomas comprometido con la excelencia educativa y la formación de
+                        profesionales bilingües.</p>
+                    <div class="social-row mt-3">
+                        <a href="https://www.facebook.com/share/1KfHyboGJN/" target="_blank"
+                            class="social-circle facebook" title="Facebook">
+                            <i class="bi bi-facebook"></i>
+                        </a>
+                        <a href="#" target="_blank" class="social-circle instagram" title="Instagram">
+                            <i class="bi bi-instagram"></i>
+                        </a>
+                        <a href="https://www.tiktok.com/@binglish_the_right_move?_r=1&_t=ZS-94pWPJMNoqg" target="_blank"
+                            class="social-circle tiktok" title="TikTok">
+                            <i class="bi bi-tiktok"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <h6>Enlaces Rápidos</h6>
+                    <ul class="footer-links list-unstyled">
+                        <li><a href="index#inicio"><i class="bi bi-house-door me-2"></i>Inicio</a></li>
+                        <li><a href="index#nosotros"><i class="bi bi-people me-2"></i>Nosotros</a></li>
+                        <li><a href="/noticias"><i class="bi bi-newspaper me-2"></i>Noticias</a></li>
+                        <li><a href="index#equipo"><i class="bi bi-person-badge me-2"></i>Personal</a></li>
+                        <li><a href="index#metodologia"><i class="bi bi-lightbulb me-2"></i>Metodología</a></li>
+                        <li><a href="index#contacto"><i class="bi bi-envelope-arrow-up me-2"></i>Contacto</a></li>
+                        <li><a href="index#ubicacion"><i class="bi bi-geo-alt me-2"></i>Ubicación</a></li>
+                        <li><a href="/convenios"><i class="bi bi-building me-2"></i>Convenios</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4">
+                    <h6>Contacto</h6>
+                    <ul class="footer-links">
+                        <li><a href="mailto:binglishtherightmove@gmail.com" target="_blank"><i
+                                    class="bi bi-envelope me-1"></i>binglishtherightmove@gmail.com</a>
+                        </li>
+                        <li><a href="tel:+591 73302492"><i class="bi bi-telephone me-1"></i>+591 73302492 - 60592864</a>
+                        </li>
+                        <li><a href="index#ubicacion"><i class="bi bi-geo-alt me-1"></i>Av. Villazón edificio Román
+                                N°1790
+                                Piso 3,
+                                frente Monoblock UMSA, La Paz, Bolivia</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                &copy; 2026 Binglish — Centro de Idiomas. Todos los derechos reservados.
+            </div>
+        </div>
+    </footer>
+
+    <!-- ============================================================
+     MODAL LOGIN (Glassmorphism)
+     ============================================================ -->
+    <div class="modal modal-animated fade" id="loginModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content glass-login">
+                <div class="modal-header border-0 pb-0 pt-4 px-4">
+                    <div class="text-center w-100">
+                        <img src="assets/logo.svg" alt="Binglish" height="80" class="me-3">
+                        <h4 class="glass-login-title">Iniciar Sesión</h4>
+                        <p class="glass-login-subtitle">Ingresa con tu código de usuario</p>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3"
+                        data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body px-4 pb-4">
+                    <form id="loginForm" novalidate>
+                        <div class="mb-3">
+                            <label class="form-label glass-login-label">Código de Usuario</label>
+                            <div class="input-group has-validation">
+                                <span class="input-group-text glass-login-icon">
+                                    <i class="bi bi-person-badge-fill"></i>
+                                </span>
+                                <button class="btn dropdown-toggle glass-login-prefix border-0" type="button"
+                                    data-bs-toggle="dropdown" aria-expanded="false" id="dropdownTipoUsuario"
+                                    style="background: transparent; min-width: 70px; flex-shrink: 0; color: #00E5FF !important; text-shadow: 0 0 8px rgba(0,229,255,0.4); font-weight: 700; letter-spacing: 1px;">
+                                    BTRM
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-dark shadow border-secondary">
+                                    <li><a class="dropdown-item active" href="#"
+                                            onclick="selectTipoUsuario('BTRM', this, event)">BTRM (Estudiante)</a></li>
+                                    <li><a class="dropdown-item" href="#"
+                                            onclick="selectTipoUsuario('ADM', this, event)">ADM (Administración)</a>
+                                    </li>
+                                    <li><a class="dropdown-item" href="#"
+                                            onclick="selectTipoUsuario('TCH', this, event)">TCH (Docente)</a></li>
+                                </ul>
+                                <input type="hidden" id="tipoUsuario" value="BTRM">
+                                <script>
+                                    function selectTipoUsuario(val, el, e) {
+                                        e.preventDefault();
+                                        document.getElementById('tipoUsuario').value = val;
+                                        document.getElementById('dropdownTipoUsuario').innerText = val;
+                                        const items = el.closest('.dropdown-menu').querySelectorAll('.dropdown-item');
+                                        items.forEach(item => item.classList.remove('active'));
+                                        el.classList.add('active');
+                                    }
+                                </script>
+                                <span class="input-group-text glass-login-icon login-dash">-</span>
+                                <input type="text" class="form-control glass-login-input" id="loginCodigo"
+                                    placeholder="204" inputmode="numeric" pattern="[0-9]+" required>
+                                <div class="invalid-feedback">Ingresa tu número de código (solo dígitos).</div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label glass-login-label">Contraseña</label>
+                            <div class="input-group">
+                                <span class="input-group-text glass-login-icon">
+                                    <i class="bi bi-lock-fill"></i>
+                                </span>
+                                <input type="password" class="form-control glass-login-input border-end-0"
+                                    id="loginPassword" placeholder="••••••••" required>
+                                <span class="input-group-text glass-login-icon" style="cursor: pointer;"
+                                    onclick="togglePasswordVisibility('loginPassword', this)"
+                                    title="Mostrar contraseña">
+                                    <i class="bi bi-eye-fill"></i>
+                                </span>
+                                <div class="invalid-feedback">Ingresa tu contraseña.</div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 d-flex justify-content-center">
+                            <div class="cf-turnstile" data-sitekey="0x4AAAAAADThGHT71f4ZsfbF" data-theme="dark"></div>
+                        </div>
+
+                        <button type="submit" class="btn glass-login-btn">
+                            <i class="bi bi-box-arrow-in-right me-2"></i>Ingresar
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+     MODAL BECAS (Glassmorphism)
+     ============================================================ -->
+    <div class="modal modal-animated fade" id="becasModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
+            <div class="modal-content glass-becas">
+                <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3"
+                    style="z-index:10" data-bs-dismiss="modal"></button>
+                <div class="modal-body p-0">
+                    <div class="row g-0">
+                        <!-- Left: Info -->
+                        <div class="col-lg-5 becas-info-col">
+                            <div class="becas-info-content">
+                                <div class="d-flex align-items-center mb-4 gap-3">
+                                    <a class="navbar-brand d-flex align-items-center">
+                                        <img src="assets/logo.svg" alt="Binglish" height="50" class="me-2">
+                                        <div class="d-flex flex-column justify-content-start lh-1">
+                                            <span class="brand-title" style="color: #fff;">BINGLISH</span>
+                                            <span class="brand-subtitle">The
+                                                Right Move</span>
+                                        </div>
+                                    </a>
+                                </div>
+                                <h3 class="becas-title"><i class="bi bi-mortarboard-fill me-2"
+                                        style="background: linear-gradient(135deg, #6C63FF, #00D4AA); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;"></i>Becas
+                                    Binglish</h3>
+                                <p class="becas-description">
+                                    Nuestras becas están diseñadas para estudiantes apasionados y comprometidos que
+                                    desean llevar su inglés al siguiente nivel. Ya sea que estés buscando mejorar tus
+                                    habilidades para avanzar en tu carrera, estudiar en el extranjero o simplemente
+                                    abrir nuevas puertas en tu vida, estamos aquí para apoyarte en tu viaje.
+                                </p>
+                                <p class="becas-description">
+                                    Postula hoy y da el primer paso hacia un futuro brillante con nuestro programa de
+                                    becas en nuestra academia de inglés.
+                                </p>
+                                <div class="becas-features">
+                                    <div class="becas-feature-item">
+                                        <i class="bi bi-check-circle-fill"></i>
+                                        <span>Cobertura parcial o total</span>
+                                    </div>
+                                    <div class="becas-feature-item">
+                                        <i class="bi bi-check-circle-fill"></i>
+                                        <span>Acceso a todos los niveles</span>
+                                    </div>
+                                    <div class="becas-feature-item">
+                                        <i class="bi bi-check-circle-fill"></i>
+                                        <span>Certificación internacional</span>
+                                    </div>
+                                    <div class="becas-feature-item">
+                                        <i class="bi bi-check-circle-fill"></i>
+                                        <span>Material incluido</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Right: Form -->
+                        <div class="col-lg-7 becas-form-col">
+                            <div class="becas-form-content">
+                                <h5 class="becas-form-title">
+                                    <i class="bi bi-pencil-square me-2"></i>Formulario de Postulación
+                                </h5>
+                                <form id="becasForm" novalidate>
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label glass-login-label">Nombre</label>
+                                            <input type="text" class="form-control glass-login-input" id="becaNombre"
+                                                placeholder="Tu nombre" required>
+                                            <div class="invalid-feedback">Campo requerido.</div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label glass-login-label">Apellido</label>
+                                            <input type="text" class="form-control glass-login-input" id="becaApellido"
+                                                placeholder="Tu apellido" required>
+                                            <div class="invalid-feedback">Campo requerido.</div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label glass-login-label">Edad</label>
+                                            <input type="number" class="form-control glass-login-input" id="becaEdad"
+                                                placeholder="18" min="10" max="80" required>
+                                            <div class="invalid-feedback">Ingresa tu edad.</div>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <label class="form-label glass-login-label">Email</label>
+                                            <input type="email" class="form-control glass-login-input" id="becaEmail"
+                                                placeholder="correo@ejemplo.com" required>
+                                            <div class="invalid-feedback">Email válido requerido.</div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label glass-login-label">Teléfono</label>
+                                            <input type="tel" class="form-control glass-login-input" id="becaTelefono"
+                                                placeholder="+591 12345678" required>
+                                            <div class="invalid-feedback">Campo requerido.</div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label glass-login-label">País</label>
+                                            <input type="text" class="form-control glass-login-input" id="becaPais"
+                                                placeholder="Tu país" required>
+                                            <div class="invalid-feedback">Campo requerido.</div>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label glass-login-label">¿Cuál es tu nivel de
+                                                inglés?</label>
+                                            <select class="form-select glass-login-input" id="becaNivel" required>
+                                                <option value="" disabled selected>Selecciona tu nivel</option>
+                                                <option value="basico">Básico</option>
+                                                <option value="intermedio">Intermedio</option>
+                                                <option value="avanzado">Avanzado</option>
+                                            </select>
+                                            <div class="invalid-feedback">Selecciona una opción.</div>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label glass-login-label">¿Por qué quieres aprender
+                                                inglés?</label>
+                                            <textarea class="form-control glass-login-input" id="becaPorque" rows="2"
+                                                placeholder="Cuéntanos tu razón..." required></textarea>
+                                            <div class="invalid-feedback">Campo requerido.</div>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label glass-login-label">¿Qué te motiva a aprender
+                                                inglés?</label>
+                                            <textarea class="form-control glass-login-input" id="becaMotivacion"
+                                                rows="2" placeholder="Tu motivación..." required></textarea>
+                                            <div class="invalid-feedback">Campo requerido.</div>
+                                        </div>
+                                        <div class="col-12 mt-3">
+                                            <button type="submit" class="btn glass-login-btn" id="btnBecasSubmit">
+                                                <i class="bi bi-send-fill me-2"></i>Enviar Postulación
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+     WHATSAPP FLOTANTE
+     ============================================================ -->
+    <a href="https://wa.me/59173302492?text=Hola,%20me%20gustaría%20recibir%20más%20información%20sobre%20los%20cursos%20de%20inglés."
+        target="_blank" class="whatsapp-float" title="Chatea con nosotros">
+        <div class="wa-sign"><i class="bi bi-whatsapp"></i></div>
+        <div class="wa-text">WhatsApp</div>
+    </a>
+
+    <!-- ============================================================
+     APLICACION CEL
+    ============================================================ -->
+    <a href="#" class="app-cel" id="appCelBtn" title="Descarga la app">
+        <div class="app-cel-sign"><i class="bi bi-phone"></i></div>
+        <div class="app-cel-text">App</div>
+    </a>
+
+    <!-- Scripts -->
+    <script src="libs/bootstrap.bundle.min.js"></script>
+    <script src="libs/sweetalert2@11.js"></script>
+    <script src="libs/index.umd.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/noticias.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            setTimeout(() => {
+                const activeLink = document.querySelector('.navbar-binglish .nav-link.active');
+                if (activeLink && typeof moveIndicator === 'function') {
+                    moveIndicator(activeLink);
+                }
+            }, 200);
+        });
+    </script>
+</body>
+
+</html>
